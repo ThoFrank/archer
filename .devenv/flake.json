@@ -1,0 +1,1 @@
+{"nixpkgs-ruby":{"url":"github:bobvanderlinden/nixpkgs-ruby","inputs":{"nixpkgs":{"follows":"nixpkgs"}}},"nixpkgs":{"url":"github:cachix/devenv-nixpkgs/rolling"}}

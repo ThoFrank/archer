@@ -1,0 +1,11 @@
+<h1>
+  <%= @tournament.name %> <%= link_to "✏️", edit_tournament_path(@tournament) %>
+</h1>
+
+<p>
+<%= @tournament.intro %>
+</p>
+
+<p>
+Place: <%= @tournament.place %>
+</p>

@@ -1,0 +1,30 @@
+<%= form_with model: tournament do |form| %>
+  <div>
+    <%= form.label :name %><br>
+    <%= form.text_field :name %>
+    <% tournament.errors.full_messages_for(:name).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.label :intro %><br>
+    <%= form.textarea :intro %><br>
+    <% tournament.errors.full_messages_for(:intro).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.label :place %><br>
+    <%= form.textarea :place %><br>
+    <% tournament.errors.full_messages_for(:place).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+

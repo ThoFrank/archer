@@ -1,0 +1,10 @@
+<h1>Tournaments</h1>
+<p>Select tournament</p>
+
+<% @tournaments.each do |t| %>
+  <h3>
+    <%= link_to t.name, t %>
+  </h3>
+<% end %>
+
+<%= link_to "Create a new one", {controller: "tournaments", action: "new"} %> 
