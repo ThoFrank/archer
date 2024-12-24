@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "articles#index"
+  root "tournaments#index"
 
   # get "up" => "rails/health#show", as: :rails_health_check
 
@@ -9,5 +9,7 @@ Rails.application.routes.draw do
     resources :comments
   end
 
-  resources :tournaments
+  resources :tournaments do
+    resources :participants
+  end
 end

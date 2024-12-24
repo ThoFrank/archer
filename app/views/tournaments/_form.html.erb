@@ -24,6 +24,22 @@
   </div>
 
   <div>
+    <%= form.label :date_start %><br>
+    <%= form.date_field :date_start %><br>
+    <% tournament.errors.full_messages_for(:date_start).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.label :date_end %><br>
+    <%= form.date_field :date_end %><br>
+    <% tournament.errors.full_messages_for(:date_end).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
     <%= form.submit %>
   </div>
 <% end %>
