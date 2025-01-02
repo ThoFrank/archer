@@ -42,3 +42,6 @@ result
 /.cache
 /.pre-commit-config.yaml
 man
+
+#elm
+/elm-stuff

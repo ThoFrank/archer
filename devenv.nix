@@ -5,11 +5,17 @@
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [
-    pkgs.libyaml
-    pkgs.sqlite
+  packages = with pkgs;[
+    libyaml
+    sqlite
     # pkgs.solargraph
   ]
+  ++ (with pkgs.elmPackages; [
+    elm
+    elm-language-server
+    elm-format
+    elm-test
+  ])
   ++ lib.optionals pkgs.stdenv.isDarwin [ pkgs.libllvm ];
 
   # https://devenv.sh/languages/
