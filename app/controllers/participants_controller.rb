@@ -24,7 +24,7 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      params.expect(participant: [ :first_name, :last_name ])
+      params.expect(participant: [ :first_name, :last_name, :dob ])
     end
 
 end

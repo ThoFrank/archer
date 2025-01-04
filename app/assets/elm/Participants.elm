@@ -228,7 +228,7 @@ view model =
         , br
         , input [ id "first_name", name "participant[first_name]", onInput UpdateFirstName, value model.first_name ] []
         , br
-        , label [ for "last_name" ] [ text "Vorname:" ]
+        , label [ for "last_name" ] [ text "Nachname:" ]
         , br
         , input [ id "last_name", name "participant[last_name]", onInput UpdateLastName, value model.last_name ] []
         , br
@@ -246,6 +246,7 @@ view model =
                         Date.toIsoString d
                 )
             , id "dob"
+            , name "participant[dob]"
             ]
             []
         , br

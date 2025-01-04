@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_17_062210) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_04_173511) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_17_062210) do
     t.integer "Tournament_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "dob"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
   end
 
