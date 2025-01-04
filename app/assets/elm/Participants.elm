@@ -1,11 +1,10 @@
-module Hello exposing (main)
+module Participants exposing (main)
 
 import Browser
 import Class exposing (Class, Gender(..), class_in_range)
 import Date exposing (Date)
-import Debug exposing (toString)
 import Html exposing (Html, br, form, input, label, option, select, text)
-import Html.Attributes exposing (disabled, for, id, name, selected, type_, value)
+import Html.Attributes exposing (action, autocomplete, disabled, for, id, method, name, selected, type_, value)
 import Html.Events exposing (onInput)
 import List exposing (filter, map)
 import Maybe exposing (andThen, withDefault)
@@ -13,13 +12,14 @@ import TargetFace exposing (TargetFace(..))
 import Time exposing (Month(..))
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element { init = init, subscriptions = subscriptions, update = update, view = view }
 
 
 type alias Model =
-    { classes : List Class
+    { flags : Flags
+    , classes : List Class
     , first_name : String
     , last_name : String
     , dob : Dob
@@ -33,30 +33,38 @@ type Dob
     | Valid Date
 
 
-init : Model
-init =
-    { classes =
-        [ { id = "RUE21M"
-          , name = "Recurve Herren"
-          , restricted_to_gender = Just Male
-          , start_dob = Date.fromCalendarDate (2025 - 49) Dec 1
-          , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
-          , possible_target_faces = [ M18Spot, M18cm40 ]
-          }
-        , { id = "RUE21W"
-          , name = "Recurve Damen"
-          , restricted_to_gender = Just Female
-          , start_dob = Date.fromCalendarDate (2025 - 49) Dec 1
-          , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
-          , possible_target_faces = [ M18Spot, M18cm40 ]
-          }
-        ]
-    , first_name = ""
-    , last_name = ""
-    , dob = Invalid ""
-    , selected_class = Nothing
-    , selected_target_face = Nothing
-    }
+init : Flags -> ( Model, Cmd msg )
+init f =
+    ( { flags = f
+      , classes =
+            [ { id = "RUE21M"
+              , name = "Recurve Herren"
+              , restricted_to_gender = Just Male
+              , start_dob = Date.fromCalendarDate (2025 - 49) Dec 1
+              , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
+              , possible_target_faces = [ M18Spot, M18cm40 ]
+              }
+            , { id = "RUE21W"
+              , name = "Recurve Damen"
+              , restricted_to_gender = Just Female
+              , start_dob = Date.fromCalendarDate (2025 - 49) Dec 1
+              , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
+              , possible_target_faces = [ M18Spot, M18cm40 ]
+              }
+            ]
+      , first_name = ""
+      , last_name = ""
+      , dob = Invalid ""
+      , selected_class = Nothing
+      , selected_target_face = Nothing
+      }
+    , Cmd.none
+    )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 type Msg
@@ -67,9 +75,9 @@ type Msg
     | UpdateLastName String
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    ( case msg of
         SelectClass cls_id ->
             { model
                 | selected_class =
@@ -85,7 +93,7 @@ update msg model =
                         |> andThen
                             (\cls ->
                                 cls.possible_target_faces
-                                    |> List.filter (\t -> toString t == tf)
+                                    |> List.filter (\t -> TargetFace.toString t == tf)
                                     |> List.head
                             )
             }
@@ -116,6 +124,8 @@ update msg model =
 
         UpdateLastName n ->
             { model | last_name = n }
+    , Cmd.none
+    )
 
 
 updateSelectedClass : Model -> Maybe Class
@@ -212,14 +222,15 @@ viewAvailableClasses model =
 
 view : Model -> Html Msg
 view model =
-    form []
-        [ label [ for "first_name" ] [ text "Vorname:" ]
+    form [ action model.flags.form_action_url, method "post" ]
+        [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
+        , label [ for "first_name" ] [ text "Vorname:" ]
         , br
-        , input [ id "first_name", onInput UpdateFirstName, value model.first_name ] []
+        , input [ id "first_name", name "participant[first_name]", onInput UpdateFirstName, value model.first_name ] []
         , br
         , label [ for "last_name" ] [ text "Vorname:" ]
         , br
-        , input [ id "last_name", onInput UpdateLastName, value model.last_name ] []
+        , input [ id "last_name", name "participant[last_name]", onInput UpdateLastName, value model.last_name ] []
         , br
         , label [ for "dob" ] [ text "Geburtsdatum:" ]
         , br
@@ -284,7 +295,7 @@ view model =
                                 (\tf ->
                                     option
                                         [ selected (model.selected_target_face == Just tf)
-                                        , value (toString tf)
+                                        , value (TargetFace.toString tf)
                                         ]
                                         [ text (name_of_target_face tf) ]
                                 )
@@ -294,3 +305,13 @@ view model =
         , br
         , input [ type_ "submit", value "Anmelden", disabled <| not <| submittable <| model ] []
         ]
+
+
+
+-- Flags
+
+
+type alias Flags =
+    { csrf_token : String
+    , form_action_url : String
+    }

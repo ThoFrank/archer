@@ -23,5 +23,18 @@ module Archer
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # sprockets
+    config.assets.enabled = true
+    config.assets.paths << Rails.root.join("app", "assets")
+    config.assets.precompile += %w( application.js application.css )
+
+    initializer 'sprockets.environment', before: :load_config_initializers do |app|
+      app.config.assets.configure do |env|
+        env.cache = ActiveSupport::Cache.lookup_store(:memory_store)
+      end
+    end
+
+
   end
 end
