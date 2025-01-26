@@ -1,8 +1,7 @@
 {
     "type": "application",
     "source-directories": [
-        "app/assets/elm",
-        "src"
+        "app/assets/elm"
     ],
     "elm-version": "0.19.1",
     "dependencies": {

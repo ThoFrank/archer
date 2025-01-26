@@ -3,8 +3,8 @@ module Participants exposing (main)
 import Browser
 import Class exposing (Class, Gender(..), class_in_range)
 import Date exposing (Date)
-import Html exposing (Html, br, form, input, label, option, select, text)
-import Html.Attributes exposing (action, autocomplete, disabled, for, id, method, name, selected, type_, value)
+import Html exposing (Html, br, div, form, input, label, option, select, text)
+import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, selected, type_, value)
 import Html.Events exposing (onInput)
 import List exposing (filter, map)
 import Maybe exposing (andThen, withDefault)
@@ -222,89 +222,108 @@ viewAvailableClasses model =
 
 view : Model -> Html Msg
 view model =
-    form [ action model.flags.form_action_url, method "post" ]
-        [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
-        , label [ for "first_name" ] [ text "Vorname:" ]
-        , br
-        , input [ id "first_name", name "participant[first_name]", onInput UpdateFirstName, value model.first_name ] []
-        , br
-        , label [ for "last_name" ] [ text "Nachname:" ]
-        , br
-        , input [ id "last_name", name "participant[last_name]", onInput UpdateLastName, value model.last_name ] []
-        , br
-        , label [ for "dob" ] [ text "Geburtsdatum:" ]
-        , br
-        , input
-            [ type_ "date"
-            , onInput UpdateDob
-            , value
-                (case model.dob of
-                    Invalid s ->
-                        s
+    let
+        input_label_class =
+            "block text-sm font-medium text-gray-700"
 
-                    Valid d ->
-                        Date.toIsoString d
+        input_class =
+            "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+    in
+    form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
+        [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
+        , div [ class "space-y-1" ]
+            [ label [ for "first_name", class input_label_class ] [ text "Vorname:" ]
+            , input [ id "first_name", name "participant[first_name]", class input_class, onInput UpdateFirstName, value model.first_name ] []
+            ]
+        , div [ class "space-y-1" ]
+            [ label [ for "last_name", class input_label_class ] [ text "Nachname:" ]
+            , input [ id "last_name", name "participant[last_name]", class input_class, onInput UpdateLastName, value model.last_name ] []
+            ]
+        , div [ class "space-y-1" ]
+            [ label [ for "dob", class input_label_class ] [ text "Geburtsdatum:" ]
+            , input
+                [ type_ "date"
+                , onInput UpdateDob
+                , value
+                    (case model.dob of
+                        Invalid s ->
+                            s
+
+                        Valid d ->
+                            Date.toIsoString d
+                    )
+                , id "dob"
+                , name "participant[dob]"
+                , class
+                    input_class
+                ]
+                []
+            ]
+        , div [ class "space-y-1" ]
+            [ label [ for "class", class input_label_class ] [ text "Klasse:" ]
+            , select
+                [ onInput SelectClass
+                , value
+                    (case model.selected_class of
+                        Nothing ->
+                            "--"
+
+                        Just c ->
+                            c.id
+                    )
+                , id "class"
+                , class input_class
+                ]
+                (option
+                    [ name "Class"
+                    , disabled False
+                    , selected (model.selected_class == Nothing)
+                    , value "--"
+                    ]
+                    [ text "--" ]
+                    :: viewAvailableClasses model
                 )
-            , id "dob"
-            , name "participant[dob]"
+            ]
+        , div [ class "space-y-1" ]
+            [ label
+                [ for "TargetFace", class input_label_class ]
+                [ text "Auflage:" ]
+            , select
+                [ onInput SelectTargetFace
+                , id "TargetFace"
+                , class input_class
+                ]
+                (option
+                    [ selected (model.selected_target_face == Nothing)
+                    , name "TargetFace"
+                    , disabled False
+                    , value "--"
+                    ]
+                    [ text "--" ]
+                    :: (case model.selected_class of
+                            Nothing ->
+                                []
+
+                            Just { possible_target_faces } ->
+                                map
+                                    (\tf ->
+                                        option
+                                            [ selected (model.selected_target_face == Just tf)
+                                            , value (TargetFace.toString tf)
+                                            ]
+                                            [ text (name_of_target_face tf) ]
+                                    )
+                                    possible_target_faces
+                       )
+                )
+            ]
+        , input
+            [ type_ "submit"
+            , value "Anmelden"
+            , disabled <| not <| submittable <| model
+            , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
             ]
             []
-        , br
-        , label [ for "class" ] [ text "Klasse:" ]
-        , br
-        , select
-            [ onInput SelectClass
-            , value
-                (case model.selected_class of
-                    Nothing ->
-                        "--"
-
-                    Just c ->
-                        c.id
-                )
-            , id "class"
-            ]
-            (option
-                [ name "Class"
-                , disabled False
-                , selected (model.selected_class == Nothing)
-                , value "--"
-                ]
-                [ text "--" ]
-                :: viewAvailableClasses model
-            )
-        , br
-        , label
-            [ for "TargetFace" ]
-            [ text "Auflage:" ]
-        , br
-        , select
-            [ onInput SelectTargetFace, id "TargetFace" ]
-            (option
-                [ selected (model.selected_target_face == Nothing)
-                , name "TargetFace"
-                , disabled False
-                , value "--"
-                ]
-                [ text "--" ]
-                :: (case model.selected_class of
-                        Nothing ->
-                            []
-
-                        Just { possible_target_faces } ->
-                            map
-                                (\tf ->
-                                    option
-                                        [ selected (model.selected_target_face == Just tf)
-                                        , value (TargetFace.toString tf)
-                                        ]
-                                        [ text (name_of_target_face tf) ]
-                                )
-                                possible_target_faces
-                   )
-            )
-        , br
-        , input [ type_ "submit", value "Anmelden", disabled <| not <| submittable <| model ] []
         ]
 
 

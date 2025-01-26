@@ -1,46 +1,47 @@
-<%= form_with model: tournament do |form| %>
-  <div>
-    <%= form.label :name %><br>
-    <%= form.text_field :name %>
+<%= form_with model: tournament, class: "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" do |form| %>
+
+  <div class="space-y-1">
+    <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :name, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:name).each do |message| %>
-      <div><%= message %></div>
+      <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>
 
-  <div>
-    <%= form.label :intro %><br>
-    <%= form.textarea :intro %><br>
+  <div class="space-y-1">
+    <%= form.label :intro, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.textarea :intro, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:intro).each do |message| %>
-      <div><%= message %></div>
+      <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>
 
-  <div>
-    <%= form.label :place %><br>
-    <%= form.textarea :place %><br>
+  <div class="space-y-1">
+    <%= form.label :place, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.textarea :place, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:place).each do |message| %>
-      <div><%= message %></div>
+      <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>
 
-  <div>
-    <%= form.label :date_start %><br>
-    <%= form.date_field :date_start %><br>
+  <div class="space-y-1">
+    <%= form.label :date_start, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.date_field :date_start, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:date_start).each do |message| %>
-      <div><%= message %></div>
+      <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>
 
-  <div>
-    <%= form.label :date_end %><br>
-    <%= form.date_field :date_end %><br>
+  <div class="space-y-1">
+    <%= form.label :date_end, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.date_field :date_end, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:date_end).each do |message| %>
-      <div><%= message %></div>
+      <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="mt-6">
+    <%= form.submit "Save", class: "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed" %>
   </div>
 <% end %>
 

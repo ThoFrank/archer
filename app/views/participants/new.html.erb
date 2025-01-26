@@ -1,7 +1,12 @@
-<h1>Register for <%=@tournament.name%></h1>
-<%= elm_embed('Elm.Participants', { flags: {
-  csrf_token: form_authenticity_token,
-  form_action_url: @participants_path,
-} }) %>
+<div class="container mx-auto p-6">
+  <h1 class="text-4xl font-bold text-gray-800 mb-4">
+    Register for <%=@tournament.name%>
+  </h1>
 
-<pre id="elm"></pre>
+  <%= elm_embed('Elm.Participants', { flags: {
+    csrf_token: form_authenticity_token,
+    form_action_url: @participants_path,
+  } }) %>
+
+  <pre id="elm"></pre>
+</div>

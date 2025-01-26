@@ -45,3 +45,6 @@ man
 
 #elm
 /elm-stuff
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
