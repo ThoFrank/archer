@@ -3,7 +3,7 @@ module Participants exposing (main)
 import Browser
 import Class exposing (Class, Gender(..), class_in_range)
 import Date exposing (Date)
-import Html exposing (Html, br, div, form, input, label, option, select, text)
+import Html exposing (Html, div, form, input, label, option, select, text)
 import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, selected, type_, value)
 import Html.Events exposing (onInput)
 import List exposing (filter, map)
