@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_04_173511) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_04_193507) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -37,6 +37,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_173511) do
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
   end
 
+  create_table "target_faces", force: :cascade do |t|
+    t.string "name"
+    t.integer "distance"
+    t.integer "size"
+    t.integer "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_target_faces_on_tournament_id"
+  end
+
+  create_table "tournament_classes", force: :cascade do |t|
+    t.string "name"
+    t.integer "age_start"
+    t.integer "age_end"
+    t.integer "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_tournament_classes_on_tournament_id"
+  end
+
   create_table "tournaments", force: :cascade do |t|
     t.string "name"
     t.text "intro"
@@ -48,4 +68,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_173511) do
   end
 
   add_foreign_key "comments", "articles"
+  add_foreign_key "target_faces", "tournaments"
+  add_foreign_key "tournament_classes", "tournaments"
 end
