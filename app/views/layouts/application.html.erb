@@ -24,10 +24,11 @@
 
   </head>
 
-  <body>
+  <body class="min-h-screen flex flex-col">
   <%= render "header" %>
-    <main class="container mx-auto px-5 flex">
+    <main class="container mx-auto px-5 flex-grow">
       <%= yield %>
     </main>
+  <%= render "footer" %>
   </body>
 </html>
