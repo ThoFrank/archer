@@ -48,3 +48,6 @@ man
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# Mac
+.DS_Store

@@ -26,6 +26,7 @@ module Archer
 
     # sprockets
     config.assets.enabled = true
+    config.assets.debug = Rails.env.development?
     config.assets.paths << Rails.root.join("app", "assets")
     config.assets.precompile += %w( application.js application.css )
 

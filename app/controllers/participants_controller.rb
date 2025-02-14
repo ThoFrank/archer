@@ -8,7 +8,19 @@ class ParticipantsController < ApplicationController
   def new
     @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.new
-    @participants_path = tournament_path(@tournament) + "/participants"
+    @flags = {
+      form_action_url: tournament_path(@tournament) + "/participants",
+      csrf_token: form_authenticity_token,
+      classes: @tournament.tournament_classes.map do |cls|
+        {
+          id: cls.id.to_s,
+          name: cls.name,
+          start_dob: "#{cls.from_dob}-01-01",
+          end_dob: "#{cls.to_dob}-12-31",
+          possible_target_faces: [],
+        }
+      end,
+    }
   end
 
   def create

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_04_193507) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_26_140412) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -45,6 +45,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_193507) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tournament_id"], name: "index_target_faces_on_tournament_id"
+  end
+
+  create_table "target_faces_tournament_classes", id: false, force: :cascade do |t|
+    t.integer "tournament_class_id", null: false
+    t.integer "target_face_id", null: false
   end
 
   create_table "tournament_classes", force: :cascade do |t|
