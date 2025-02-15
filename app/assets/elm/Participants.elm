@@ -9,7 +9,7 @@ import Html.Events exposing (onInput)
 import Json.Decode as JD
 import List exposing (filter, map)
 import Maybe exposing (andThen, withDefault)
-import TargetFace exposing (TargetFace(..))
+import TargetFace exposing (TargetFace)
 import Time exposing (Month(..))
 
 
@@ -117,7 +117,7 @@ update msg mdl =
                                     |> andThen
                                         (\cls ->
                                             cls.possible_target_faces
-                                                |> List.filter (\t -> TargetFace.toString t == tf)
+                                                |> List.filter (\t -> t.id == tf)
                                                 |> List.head
                                         )
                         }
@@ -177,16 +177,6 @@ updateSelectedTargetFace model =
                     |> List.head
                     |> withDefault Nothing
             )
-
-
-name_of_target_face : TargetFace -> String
-name_of_target_face tf =
-    case tf of
-        M18Spot ->
-            "18m / Spot"
-
-        M18cm40 ->
-            "18m / 40cm"
 
 
 available_classes : ValidModel -> List Class.Class
@@ -334,9 +324,9 @@ view mdl =
                                             (\tf ->
                                                 option
                                                     [ selected (model.selected_target_face == Just tf)
-                                                    , value (TargetFace.toString tf)
+                                                    , value tf.id
                                                     ]
-                                                    [ text (name_of_target_face tf) ]
+                                                    [ text tf.name ]
                                             )
                                             possible_target_faces
                                )

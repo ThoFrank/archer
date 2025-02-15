@@ -17,7 +17,7 @@ class ParticipantsController < ApplicationController
           name: cls.name,
           start_dob: "#{cls.from_dob}-01-01",
           end_dob: "#{cls.to_dob}-12-31",
-          possible_target_faces: [],
+          possible_target_faces: cls.target_faces,
         }
       end,
     }
