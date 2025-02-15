@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_26_140412) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -34,7 +34,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_140412) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.date "dob"
+    t.integer "tournament_class_id"
+    t.integer "target_face_id"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
+    t.index ["target_face_id"], name: "index_participants_on_target_face_id"
+    t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
   end
 
   create_table "target_faces", force: :cascade do |t|
@@ -73,6 +77,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_26_140412) do
   end
 
   add_foreign_key "comments", "articles"
+  add_foreign_key "participants", "target_faces"
+  add_foreign_key "participants", "tournament_classes"
   add_foreign_key "target_faces", "tournaments"
   add_foreign_key "tournament_classes", "tournaments"
 end

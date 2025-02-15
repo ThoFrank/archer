@@ -51,22 +51,6 @@ init f =
             ValidatedModel
                 { flags = f
                 , classes = validClasses
-
-                -- [ { id = "RUE21M"
-                --   , name = "Recurve Herren"
-                --   , restricted_to_gender = Just Male
-                --   , start_dob = Date.fromCalendarDate (2025 - 49) Dec 31
-                --   , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
-                --   , possible_target_faces = target_faces
-                --   }
-                -- , { id = "RUE21W"
-                --   , name = "Recurve Damen"
-                --   , restricted_to_gender = Just Female
-                --   , start_dob = Date.fromCalendarDate (2025 - 49) Dec 31
-                --   , end_dob = Date.fromCalendarDate (2025 - 21) Jan 1
-                --   , possible_target_faces = [ M18Spot, M18cm40 ]
-                --   }
-                -- ]
                 , first_name = ""
                 , last_name = ""
                 , dob = Invalid ""
@@ -287,6 +271,7 @@ view mdl =
                                     c.id
                             )
                         , id "class"
+                        , name "participant[tournament_class]"
                         , class input_class
                         ]
                         (option
@@ -301,16 +286,16 @@ view mdl =
                     ]
                 , div [ class "space-y-1" ]
                     [ label
-                        [ for "TargetFace", class input_label_class ]
+                        [ for "target_face", class input_label_class ]
                         [ text "Auflage:" ]
                     , select
                         [ onInput SelectTargetFace
-                        , id "TargetFace"
+                        , id "target_face"
+                        , name "participant[target_face]"
                         , class input_class
                         ]
                         (option
                             [ selected (model.selected_target_face == Nothing)
-                            , name "TargetFace"
                             , disabled False
                             , value "--"
                             ]

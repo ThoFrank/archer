@@ -3,6 +3,14 @@ class ParticipantsController < ApplicationController
   def index
     @tournament = Tournament.find(params[:tournament_id])
     @participants = @tournament.participants
+    respond_to do |format|
+      format.html
+      format.csv do
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = "attachment; filename=#{@tournament.name}_participants.csv"    
+        render :template => "participants/index"
+    end
+    end
   end
 
   def new
@@ -25,7 +33,10 @@ class ParticipantsController < ApplicationController
 
   def create
     @tournament = Tournament.find(params[:tournament_id])
-    @participant = Participant.new(participant_params)
+    params = participant_params.to_hash
+    params["target_face"] = TargetFace.find (params["target_face"])
+    params["tournament_class"] = TournamentClass.find params["tournament_class"]
+    @participant = Participant.new(params)
     @participant.Tournament = @tournament
     if @participant.save
       redirect_to tournament_path(@tournament) + "/participants"
@@ -36,7 +47,7 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      params.expect(participant: [ :first_name, :last_name, :dob ])
+      params.expect(participant: [ :first_name, :last_name, :dob, :tournament_class, :target_face])
     end
 
 end
