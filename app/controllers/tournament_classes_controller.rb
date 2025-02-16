@@ -66,6 +66,6 @@ class TournamentClassesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def tournament_class_params
-      params.fetch(:tournament_class, {})
+      params.expect(tournament_class: [ :name, :age_start, :age_end])
     end
 end

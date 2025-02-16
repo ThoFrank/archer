@@ -11,7 +11,31 @@
     </div>
   <% end %>
 
-  <div class="inline">
+  <div class="space-y-1">
+    <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :name, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
+    <% tournament.errors.full_messages_for(:name).each do |message| %>
+      <div class="text-sm text-red-600"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="space-y-1">
+    <%= form.label :distance, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.number_field :distance, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
+    <% tournament.errors.full_messages_for(:distance).each do |message| %>
+      <div class="text-sm text-red-600"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="space-y-1">
+    <%= form.label :size, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.number_field :size, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
+    <% tournament.errors.full_messages_for(:size).each do |message| %>
+      <div class="text-sm text-red-600"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="space">
     <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
