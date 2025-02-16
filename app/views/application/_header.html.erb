@@ -3,6 +3,11 @@
     <!-- Left Side: Navigation Links -->
     <nav class="flex space-x-6">
       <a href="/" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
+      <% if @tournament %>
+        <%= link_to "Tournament", @tournament %>
+        <%= link_to "Classes", tournament_tournament_classes_path(@tournament) %>
+        <%= link_to "Target Faces", tournament_target_faces_path(@tournament) %>
+      <% end %>
     </nav>
 
     <!-- Right Side: Login Button -->

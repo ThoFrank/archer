@@ -11,5 +11,7 @@ Rails.application.routes.draw do
 
   resources :tournaments do
     resources :participants
+    resources :target_faces
+    resources :tournament_classes
   end
 end

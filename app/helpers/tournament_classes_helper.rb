@@ -1,0 +1,2 @@
+module TournamentClassesHelper
+end

@@ -1,0 +1,25 @@
+<% content_for :title, "Tournament classes" %>
+
+<div class="w-full">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl">Tournament classes</h1>
+    <%= link_to "New tournament class", new_tournament_tournament_class_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  </div>
+
+  <div id="tournament_classes" class="min-w-full">
+    <% if @tournament_classes.any? %>
+      <% @tournament_classes.each do |tournament_class| %>
+        <%= render tournament_class %>
+        <p>
+          <%= link_to tournament_class.name, tournament_tournament_class_path(@tournament, tournament_class), class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+        </p>
+      <% end %>
+    <% else %>
+      <p class="text-center my-10">No tournament classes found.</p>
+    <% end %>
+  </div>
+</div>
