@@ -36,6 +36,16 @@
   </div>
 
   <div class="space-y-1">
+    <%= form.label :target_faces, class: "block text-sm font-medium text-gray-700" %>
+    <% tournament.target_faces.each do |tf| %>
+      <div class="block w-full max-w-md">
+        <input type="checkbox" value="<%= tf.id %>" <%=checked="checked" if tournament_class.target_faces.include? tf%> name="tournament_class[target_faces][]" id="tf<%= tf.id %>">
+        <label class="px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" for="tf<%= tf.id %>"><%= tf.name %></label>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-1">
     <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
