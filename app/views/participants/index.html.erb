@@ -15,10 +15,10 @@
             <%= "#{p.first_name} #{p.last_name}" %>
           </td>
           <td class="px-6 py-4 text-gray-600">
-            <%= p.tournament_class.name %>
+            <%= p.tournament_class.andand.name %>
           </td>
           <td class="px-6 py-4 text-gray-600">
-            <%= p.target_face.name %>
+            <%= p.target_face.andand.name %>
           </td>
         </tr>
       <% end %>

@@ -3,7 +3,7 @@ class TargetFacesController < ApplicationController
   before_action :set_target_face, only: %i[ show edit update destroy ]
 
   def index
-    @target_faces = TargetFace.all
+    @target_faces = @tournament.target_faces
   end
 
   # GET /target_faces/1
