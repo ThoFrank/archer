@@ -33,7 +33,13 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git pkg-config npm && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-RUN npm install -g elm
+# Install elm (npm version not compatible with aarch64)
+RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
+    --extra-conf "sandbox = false" \
+    --init none \
+    --no-confirm
+ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
+RUN nix profile install nixpkgs#elmPackages.elm
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -70,5 +76,5 @@ USER 1000:1000
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+EXPOSE 3000
 CMD ["./bin/thrust", "./bin/rails", "server"]
