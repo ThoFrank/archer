@@ -1,25 +1,38 @@
-<% content_for :title, "Tournament classes" %>
+<% content_for :title, "Classes" %>
 
-<div class="w-full">
+<div class="w-full p-6">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
 
   <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Tournament classes</h1>
+    <h1 class="font-bold text-4xl">Tournament Classes</h1>
     <%= link_to "New tournament class", new_tournament_tournament_class_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
   </div>
 
-  <div id="tournament_classes" class="min-w-full">
-    <% if @tournament_classes.any? %>
-      <% @tournament_classes.each do |tournament_class| %>
-        <%= render tournament_class %>
-        <p>
-          <%= link_to tournament_class.name, tournament_tournament_class_path(@tournament, tournament_class), class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-        </p>
+  <table class="mt-6 min-w-full table-auto border-collapse border border-gray-200 shadow-md rounded-lg">
+    <thead>
+      <tr class="bg-gray-100 text-gray-700">
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Name</th>
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Minimum Age</th>
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Maximum Age</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% @tournament_classes.each do |c| %>
+        <tr class="hover:bg-gray-50" data-url=<%= tournament_tournament_class_path(@tournament, c) %>>
+          <td class="px-6 py-4 text-gray-800">
+            <%= c.name %>
+          </td>
+          <td class="px-6 py-4 text-gray-600">
+            <%= c.age_start %>
+          </td>
+          <td class="px-6 py-4 text-gray-600">
+            <%= c.age_end %>
+          </td>
+        </tr>
       <% end %>
-    <% else %>
-      <p class="text-center my-10">No tournament classes found.</p>
-    <% end %>
-  </div>
+    </tbody>
+  </table>
+
 </div>

@@ -31,4 +31,25 @@
     </main>
   <%= render "footer" %>
   </body>
+
+  <script>
+      // JavaScript to make rows clickable
+      document.addEventListener('DOMContentLoaded', function() {
+          const tableRows = document.querySelectorAll('tbody tr');
+
+          tableRows.forEach(row => {
+            if (row.getAttribute('data-url')) {
+              row.addEventListener('click', function(event) {
+                  const url = this.getAttribute('data-url');
+                  if (url) {
+                      window.location.href = url;
+                  }
+              });
+
+              // Optional: Make the cursor a pointer to indicate it's clickable
+              row.style.cursor = 'pointer';
+            }
+          });
+      });
+  </script>
 </html>

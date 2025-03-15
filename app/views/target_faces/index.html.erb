@@ -1,25 +1,38 @@
-<% content_for :title, "Target faces" %>
+<% content_for :title, "Target Faces" %>
 
-<div class="w-full">
+<div class="w-full p-6">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
 
   <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Target faces</h1>
+    <h1 class="font-bold text-4xl">Target Faces</h1>
     <%= link_to "New target face", new_tournament_target_face_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
   </div>
 
-  <div id="target_faces" class="min-w-full">
-    <% if @target_faces.any? %>
-      <% @target_faces.each do |target_face| %>
-        <%= render target_face %>
-        <p>
-          <%= link_to target_face.name, tournament_target_face_path(@tournament, target_face), class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-        </p>
+  <table class="mt-6 min-w-full table-auto border-collapse border border-gray-200 shadow-md rounded-lg">
+    <thead>
+      <tr class="bg-gray-100 text-gray-700">
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Name</th>
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Distance</th>
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300">Size</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% @target_faces.each do |tf| %>
+        <tr class="hover:bg-gray-50" data-url=<%= tournament_target_face_path(@tournament, tf) %>>
+          <td class="px-6 py-4 text-gray-800">
+            <%= tf.name %>
+          </td>
+          <td class="px-6 py-4 text-gray-600">
+            <%= tf.distance %>
+          </td>
+          <td class="px-6 py-4 text-gray-600">
+            <%= tf.size %>
+          </td>
+        </tr>
       <% end %>
-    <% else %>
-      <p class="text-center my-10">No target faces found.</p>
-    <% end %>
-  </div>
+    </tbody>
+  </table>
+
 </div>
