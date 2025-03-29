@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  distance: 1
-  size: 1
-  tournament: one
+spot:
+  name: Spot
+  distance: 18
+  size: 40
+  tournament: indoor
 
-two:
-  name: MyString
-  distance: 1
-  size: 1
-  tournament: two
+40cm:
+  name: 40cm
+  distance: 18
+  size: 40
+  tournament: indoor

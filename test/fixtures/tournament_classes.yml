@@ -1,15 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  id: MyString
-  name: MyString
-  age_start: 1
-  age_end: 1
-  tournament: one
+rec_herren:
+  name: Recurve Herren
+  age_start: 21
+  age_end: 49
+  tournament: indoor
+  target_faces: spot, 40cm
 
-two:
-  id: MyString
-  name: MyString
-  age_start: 1
-  age_end: 1
-  tournament: two
+rec_damen:
+  name: Recurve Damen
+  age_start: 21
+  age_end: 49
+  tournament: indoor

@@ -1,9 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  intro: MyText
+indoor:
+  name: 15. Indoor
+  intro: PSV Indoor Turnier
+  date_start: 2025-02-23
+  date_end: 2025-02-23
+  place: Franz-Mader-Straße 11, 80992 München
 
-two:
-  name: MyString
-  intro: MyText
+vm_feld:
+  name: VM Feld 2025

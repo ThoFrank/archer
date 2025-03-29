@@ -1,4 +1,4 @@
-<%= form_with(model: [ tournament, tournament_class], class: "contents", class: "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg") do |form| %>
+<%= form_with(model: [ tournament, tournament_class], class: "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg") do |form| %>
   <% if tournament_class.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(tournament_class.errors.count, "error") %> prohibited this tournament_class from being saved:</h2>

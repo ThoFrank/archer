@@ -2,16 +2,17 @@ require "application_system_test_case"
 
 class TargetFacesTest < ApplicationSystemTestCase
   setup do
-    @target_face = target_faces(:one)
+    @tournament = tournament(:indoor)
+    @target_face = target_faces(:spot)
   end
 
   test "visiting the index" do
-    visit target_faces_url
+    visit tournament_target_faces_url(@tournament)
     assert_selector "h1", text: "Target faces"
   end
 
   test "should create target face" do
-    visit target_faces_url
+    visit tournament_target_faces_url(@tournament)
     click_on "New target face"
 
     click_on "Create Target face"
@@ -21,7 +22,7 @@ class TargetFacesTest < ApplicationSystemTestCase
   end
 
   test "should update Target face" do
-    visit target_face_url(@target_face)
+    visit tournament_target_face_url(@tournament, @target_face)
     click_on "Edit this target face", match: :first
 
     click_on "Update Target face"
@@ -31,7 +32,7 @@ class TargetFacesTest < ApplicationSystemTestCase
   end
 
   test "should destroy Target face" do
-    visit target_face_url(@target_face)
+    visit tournament_target_face_url(@tournament, @target_face)
     click_on "Destroy this target face", match: :first
 
     assert_text "Target face was successfully destroyed"

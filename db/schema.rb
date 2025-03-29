@@ -51,9 +51,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
     t.index ["tournament_id"], name: "index_target_faces_on_tournament_id"
   end
 
-  create_table "target_faces_tournament_classes", id: false, force: :cascade do |t|
-    t.integer "tournament_class_id", null: false
-    t.integer "target_face_id", null: false
+  create_table "target_faces_tournament_classes", force: :cascade do |t|
+    t.integer "tournament_class_id"
+    t.integer "target_face_id"
+    t.index ["target_face_id"], name: "index_target_faces_tournament_classes_on_target_face_id"
+    t.index ["tournament_class_id"], name: "index_target_faces_tournament_classes_on_tournament_class_id"
   end
 
   create_table "tournament_classes", force: :cascade do |t|
@@ -80,5 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
   add_foreign_key "participants", "target_faces"
   add_foreign_key "participants", "tournament_classes"
   add_foreign_key "target_faces", "tournaments"
+  add_foreign_key "target_faces_tournament_classes", "target_faces"
+  add_foreign_key "target_faces_tournament_classes", "tournament_classes"
   add_foreign_key "tournament_classes", "tournaments"
 end
