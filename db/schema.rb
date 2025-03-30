@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_29_191408) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -39,6 +39,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
     t.index ["target_face_id"], name: "index_participants_on_target_face_id"
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "target_faces", force: :cascade do |t|
@@ -78,9 +87,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_15_083311) do
     t.datetime "date_end"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
   add_foreign_key "comments", "articles"
   add_foreign_key "participants", "target_faces"
   add_foreign_key "participants", "tournament_classes"
+  add_foreign_key "sessions", "users"
   add_foreign_key "target_faces", "tournaments"
   add_foreign_key "target_faces_tournament_classes", "target_faces"
   add_foreign_key "target_faces_tournament_classes", "tournament_classes"

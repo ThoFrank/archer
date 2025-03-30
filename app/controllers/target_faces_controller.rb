@@ -1,4 +1,5 @@
 class TargetFacesController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   before_action :set_tournament
   before_action :set_target_face, only: %i[ show edit update destroy ]
 

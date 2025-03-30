@@ -4,6 +4,7 @@ class TargetFacesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @tournament = tournaments(:indoor)
     @target_face = target_faces(:spot)
+    @user = users(:one)
   end
 
   test "should get index" do
@@ -12,11 +13,13 @@ class TargetFacesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get new" do
+    authenticate_as(@user)
     get new_tournament_target_face_url(@tournament)
     assert_response :success
   end
 
   test "should create target_face" do
+    authenticate_as(@user)
     assert_difference("TargetFace.count") do
       post tournament_target_faces_url(@tournament), params: { target_face: {name: "60cm", distance: 18, size: 60 } }
     end
@@ -30,16 +33,19 @@ class TargetFacesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get edit" do
+    authenticate_as(@user)
     get edit_tournament_target_face_url(@tournament, @target_face)
     assert_response :success
   end
 
   test "should update target_face" do
+    authenticate_as(@user)
     patch tournament_target_face_url(@tournament, @target_face), params: { target_face: {distance: 25} }
     assert_redirected_to tournament_target_face_url(@tournament, @target_face)
   end
 
   test "should destroy target_face" do
+    authenticate_as(@user)
     assert_difference("TargetFace.count", -1) do
       delete tournament_target_face_url(@tournament, @target_face)
     end

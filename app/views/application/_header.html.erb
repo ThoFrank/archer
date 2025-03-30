@@ -12,9 +12,15 @@
 
     <!-- Right Side: Login Button -->
     <div>
-      <a href="/login" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        Login
-      </a>
+      <% if authenticated? %>
+        <a href="<%=session_path%>" data-method="delete" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Log Out
+        </a>
+      <% else %>
+        <a href="<%=session_path%>/new" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Log In
+        </a>
+      <% end %>
     </div>
   </div>
 </header>

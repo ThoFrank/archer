@@ -1,4 +1,5 @@
 class ParticipantsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index new create]
 
   def index
     @tournament = Tournament.find(params[:tournament_id])
@@ -6,9 +7,13 @@ class ParticipantsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        response.headers['Content-Type'] = 'text/csv'
-        response.headers['Content-Disposition'] = "attachment; filename=#{@tournament.name}_participants.csv"    
-        render :template => "participants/index"
+        if authenticated?
+          response.headers['Content-Type'] = 'text/csv'
+          response.headers['Content-Disposition'] = "attachment; filename=#{@tournament.name}_participants.csv"    
+          render :template => "participants/index"
+        else
+          raise "TODO"
+        end
     end
     end
   end
