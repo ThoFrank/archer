@@ -12,7 +12,7 @@ class ParticipantsController < ApplicationController
           response.headers['Content-Disposition'] = "attachment; filename=#{@tournament.name}_participants.csv"    
           render :template => "participants/index"
         else
-          raise "TODO"
+          request_authentication
         end
     end
     end
@@ -52,7 +52,7 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      params.expect(participant: [ :first_name, :last_name, :dob, :tournament_class, :target_face])
+      params.expect(participant: [ :first_name, :last_name, :email, :dob, :tournament_class, :target_face])
     end
 
 end

@@ -1,10 +1,11 @@
 <% require "csv" %>
 <%= CSV.generate(:col_sep => ";") do |csv|
-  csv << ["First Name", "Last Name", "Dob", "Class", "Target Face"]
+  csv << ["First Name", "Last Name", "Email", "Dob", "Class", "Target Face"]
   @participants.each do |p|
     csv << [
       p.first_name,
       p.last_name,
+      p.email,
       p.dob,
       p.tournament_class.andand.name,
       p.target_face.andand.name,

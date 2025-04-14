@@ -3,10 +3,12 @@ module Participants exposing (main)
 import Browser
 import Class exposing (Class, class_in_range)
 import Date exposing (Date)
+import Email
 import Html exposing (Html, div, form, input, label, option, select, text)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, selected, type_, value)
+import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, type_, value)
 import Html.Events exposing (onInput)
 import Json.Decode as JD
+import Json.Encode as JE
 import List exposing (filter, map)
 import Maybe exposing (andThen, withDefault)
 import TargetFace exposing (TargetFace)
@@ -23,6 +25,7 @@ type alias ValidModel =
     , classes : List Class
     , first_name : String
     , last_name : String
+    , email : String
     , dob : Dob
     , selected_class : Maybe Class
     , selected_target_face : Maybe TargetFace
@@ -53,6 +56,7 @@ init f =
                 , classes = validClasses
                 , first_name = ""
                 , last_name = ""
+                , email = ""
                 , dob = Invalid ""
                 , selected_class = Nothing
                 , selected_target_face = Nothing
@@ -75,6 +79,7 @@ type Msg
     | UpdateDob String
     | UpdateFirstName String
     | UpdateLastName String
+    | UpdateEmail String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -132,6 +137,9 @@ update msg mdl =
 
                     UpdateLastName n ->
                         { model | last_name = n }
+
+                    UpdateEmail e ->
+                        { model | email = e }
                 )
             , Cmd.none
             )
@@ -198,6 +206,13 @@ submittable model =
                 Nothing ->
                     False
            )
+        && (case Email.fromString model.email of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+           )
 
 
 viewAvailableClasses : ValidModel -> List (Html Msg)
@@ -220,28 +235,67 @@ view mdl =
         input_label_class =
             "block text-sm font-medium text-gray-700"
 
-        input_class =
+        valid_input_class =
             "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+
+        invalid_input_class =
+            "block w-full max-w-md border border-red-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-red-500 focus:border-red-500"
     in
     case mdl of
         InitializationError e ->
             div [] [ text e ]
 
         ValidatedModel model ->
+            let
+                first_name_class =
+                    if String.isEmpty model.first_name then
+                        invalid_input_class
+
+                    else
+                        valid_input_class
+
+                last_name_class =
+                    if String.isEmpty model.last_name then
+                        invalid_input_class
+
+                    else
+                        valid_input_class
+
+                email_class =
+                    case Email.fromString model.email of
+                        Just _ ->
+                            valid_input_class
+
+                        Nothing ->
+                            invalid_input_class
+
+                dob_class =
+                    case model.dob of
+                        Valid _ ->
+                            valid_input_class
+
+                        Invalid _ ->
+                            invalid_input_class
+            in
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
                 , div [ class "space-y-1" ]
                     [ label [ for "first_name", class input_label_class ] [ text "Vorname:" ]
-                    , input [ id "first_name", name "participant[first_name]", class input_class, onInput UpdateFirstName, value model.first_name ] []
+                    , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput UpdateFirstName, value model.first_name ] []
                     ]
                 , div [ class "space-y-1" ]
                     [ label [ for "last_name", class input_label_class ] [ text "Nachname:" ]
-                    , input [ id "last_name", name "participant[last_name]", class input_class, onInput UpdateLastName, value model.last_name ] []
+                    , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput UpdateLastName, value model.last_name ] []
+                    ]
+                , div [ class "space-y-1" ]
+                    [ label [ for "email", class input_label_class ] [ text "Email:" ]
+                    , input [ id "email", type_ "email", name "participant[email]", class email_class, onInput UpdateEmail, value model.email ] []
                     ]
                 , div [ class "space-y-1" ]
                     [ label [ for "dob", class input_label_class ] [ text "Geburtsdatum:" ]
                     , input
                         [ type_ "date"
+                        , property "autocomplete" (JE.string "bday")
                         , onInput UpdateDob
                         , value
                             (case model.dob of
@@ -254,7 +308,7 @@ view mdl =
                         , id "dob"
                         , name "participant[dob]"
                         , class
-                            input_class
+                            dob_class
                         ]
                         []
                     ]
@@ -272,7 +326,7 @@ view mdl =
                             )
                         , id "class"
                         , name "participant[tournament_class]"
-                        , class input_class
+                        , class valid_input_class
                         ]
                         (option
                             [ name "Class"
@@ -292,7 +346,7 @@ view mdl =
                         [ onInput SelectTargetFace
                         , id "target_face"
                         , name "participant[target_face]"
-                        , class input_class
+                        , class valid_input_class
                         ]
                         (option
                             [ selected (model.selected_target_face == Nothing)

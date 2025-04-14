@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_29_191408) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_12_083055) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -36,6 +36,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_29_191408) do
     t.date "dob"
     t.integer "tournament_class_id"
     t.integer "target_face_id"
+    t.string "email"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
     t.index ["target_face_id"], name: "index_participants_on_target_face_id"
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
