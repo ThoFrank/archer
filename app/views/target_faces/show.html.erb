@@ -1,6 +1,6 @@
-<% content_for :title, "Showing target face" %>
+<% content_for :title, @target_face.name %>
 
-<div class="md:w-2/3 w-full">
+<div class="w-full p-6">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
@@ -9,9 +9,13 @@
 
   <%= render @target_face %>
 
-  <%= link_to "Edit this target face", edit_tournament_target_face_path(@tournament, @target_face), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% if authenticated? %>
+    <%= link_to "Edit this target face", edit_tournament_target_face_path(@tournament, @target_face), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% end %>
   <%= link_to "Back to target faces", tournament_target_faces_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <div class="inline-block ml-2">
-    <%= button_to "Destroy this target face", tournament_target_face_path(@tournament, @target_face), method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
-  </div>
+  <% if authenticated? %>
+    <div class="inline-block ml-2">
+      <%= button_to "Destroy this target face", tournament_target_face_path(@tournament, @target_face), method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+    </div>
+  <% end %>
 </div>

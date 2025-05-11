@@ -7,7 +7,9 @@
 
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Tournament Classes</h1>
-    <%= link_to "New tournament class", new_tournament_tournament_class_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+    <% if authenticated? %>
+      <%= link_to "New tournament class", new_tournament_tournament_class_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+    <% end %>
   </div>
 
   <table class="mt-6 min-w-full table-auto border-collapse border border-gray-200 shadow-md rounded-lg">

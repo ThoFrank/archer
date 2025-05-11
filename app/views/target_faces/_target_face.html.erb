@@ -1,2 +1,24 @@
 <div id="<%= dom_id target_face %>">
+  <div class="mt-6">
+    <b>Name:</b> <%= @target_face.name %>
+  </div>
+
+  <div>
+    <b>Distance:</b> <%= @target_face.distance %>m
+  </div>
+
+  <div>
+    <b>Size:</b> <%= @target_face.size %>cm
+  </div>
+
+  <div class="mt-6 mb-6">
+    <b>Used by:</b>
+    <ul class="list-disc list-inside">
+      <% @target_face.tournament_classes.each do |cls| %>
+        <li>
+          <%= cls.name %>
+        </li>
+      <% end %>
+    <ul>
+  </div>
 </div>
