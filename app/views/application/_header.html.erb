@@ -11,7 +11,11 @@
     </nav>
 
     <!-- Right Side: Login Button -->
-    <div>
+    <nav class="flex space-x-6">
+      <select bg-transparent class="border-none appearance-none" id="locale_selector">
+        <option value="de">🇩🇪 - DE</option>
+        <option value="en">🇬🇧 - EN</option>
+      </select>
       <% if authenticated? %>
         <a href="<%=session_path%>" data-method="delete" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
           Log Out
@@ -21,6 +25,6 @@
           Log In
         </a>
       <% end %>
-    </div>
+    </nav>
   </div>
 </header>

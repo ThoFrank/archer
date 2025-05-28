@@ -33,23 +33,36 @@
   </body>
 
   <script>
-      // JavaScript to make rows clickable
-      document.addEventListener('DOMContentLoaded', function() {
-          const tableRows = document.querySelectorAll('tbody tr');
+    // JavaScript to make rows clickable
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableRows = document.querySelectorAll('tbody tr');
 
-          tableRows.forEach(row => {
-            if (row.getAttribute('data-url')) {
-              row.addEventListener('click', function(event) {
-                  const url = this.getAttribute('data-url');
-                  if (url) {
-                      window.location.href = url;
-                  }
-              });
-
-              // Optional: Make the cursor a pointer to indicate it's clickable
-              row.style.cursor = 'pointer';
+      tableRows.forEach(row => {
+        if (row.getAttribute('data-url')) {
+          row.addEventListener('click', function(event) {
+            const url = this.getAttribute('data-url');
+            if (url) {
+                window.location.href = url;
             }
           });
+
+          // Optional: Make the cursor a pointer to indicate it's clickable
+          row.style.cursor = 'pointer';
+        }
       });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const select = document.getElementById("locale_selector");
+      const current_url = new URL(window.location.href);
+      const current_locale = current_url.searchParams.get('locale') || 'de';
+      select.value = current_locale;
+      select.addEventListener('change', function() {
+        const selectedLocale = this.value;
+        var url = new URL(window.location.href);
+        url.searchParams.set('locale', selectedLocale);
+        window.location.href = url.toString();
+      });
+    });
   </script>
 </html>
