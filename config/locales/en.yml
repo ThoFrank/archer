@@ -29,6 +29,22 @@
 
 en:
   hello: "Hello world"
+  Home: Home
+  Tournament: Tournament
+  Classes: Classes
+  Target Faces: Target Faces
   tournaments:
+    index:
+      Tournaments: Turniere
+      Select a tournament: Select a tournament
+      Create a new one: Create a new one
     show:
+      Place: Place
       Manage Participants: Manage Participants
+  tournament_classes:
+    index:
+      Tournament Classes: Tournament Classes
+      New tournament class: New tournament class
+      Name: Name
+      Minimum Age: Minimum Age
+      Maximum Age: Maximum Age      

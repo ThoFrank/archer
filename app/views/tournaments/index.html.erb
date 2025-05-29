@@ -1,6 +1,6 @@
 <div class="container mx-auto p-6">
-  <h1 class="text-4xl font-bold text-gray-800 mb-4">Tournaments</h1>
-  <p class="text-lg text-gray-600 mb-6">Select a tournament</p>
+  <h1 class="text-4xl font-bold text-gray-800 mb-4"><%= t ".Tournaments"%></h1>
+  <p class="text-lg text-gray-600 mb-6"><%= t ".Select a tournament"%></p>
 
   <div class="space-y-4">
     <% @tournaments.each do |t| %>
@@ -11,6 +11,6 @@
   </div>
 
   <div class="mt-6">
-    <%= link_to "Create a new one", {controller: "tournaments", action: "new"}, class: "inline-block px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    <%= link_to (t ".Create a new one"), {controller: "tournaments", action: "new"}, class: "inline-block px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </div>
 </div>

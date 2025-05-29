@@ -1,5 +1,21 @@
 de:
   hello: "Hallo Welt"
+  Home: Home
+  Tournament: Turnier
+  Classes: Klassen
+  Target Faces: Ziele
   tournaments:
+    index:
+      Tournaments: Turniere
+      Select a tournament: Wähle ein Turnier
+      Create a new one: Neues erstellen
     show:
+      Place: Ort
       Manage Participants: Teilnehmende verwalten
+  tournament_classes:
+    index:
+      Tournament Classes: Turnierklassen
+      New tournament class: Neue Klasse erstellen
+      Name: Name
+      Minimum Age: Minimales Alter
+      Maximum Age: Maximales Alter
