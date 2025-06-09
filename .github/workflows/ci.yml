@@ -66,6 +66,10 @@ jobs:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips sqlite3
 
+      - uses: jorelali/setup-elm@v6
+        with:
+          elm-version: 0.19.1
+
       - name: Checkout code
         uses: actions/checkout@v4
 
