@@ -7,6 +7,7 @@ import Email
 import Html exposing (Html, div, form, input, label, option, select, text)
 import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, type_, value)
 import Html.Events exposing (onInput)
+import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
 import Json.Encode as JE
 import List exposing (filter, map)
@@ -22,6 +23,7 @@ main =
 
 type alias ValidModel =
     { flags : Flags
+    , translations : I18Next.Translations
     , classes : List Class
     , first_name : String
     , last_name : String
@@ -48,11 +50,15 @@ init f =
         decoded_classed =
             JD.decodeValue (JD.list Class.classDecoder) f.classes
                 |> Result.mapError JD.errorToString
+
+        decoded_translations =
+            JD.decodeValue translationsDecoder f.translations
     in
-    ( case decoded_classed of
-        Result.Ok validClasses ->
+    ( case ( decoded_translations, decoded_classed ) of
+        ( Result.Ok translations, Result.Ok validClasses ) ->
             ValidatedModel
                 { flags = f
+                , translations = translations
                 , classes = validClasses
                 , first_name = ""
                 , last_name = ""
@@ -62,8 +68,14 @@ init f =
                 , selected_target_face = Nothing
                 }
 
-        Result.Err e ->
+        ( Result.Ok _, Result.Err e ) ->
             InitializationError e
+
+        ( Result.Err e, Result.Ok _ ) ->
+            InitializationError (JD.errorToString e)
+
+        ( Result.Err e1, Result.Err e2 ) ->
+            InitializationError ("multiple errors: " ++ JD.errorToString e1 ++ "\n" ++ e2)
     , Cmd.none
     )
 
@@ -280,19 +292,19 @@ view mdl =
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
                 , div [ class "space-y-1" ]
-                    [ label [ for "first_name", class input_label_class ] [ text "Vorname:" ]
+                    [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
                     , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput UpdateFirstName, value model.first_name ] []
                     ]
                 , div [ class "space-y-1" ]
-                    [ label [ for "last_name", class input_label_class ] [ text "Nachname:" ]
+                    [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
                     , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput UpdateLastName, value model.last_name ] []
                     ]
                 , div [ class "space-y-1" ]
-                    [ label [ for "email", class input_label_class ] [ text "Email:" ]
+                    [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
                     , input [ id "email", type_ "email", name "participant[email]", class email_class, onInput UpdateEmail, value model.email ] []
                     ]
                 , div [ class "space-y-1" ]
-                    [ label [ for "dob", class input_label_class ] [ text "Geburtsdatum:" ]
+                    [ label [ for "dob", class input_label_class ] [ text (t model.translations "Date of birth:") ]
                     , input
                         [ type_ "date"
                         , property "autocomplete" (JE.string "bday")
@@ -313,7 +325,7 @@ view mdl =
                         []
                     ]
                 , div [ class "space-y-1" ]
-                    [ label [ for "class", class input_label_class ] [ text "Klasse:" ]
+                    [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
                     , select
                         [ onInput SelectClass
                         , value
@@ -341,7 +353,7 @@ view mdl =
                 , div [ class "space-y-1" ]
                     [ label
                         [ for "target_face", class input_label_class ]
-                        [ text "Auflage:" ]
+                        [ text (t model.translations "Target:") ]
                     , select
                         [ onInput SelectTargetFace
                         , id "target_face"
@@ -373,7 +385,7 @@ view mdl =
                     ]
                 , input
                     [ type_ "submit"
-                    , value "Anmelden"
+                    , value (t model.translations "Submit")
                     , disabled <| not <| submittable <| model
                     , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
                     ]
@@ -389,4 +401,5 @@ type alias Flags =
     { csrf_token : String
     , form_action_url : String
     , classes : JD.Value
+    , translations : JD.Value
     }

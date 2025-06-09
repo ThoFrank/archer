@@ -31,6 +31,7 @@ en:
   hello: "Hello world"
   Home: Home
   Tournament: Tournament
+  Participants: Participants
   Classes: Classes
   Target Faces: Target Faces
   tournaments:
@@ -48,3 +49,19 @@ en:
       Name: Name
       Minimum Age: Minimum Age
       Maximum Age: Maximum Age      
+  participants:
+    index:
+      Register a new one: Register a new one
+      Download as csv: Download as csv
+      Name: Name
+      Class: Class
+      Target Face: Target Face
+    new:
+      heading: "Register for %{tournament}"
+      "Given name:": "Given name:"
+      "Last name:": "Last name:"
+      "Email address:": "Email address:"
+      "Date of birth:": "Date of birth:"
+      "Class:": "Class:"
+      "Target:": "Target:"
+      Submit: Submit

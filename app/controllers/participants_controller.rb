@@ -24,6 +24,7 @@ class ParticipantsController < ApplicationController
     @flags = {
       form_action_url: tournament_path(@tournament) + "/participants",
       csrf_token: form_authenticity_token,
+      translations: I18n.t('participants.new'),
       classes: @tournament.tournament_classes.map do |cls|
         {
           id: cls.id.to_s,

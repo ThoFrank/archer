@@ -2,6 +2,7 @@ de:
   hello: "Hallo Welt"
   Home: Home
   Tournament: Turnier
+  Participants: Teilnehmende
   Classes: Klassen
   Target Faces: Ziele
   tournaments:
@@ -11,7 +12,6 @@ de:
       Create a new one: Neues erstellen
     show:
       Place: Ort
-      Manage Participants: Teilnehmende verwalten
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen
@@ -19,3 +19,19 @@ de:
       Name: Name
       Minimum Age: Minimales Alter
       Maximum Age: Maximales Alter
+  participants:
+    index:
+      Register a new one: Registrieren
+      Download as csv: Als CSV Datei runterladen
+      Name: Name
+      Class: Klasse
+      Target Face: Scheibe
+    new:
+      heading: "Anmeldung für %{tournament}"
+      "Given name:": "Vorname:"
+      "Last name:": "Nachname:"
+      "Email address:": "Email-Addresse:"
+      "Date of birth:": "Geburtsdatum:"
+      "Class:": "Klasse:"
+      "Target:": "Auflage:"
+      Submit: Anmelden

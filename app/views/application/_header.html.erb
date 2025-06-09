@@ -5,6 +5,7 @@
       <a href="/" class="text-gray-700 hover:text-blue-600 font-medium">Home</a>
       <% if @tournament && @tournament.id %>
         <a href="<%= tournament_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Tournament"%></a>
+        <a href="<%= tournament_participants_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Participants"%></a>
         <a href="<%= tournament_tournament_classes_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Classes"%></a>
         <a href="<%= tournament_target_faces_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Target Faces"%></a>
       <% end %>
