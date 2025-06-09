@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # Alternative to importmap
-gem 'sprockets-rails', :require => 'sprockets/railtie'
+gem "sprockets-rails", require: "sprockets/railtie"
 # Elm integration in rails
 gem "elm-rails"
 

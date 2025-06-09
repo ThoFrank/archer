@@ -21,7 +21,7 @@ class TargetFacesControllerTest < ActionDispatch::IntegrationTest
   test "should create target_face" do
     authenticate_as(@user)
     assert_difference("TargetFace.count") do
-      post tournament_target_faces_url(@tournament), params: { target_face: {name: "60cm", distance: 18, size: 60 } }
+      post tournament_target_faces_url(@tournament), params: { target_face: { name: "60cm", distance: 18, size: 60 } }
     end
 
     assert_redirected_to tournament_target_face_url(@tournament, TargetFace.last)
@@ -40,7 +40,7 @@ class TargetFacesControllerTest < ActionDispatch::IntegrationTest
 
   test "should update target_face" do
     authenticate_as(@user)
-    patch tournament_target_face_url(@tournament, @target_face), params: { target_face: {distance: 25} }
+    patch tournament_target_face_url(@tournament, @target_face), params: { target_face: { distance: 25 } }
     assert_redirected_to tournament_target_face_url(@tournament, @target_face)
   end
 

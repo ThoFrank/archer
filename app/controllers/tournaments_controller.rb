@@ -21,7 +21,7 @@ class TournamentsController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   end
-  
+
   def edit
     @tournament = Tournament.find(params[:id])
   end
@@ -42,7 +42,7 @@ class TournamentsController < ApplicationController
         :intro,
         :place,
         :date_start,
-        :date_end,
+        :date_end
       ])
     end
 end
