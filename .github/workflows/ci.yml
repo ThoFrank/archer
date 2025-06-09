@@ -88,3 +88,20 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+  build-container:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+     - name: Build image
+       run: |
+         docker build -t ghcr.io/thofrank/archer:latest .
+     - name: Login to GitHub Container Registry
+       uses: docker/login-action@v3
+       with:
+         registry: ghcr.io
+         username: ${{github.actor}}
+         password: ${{secrets.GITHUB_TOKEN}}
+     - name: Upload latest container to registry
+       run: docker push ghcr.io/thofrank/archer:latest
+          
