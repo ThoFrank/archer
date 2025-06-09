@@ -66,6 +66,6 @@ class TargetFacesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def target_face_params
-      params.expect(target_face: [ :name, :distance, :size])
+      params.expect(target_face: [ :name, :distance, :size ])
     end
 end

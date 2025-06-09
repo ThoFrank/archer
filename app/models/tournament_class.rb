@@ -6,10 +6,10 @@ class TournamentClass < ApplicationRecord
   has_many :participants, dependent: :destroy
 
 
-  def to_dob()
+  def to_dob
     self.tournament.date_start.year - self.age_start
   end
-  def from_dob()
+  def from_dob
     self.tournament.date_start.year - self.age_end
   end
 end

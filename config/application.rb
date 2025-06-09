@@ -28,14 +28,12 @@ module Archer
     config.assets.enabled = true
     config.assets.debug = Rails.env.development?
     config.assets.paths << Rails.root.join("app", "assets")
-    config.assets.precompile += %w( application.js application.css )
+    config.assets.precompile += %w[ application.js application.css ]
 
-    initializer 'sprockets.environment', before: :load_config_initializers do |app|
+    initializer "sprockets.environment", before: :load_config_initializers do |app|
       app.config.assets.configure do |env|
         env.cache = ActiveSupport::Cache.lookup_store(:memory_store)
       end
     end
-
-
   end
 end
