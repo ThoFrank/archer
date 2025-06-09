@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class TargetFacesTest < ApplicationSystemTestCase
   setup do
-    @tournament = tournament(:indoor)
+    @tournament = tournaments(:indoor)
     @target_face = target_faces(:spot)
   end
 
