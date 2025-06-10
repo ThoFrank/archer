@@ -104,12 +104,22 @@ update msg mdl =
             ( ValidatedModel
                 (case msg of
                     SelectClass cls_id ->
-                        { model
-                            | selected_class =
-                                model.classes
-                                    |> filter (\{ id } -> id == cls_id)
-                                    |> List.head
-                        }
+                        let
+                            m0 =
+                                model
+
+                            m1 =
+                                { m0
+                                    | selected_class =
+                                        model.classes
+                                            |> filter (\{ id } -> id == cls_id)
+                                            |> List.head
+                                }
+
+                            m2 =
+                                { m1 | selected_target_face = updateSelectedTargetFace m1 }
+                        in
+                        m2
 
                     SelectTargetFace tf ->
                         { model
