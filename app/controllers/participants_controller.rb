@@ -22,7 +22,7 @@ class ParticipantsController < ApplicationController
     @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.new
     @flags = {
-      form_action_url: tournament_path(@tournament) + "/participants",
+      form_action_url: tournament_participants_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.new"),
       classes: @tournament.tournament_classes.map do |cls|
@@ -45,7 +45,7 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new(params)
     @participant.Tournament = @tournament
     if @participant.save
-      redirect_to tournament_path(@tournament) + "/participants"
+      redirect_to tournament_participants_path(@tournament)
     else
       render :new, status: :unprocessable_entity
     end
