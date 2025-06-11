@@ -17,4 +17,15 @@
       <% end %>
     <ul>
   </div>
+
+  <div class="mt-6 mb-6">
+    <b>Registered participants:</b>
+    <ul class="list-disc list-inside">
+      <% @tournament_class.participants.each do |p| %>
+        <li>
+          <%= p.first_name + " " + p.last_name %>
+        </li>
+      <% end %>
+    <ul>
+  </div>
 </div>
