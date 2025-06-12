@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   root "tournaments#index"
 
-  # get "up" => "rails/health#show", as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # get "/articles", to: "articles#index"
   # get "/articles/:id", to: "articles#show"
