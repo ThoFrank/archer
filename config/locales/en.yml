@@ -65,3 +65,6 @@ en:
       "Class:": "Class:"
       "Target:": "Target:"
       Submit: Submit
+  mail:
+    registation_confirmation:
+      subject: Registration Confirmation %{tournament}

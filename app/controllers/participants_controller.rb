@@ -45,6 +45,7 @@ class ParticipantsController < ApplicationController
     @participant = Participant.new(params)
     @participant.Tournament = @tournament
     if @participant.save
+      ParticipantMailer.registration_confirmation(@participant).deliver
       redirect_to tournament_participants_path(@tournament)
     else
       render :new, status: :unprocessable_entity

@@ -54,7 +54,7 @@ Rails.application.configure do
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
@@ -67,6 +67,14 @@ Rails.application.configure do
   #   port: 587,
   #   authentication: :plain
   # }
+  # I decided instead to use env vars for easier configuration
+  config.action_mailer.smtp_settings = {
+    user_name: ENV.fetch("ARCHER_SMTP_USERNAME") { |_| Rails.application.credentials.dig(:smtp, :user_name) },
+    password: ENV.fetch("ARCHER_SMTP_PASSWORD") { |_| Rails.application.credentials.dig(:smtp, :password) },
+    address: ENV.fetch("ARCHER_SMTP_ADDRESS", "smtp.example.com"),
+    port: ENV.fetch("ARCHER_SMTP_PORT", "587").to_i,
+    authentication: :plain
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
