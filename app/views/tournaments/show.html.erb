@@ -10,12 +10,12 @@
   <%= @tournament.date_end.andand.strftime("%d.%m.%Y") %>
   </p>
 
-  <div class="prose prose-a:text-blue-600 prose-a:hover:text-blue-700"">
-  <%= @tournament.description %>
-  </div>
-
   <p class="text-lg text-gray-600 mb-6">
   <%= t ".Place" %>: <%= @tournament.place %>
   </p>
+
+  <div class="prose prose-a:text-blue-600 prose-a:hover:text-blue-700"">
+    <%= @tournament.description %>
+  </div>
 
 </div>
