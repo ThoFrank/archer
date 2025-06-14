@@ -8,10 +8,10 @@
     <% end %>
   </div>
 
-  <div class="space-y-1">
-    <%= form.label :intro, class: "block text-sm font-medium text-gray-700" %>
-    <%= form.textarea :intro, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
-    <% tournament.errors.full_messages_for(:intro).each do |message| %>
+  <div class="space-y-1 field space-x-full">
+    <%= form.label :description %>
+    <%= form.rich_textarea :description %>
+    <% tournament.errors.full_messages_for(:description).each do |message| %>
       <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
   </div>

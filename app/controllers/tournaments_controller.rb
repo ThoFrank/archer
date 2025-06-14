@@ -39,7 +39,7 @@ class TournamentsController < ApplicationController
     def tournament_params
       params.expect(tournament: [
         :name,
-        :intro,
+        :description,
         :place,
         :date_start,
         :date_end

@@ -2,6 +2,7 @@ class Tournament < ApplicationRecord
   has_many :participants
   has_many :target_faces
   has_many :tournament_classes
+  has_rich_text :description
   validates :name, presence: true
   validate :valid_dates
 
