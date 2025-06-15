@@ -65,6 +65,15 @@ en:
       "Class:": "Class:"
       "Target:": "Target:"
       Submit: Submit
+    edit:
+      heading: "Register for %{tournament}"
+      "Given name:": "Given name:"
+      "Last name:": "Last name:"
+      "Email address:": "Email address:"
+      "Date of birth:": "Date of birth:"
+      "Class:": "Class:"
+      "Target:": "Target:"
+      Submit: Submit
   mail:
     registation_confirmation:
       subject: Registration Confirmation %{tournament}
