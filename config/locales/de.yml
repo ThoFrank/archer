@@ -35,6 +35,15 @@ de:
       "Class:": "Klasse:"
       "Target:": "Auflage:"
       Submit: Anmelden
+    edit:
+      heading: "Aktualisiere Anmeldedaten für %{tournament}"
+      "Given name:": "Vorname:"
+      "Last name:": "Nachname:"
+      "Email address:": "Email-Addresse:"
+      "Date of birth:": "Geburtsdatum:"
+      "Class:": "Klasse:"
+      "Target:": "Auflage:"
+      Submit: Speichern
   mail:
     registation_confirmation:
       subject: Anmeldebestätigung %{tournament}

@@ -10,7 +10,11 @@
     </thead>
     <tbody class="divide-y divide-gray-200">
       <% @participants.each do |p| %>
-        <tr>
+        <tr
+          <% if authenticated? %>
+            class="hover:bg-gray-50" data-url=<%= edit_tournament_participant_path(@tournament, p)%>
+          <% end %>
+        >
           <td class="px-6 py-4 text-gray-800">
             <%= "#{p.first_name} #{p.last_name}" %>
           </td>

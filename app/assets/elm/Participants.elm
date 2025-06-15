@@ -53,19 +53,65 @@ init f =
 
         decoded_translations =
             JD.decodeValue translationsDecoder f.translations
+
+        first_name =
+            Maybe.withDefault "" (Maybe.map (\a -> a.first_name) f.existing_archer)
+
+        last_name =
+            Maybe.withDefault "" (Maybe.map (\a -> a.last_name) f.existing_archer)
+
+        email =
+            Maybe.withDefault "" (Maybe.map (\a -> a.email) f.existing_archer)
+
+        dob_string =
+            Maybe.withDefault "" (Maybe.map (\a -> a.dob) f.existing_archer)
+
+        dob =
+            Date.fromIsoString dob_string
+                |> Result.map (\d -> Valid d)
+                |> Result.withDefault (Invalid dob_string)
+
+        selected_class_id =
+            Maybe.map (\a -> a.selected_class) f.existing_archer
+
+        selected_target_face_id =
+            Maybe.map (\a -> a.selected_target_face) f.existing_archer
     in
     ( case ( decoded_translations, decoded_classed ) of
         ( Result.Ok translations, Result.Ok validClasses ) ->
+            let
+                selected_class =
+                    Maybe.andThen
+                        (\sc ->
+                            validClasses
+                                |> filter (\{ id } -> id == sc)
+                                |> List.head
+                        )
+                        selected_class_id
+
+                selected_target_face =
+                    selected_target_face_id
+                        |> Maybe.andThen
+                            (\tf ->
+                                selected_class
+                                    |> andThen
+                                        (\cls ->
+                                            cls.possible_target_faces
+                                                |> List.filter (\t -> t.id == tf)
+                                                |> List.head
+                                        )
+                            )
+            in
             ValidatedModel
                 { flags = f
                 , translations = translations
                 , classes = validClasses
-                , first_name = ""
-                , last_name = ""
-                , email = ""
-                , dob = Invalid ""
-                , selected_class = Nothing
-                , selected_target_face = Nothing
+                , first_name = first_name
+                , last_name = last_name
+                , email = email
+                , dob = dob
+                , selected_class = selected_class
+                , selected_target_face = selected_target_face
                 }
 
         ( Result.Ok _, Result.Err e ) ->
@@ -300,107 +346,117 @@ view mdl =
                             invalid_input_class
             in
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
-                [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
-                , div [ class "space-y-1" ]
-                    [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
-                    , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput UpdateFirstName, value model.first_name ] []
-                    ]
-                , div [ class "space-y-1" ]
-                    [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
-                    , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput UpdateLastName, value model.last_name ] []
-                    ]
-                , div [ class "space-y-1" ]
-                    [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
-                    , input [ id "email", type_ "email", name "participant[email]", class email_class, onInput UpdateEmail, value model.email ] []
-                    ]
-                , div [ class "space-y-1" ]
-                    [ label [ for "dob", class input_label_class ] [ text (t model.translations "Date of birth:") ]
-                    , input
-                        [ type_ "date"
-                        , property "autocomplete" (JE.string "bday")
-                        , onInput UpdateDob
-                        , value
-                            (case model.dob of
-                                Invalid s ->
-                                    s
-
-                                Valid d ->
-                                    Date.toIsoString d
-                            )
-                        , id "dob"
-                        , name "participant[dob]"
-                        , class
-                            dob_class
-                        ]
+                (List.concat
+                    [ [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
+                      ]
+                    , if model.flags.existing_archer == Nothing then
                         []
-                    ]
-                , div [ class "space-y-1" ]
-                    [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
-                    , select
-                        [ onInput SelectClass
-                        , value
-                            (case model.selected_class of
-                                Nothing ->
-                                    "--"
 
-                                Just c ->
-                                    c.id
-                            )
-                        , id "class"
-                        , name "participant[tournament_class]"
-                        , class valid_input_class
+                      else
+                        [ input [ type_ "hidden", name "_method", value "patch", autocomplete False ] []
                         ]
-                        (option
-                            [ name "Class"
-                            , disabled False
-                            , selected (model.selected_class == Nothing)
-                            , value "--"
+                    , [ div [ class "space-y-1" ]
+                            [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
+                            , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput UpdateFirstName, value model.first_name ] []
                             ]
-                            [ text "--" ]
-                            :: viewAvailableClasses model
-                        )
-                    ]
-                , div [ class "space-y-1" ]
-                    [ label
-                        [ for "target_face", class input_label_class ]
-                        [ text (t model.translations "Target:") ]
-                    , select
-                        [ onInput SelectTargetFace
-                        , id "target_face"
-                        , name "participant[target_face]"
-                        , class valid_input_class
-                        ]
-                        (option
-                            [ selected (model.selected_target_face == Nothing)
-                            , disabled False
-                            , value "--"
+                      , div [ class "space-y-1" ]
+                            [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
+                            , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput UpdateLastName, value model.last_name ] []
                             ]
-                            [ text "--" ]
-                            :: (case model.selected_class of
-                                    Nothing ->
-                                        []
+                      , div [ class "space-y-1" ]
+                            [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
+                            , input [ id "email", type_ "email", name "participant[email]", class email_class, onInput UpdateEmail, value model.email ] []
+                            ]
+                      , div [ class "space-y-1" ]
+                            [ label [ for "dob", class input_label_class ] [ text (t model.translations "Date of birth:") ]
+                            , input
+                                [ type_ "date"
+                                , property "autocomplete" (JE.string "bday")
+                                , onInput UpdateDob
+                                , value
+                                    (case model.dob of
+                                        Invalid s ->
+                                            s
 
-                                    Just { possible_target_faces } ->
-                                        map
-                                            (\tf ->
-                                                option
-                                                    [ selected (model.selected_target_face == Just tf)
-                                                    , value tf.id
-                                                    ]
-                                                    [ text tf.name ]
-                                            )
-                                            possible_target_faces
-                               )
-                        )
+                                        Valid d ->
+                                            Date.toIsoString d
+                                    )
+                                , id "dob"
+                                , name "participant[dob]"
+                                , class
+                                    dob_class
+                                ]
+                                []
+                            ]
+                      , div [ class "space-y-1" ]
+                            [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
+                            , select
+                                [ onInput SelectClass
+                                , value
+                                    (case model.selected_class of
+                                        Nothing ->
+                                            "--"
+
+                                        Just c ->
+                                            c.id
+                                    )
+                                , id "class"
+                                , name "participant[tournament_class]"
+                                , class valid_input_class
+                                ]
+                                (option
+                                    [ name "Class"
+                                    , disabled False
+                                    , selected (model.selected_class == Nothing)
+                                    , value "--"
+                                    ]
+                                    [ text "--" ]
+                                    :: viewAvailableClasses model
+                                )
+                            ]
+                      , div [ class "space-y-1" ]
+                            [ label
+                                [ for "target_face", class input_label_class ]
+                                [ text (t model.translations "Target:") ]
+                            , select
+                                [ onInput SelectTargetFace
+                                , id "target_face"
+                                , name "participant[target_face]"
+                                , class valid_input_class
+                                ]
+                                (option
+                                    [ selected (model.selected_target_face == Nothing)
+                                    , disabled False
+                                    , value "--"
+                                    ]
+                                    [ text "--" ]
+                                    :: (case model.selected_class of
+                                            Nothing ->
+                                                []
+
+                                            Just { possible_target_faces } ->
+                                                map
+                                                    (\tf ->
+                                                        option
+                                                            [ selected (model.selected_target_face == Just tf)
+                                                            , value tf.id
+                                                            ]
+                                                            [ text tf.name ]
+                                                    )
+                                                    possible_target_faces
+                                       )
+                                )
+                            ]
+                      , input
+                            [ type_ "submit"
+                            , value (t model.translations "Submit")
+                            , disabled <| not <| submittable <| model
+                            , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            ]
+                            []
+                      ]
                     ]
-                , input
-                    [ type_ "submit"
-                    , value (t model.translations "Submit")
-                    , disabled <| not <| submittable <| model
-                    , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    ]
-                    []
-                ]
+                )
 
 
 
@@ -412,4 +468,13 @@ type alias Flags =
     , form_action_url : String
     , classes : JD.Value
     , translations : JD.Value
+    , existing_archer :
+        Maybe
+            { first_name : String
+            , last_name : String
+            , email : String
+            , dob : String
+            , selected_class : String
+            , selected_target_face : String
+            }
     }
