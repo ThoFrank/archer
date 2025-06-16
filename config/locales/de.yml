@@ -12,6 +12,7 @@ de:
       Create a new one: Neues erstellen
     show:
       Place: Ort
+      Go to registration: Zur Anmeldung
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen
@@ -21,7 +22,7 @@ de:
       Maximum Age: Maximales Alter
   participants:
     index:
-      Register a new one: Registrieren
+      Register: Anmelden
       Download as csv: Als CSV Datei runterladen
       Name: Name
       Class: Klasse

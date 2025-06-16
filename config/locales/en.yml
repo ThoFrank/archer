@@ -41,7 +41,7 @@ en:
       Create a new one: Create a new one
     show:
       Place: Place
-      Manage Participants: Manage Participants
+      Go to registration: Go to registration
   tournament_classes:
     index:
       Tournament Classes: Tournament Classes
@@ -51,7 +51,7 @@ en:
       Maximum Age: Maximum Age      
   participants:
     index:
-      Register a new one: Register a new one
+      Register: Register
       Download as csv: Download as csv
       Name: Name
       Class: Class
