@@ -39,9 +39,14 @@ class ParticipantsController < ApplicationController
 
   def create
     @tournament = Tournament.find(params[:tournament_id])
+
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
     params["tournament_class"] = TournamentClass.find params["tournament_class"]
+    %w[ first_name last_name ].each do |p|
+      params[p].strip!
+    end
+
     @participant = Participant.new(params)
     @participant.Tournament = @tournament
     if @participant.save
