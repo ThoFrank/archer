@@ -33,7 +33,8 @@ class ParticipantsController < ApplicationController
           end_dob: "#{cls.to_dob}-12-31",
           possible_target_faces: cls.target_faces
         }
-      end
+      end,
+      existing_archer: nil
     }
   end
 
@@ -54,6 +55,47 @@ class ParticipantsController < ApplicationController
       redirect_to tournament_participants_path(@tournament)
     else
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+    @tournament = Tournament.find(params[:tournament_id])
+    @participant = Participant.find(params.expect(:id))
+    @flags = {
+      form_action_url: tournament_participant_path(@tournament, @participant),
+      csrf_token: form_authenticity_token,
+      translations: I18n.t("participants.edit"),
+      classes: @tournament.tournament_classes.map do |cls|
+        {
+          id: cls.id.to_s,
+          name: cls.name,
+          start_dob: "#{cls.from_dob}-01-01",
+          end_dob: "#{cls.to_dob}-12-31",
+          possible_target_faces: cls.target_faces
+        }
+      end,
+      existing_archer: {
+        first_name: @participant.first_name,
+        last_name: @participant.last_name,
+        email: @participant.email || "",
+        dob: @participant.dob || "",
+        selected_class: @participant.tournament_class.andand.id.to_s || "",
+        selected_target_face: @participant.target_face.andand.id.to_s  || ""
+      }
+    }
+  end
+
+  def update
+    @tournament = Tournament.find(params[:tournament_id])
+    @participant = Participant.find(params.expect(:id))
+    params = participant_params.to_hash
+    params["target_face"] = TargetFace.find (params["target_face"])
+    params["tournament_class"] = TournamentClass.find params["tournament_class"]
+    logger.debug "Updating participant with #{params}"
+    if @participant.update(params)
+      redirect_to tournament_participants_path(@tournament)
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
