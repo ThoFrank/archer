@@ -6,10 +6,18 @@ class TournamentClass < ApplicationRecord
   has_many :participants, dependent: :destroy
 
 
-  def to_dob
-    self.tournament.date_start.year - self.age_start
+  # Date used for age calculation
+  def base_date
+    self.tournament.andand.date_start.to_date || Date.today
   end
-  def from_dob
-    self.tournament.date_start.year - self.age_end
+
+  # Latest birthday date allowed for the class
+  def to_date
+    base_date - (self.age_start.years + 1.year - 1.day)
+  end
+
+  # Earliest birthday date allowed for the class
+  def from_date
+    base_date - self.age_end.years
   end
 end

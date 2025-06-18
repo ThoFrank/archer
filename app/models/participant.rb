@@ -1,11 +1,13 @@
 class ParticipantValidator < ActiveModel::Validator
   def validate(record)
-    base_date = record.Tournament.date_start
     tournament_class = record.tournament_class
-    age_end = tournament_class.andand.age_end || 100
-    age_start = tournament_class.andand.age_start || 0
-    date_start = base_date - age_end.years
-    date_end = base_date - age_start.years + 1.year - 1.day
+    if tournament_class
+      date_start = tournament_class.from_date
+      date_end = tournament_class.to_date
+    else
+      date_start = Date.new(1900)
+      date_end = Date.today
+    end
 
     unless record.dob && date_start <= record.dob && record.dob <= date_end
       record.errors.add :tournament_class
