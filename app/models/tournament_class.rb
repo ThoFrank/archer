@@ -6,6 +6,7 @@ class TournamentClass < ApplicationRecord
   has_many :participants, dependent: :destroy
 
 
+  # TODO use same thing in validator
   def to_dob
     self.tournament.date_start.year - self.age_start
   end
