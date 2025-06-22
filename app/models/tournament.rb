@@ -10,7 +10,7 @@ class Tournament < ApplicationRecord
     def valid_date(date)
       if date.blank?
         "can't be blank"
-      elsif !date.is_a?(ActiveSupport::TimeWithZone)
+      elsif !date.is_a?(ActiveSupport::TimeWithZone) && !date.is_a?(Date)
         "must be a valid date"
       end
     end
@@ -26,6 +26,10 @@ class Tournament < ApplicationRecord
     e = valid_date(date_end)
     if e
       errors.add(:date_end, e)
+    end
+    e = valid_date(season_start_date)
+    if e
+      errors.add(:season_start_date, e)
     end
     if date_start && date_end && date_end.utc() < date_start.utc()
       errors.add(:date_end, "must not be earlier than begin")

@@ -10,6 +10,7 @@ class TournamentsController < ApplicationController
 
   def new
     @tournament = Tournament.new
+    @tournament.season_start_date = Date.new(Date.today.year)
   end
 
   def create

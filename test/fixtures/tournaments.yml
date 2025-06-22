@@ -3,6 +3,7 @@
 indoor:
   name: 15. Indoor
   # description: PSV Indoor Turnier
+  season_start_date: 2025-01-01
   date_start: 2025-02-23
   date_end: 2025-02-23
   place: Franz-Mader-Straße 11, 80992 München
