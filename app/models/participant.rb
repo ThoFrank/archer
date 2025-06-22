@@ -20,7 +20,6 @@ class ParticipantValidator < ActiveModel::Validator
     unless URI::MailTo::EMAIL_REGEXP.match?(record.email)
       record.errors.add :email
     end
-
   end
 end
 
