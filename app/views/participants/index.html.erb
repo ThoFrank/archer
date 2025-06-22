@@ -14,7 +14,7 @@
           class="<% if authenticated? %>
             hover:bg-gray-50
           <% end %>
-          <% unless p.valid? %>
+          <% if authenticated? && !p.valid? %>
             bg-red-100
           <% end %>"
           <% if authenticated? %>
