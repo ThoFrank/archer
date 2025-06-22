@@ -11,8 +11,14 @@
     <tbody class="divide-y divide-gray-200">
       <% @participants.each do |p| %>
         <tr
+          class="<% if authenticated? %>
+            hover:bg-gray-50
+          <% end %>
+          <% if authenticated? && !p.valid? %>
+            bg-red-100
+          <% end %>"
           <% if authenticated? %>
-            class="hover:bg-gray-50" data-url=<%= edit_tournament_participant_path(@tournament, p)%>
+            data-url=<%= edit_tournament_participant_path(@tournament, p)%>
           <% end %>
         >
           <td class="px-6 py-4 text-gray-800">

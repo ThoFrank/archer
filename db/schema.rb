@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_14_052521) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_21_124915) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -18,6 +18,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_14_052521) do
     t.string "place"
     t.datetime "date_start"
     t.datetime "date_end"
+    t.date "season_start_date"
   end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
