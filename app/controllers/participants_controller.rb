@@ -29,9 +29,8 @@ class ParticipantsController < ApplicationController
         {
           id: cls.id.to_s,
           name: cls.name,
-          # TODO use custom date
           start_dob: "#{cls.from_date}",
-          end_dob: "#{cls.to_dob}",
+          end_dob: "#{cls.to_date}",
           possible_target_faces: cls.target_faces
         }
       end,
