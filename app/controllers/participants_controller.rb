@@ -99,6 +99,14 @@ class ParticipantsController < ApplicationController
     end
   end
 
+  def destroy
+    @tournament = Tournament.find(params[:tournament_id])
+    @participant = Participant.find(params.expect(:id))
+    @participant.destroy!
+
+    redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."
+  end
+
   private
     def participant_params
       params.expect(participant: [ :first_name, :last_name, :email, :dob, :tournament_class, :target_face ])

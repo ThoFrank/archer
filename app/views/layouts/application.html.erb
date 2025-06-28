@@ -18,9 +18,9 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
 
-    <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= javascript_include_tag "sprockets_application", "data-turbo-track": "reload", defer: true %>
     <%= csrf_meta_tags %>
+    <%= javascript_importmap_tags %>
 
   </head>
 
@@ -34,14 +34,14 @@
 
   <script>
     // JavaScript to make rows clickable
-    document.addEventListener('DOMContentLoaded', function() {
+    function addTableRowListener() {
       const tableRows = document.querySelectorAll('tbody tr');
 
       tableRows.forEach(row => {
         if (row.getAttribute('data-url')) {
           row.addEventListener('click', function(event) {
             const url = this.getAttribute('data-url');
-            if (url) {
+            if (event.target.tagName != "BUTTON" && url) {
                 window.location.href = url;
             }
           });
@@ -50,9 +50,11 @@
           row.style.cursor = 'pointer';
         }
       });
-    });
+    }
+    document.addEventListener('DOMContentLoaded', addTableRowListener);
+    document.addEventListener('turbo:render', addTableRowListener);
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function addLocaleSelectorListener() {
       const select = document.getElementById("locale_selector");
       const current_url = new URL(window.location.href);
       const current_locale = current_url.searchParams.get('locale') || 'de';
@@ -63,6 +65,8 @@
         url.searchParams.set('locale', selectedLocale);
         window.location.href = url.toString();
       });
-    });
+    }
+    document.addEventListener('DOMContentLoaded', addLocaleSelectorListener);
+    document.addEventListener('turbo:render', addLocaleSelectorListener);
   </script>
 </html>
