@@ -1,27 +1,40 @@
-# README
+# Archer - archery tournament registration
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Archer is designed for easy participant management for archery competitions.
 
-Things you may want to cover:
+## Deployment
 
-* Ruby version
+Ready made container available at ``ghcr.io/thofrank/archer:latest``
 
-* System dependencies
+Following environment variables are available for configuration:
 
-* Configuration
+```
+RAILS_MASTER_KEY # See https://github.com/ThoFrank/archer/issues/12
+ARCHER_DEFAULT_MAIL_ADDRESS
+ARCHER_SMTP_ADDRESS
+ARCHER_SMTP_USERNAME
+ARCHER_SMTP_PASSWORD
+```
 
-* Database creation
+## Development
 
-* Database initialization
+For development Ruby and other system dependencies are managed via [devenv](https://devenv.sh).
 
-* How to run the test suite
+Once you are in a devenv shell run:
 
-* Services (job queues, cache servers, search engines, etc.)
+```bash
+# initialize database
+rake db:create
 
-* Deployment instructions
+# migrate databases to the latest schema
+rake db:migrate
 
-* ...
+# load test fixtures to have some data
+rake db:fixtures:load
+
+# start the development server
+bin/dev
+```
 
 # Attribution
 
