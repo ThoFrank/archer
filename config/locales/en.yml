@@ -56,6 +56,7 @@ en:
   participants:
     index:
       Register: Register
+      Register multiple: Register multiple
       Download as csv: Download as csv
       Export to ianseo: Export to ianseo
       Name: Name

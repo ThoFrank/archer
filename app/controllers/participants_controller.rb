@@ -42,6 +42,26 @@ class ParticipantsController < ApplicationController
     }
   end
 
+  def multiple_new
+    @tournament = Tournament.find(params[:tournament_id])
+
+    @flags = {
+      form_action_url: tournament_multiple_create_participants_path(@tournament),
+      csrf_token: form_authenticity_token,
+      translations: I18n.t("participants.new"),
+      classes: @tournament.tournament_classes.map do |cls|
+        {
+          id: cls.id.to_s,
+          name: cls.name,
+          start_dob: "#{cls.from_date}",
+          end_dob: "#{cls.to_date}",
+          possible_target_faces: cls.target_faces
+        }
+      end,
+      existing_archer: nil
+    }
+  end
+
   def create
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
@@ -68,6 +88,11 @@ class ParticipantsController < ApplicationController
 
     ParticipantMailer.registration_confirmation(@participant).deliver
     redirect_to tournament_participants_path(@tournament)
+  end
+
+  def multiple_create
+    # raise :TODO
+    create
   end
 
   def edit
