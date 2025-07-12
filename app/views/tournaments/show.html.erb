@@ -22,6 +22,10 @@
     <%= @tournament.description %>
   </div>
 
+  <p class=mb-6>
+    <%= t "Participants"%>: <%= @tournament.participants.count %>
+  </p>
+
   <p class="mb-6">
     <%= link_to (t ".Go to registration"), tournament_participants_path(@tournament), class: "inline-block px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
   </p>
