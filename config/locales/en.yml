@@ -45,6 +45,7 @@ en:
     show:
       Place: Place
       Go to registration: Go to registration
+      Current number of participants: Current number of participants
   tournament_classes:
     index:
       Tournament Classes: Tournament Classes

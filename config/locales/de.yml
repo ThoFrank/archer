@@ -16,6 +16,7 @@ de:
     show:
       Place: Ort
       Go to registration: Zur Anmeldung
+      Current number of participants: Aktuelle Anzahl der Anmeldungen
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen
