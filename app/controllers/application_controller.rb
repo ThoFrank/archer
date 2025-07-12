@@ -6,7 +6,8 @@ class ApplicationController < ActionController::Base
   around_action :switch_locale
 
   def switch_locale(&action)
-    locale = params[:locale] || "de"
+    locale = params[:locale] if I18n.locale_available? params[:locale]
+    locale ||= :de
     I18n.with_locale(locale, &action)
   end
 
