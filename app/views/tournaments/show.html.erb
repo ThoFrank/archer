@@ -5,9 +5,13 @@
   </h1>
 
   <p class="text-lg text-gray-600 mb-6">
-  <%= @tournament.date_start.andand.strftime("%d.%m.%Y") %>
-  -
-  <%= @tournament.date_end.andand.strftime("%d.%m.%Y") %>
+    <% if @tournament.date_start == @tournament.date_end %>
+      <%= @tournament.date_start.andand.strftime("%d.%m.%Y") %>
+    <% else %>
+      <%= @tournament.date_start.andand.strftime("%d.%m.%Y") %>
+      -
+      <%= @tournament.date_end.andand.strftime("%d.%m.%Y") %>
+    <% end %>
   </p>
 
   <p class="text-lg text-gray-600 mb-6">
