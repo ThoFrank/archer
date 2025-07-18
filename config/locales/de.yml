@@ -49,6 +49,7 @@ de:
       "Class:": "Klasse:"
       "Target:": "Auflage:"
       Submit: Speichern
+      Delete: Löschen
   mail:
     registation_confirmation:
       subject: Anmeldebestätigung %{tournament}

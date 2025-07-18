@@ -10,4 +10,11 @@
   <%= elm_embed('Elm.Participants', { flags: @flags }) %>
 
   <pre id="elm"></pre>
+
+  <div class="inline-block ml-2">
+    <%= button_to (t ".Delete"), tournament_participant_path(@tournament, @participant), method: :delete, data: {
+          turbo_confirm: "Are you sure?"
+        }, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+  </div>
+
 </div>
