@@ -5,7 +5,7 @@ import Class exposing (Class, class_in_range)
 import Date exposing (Date)
 import Email
 import Html exposing (Html, div, form, input, label, option, select, text)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, type_, value)
+import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
@@ -449,6 +449,7 @@ view mdl =
                             ]
                       , input
                             [ type_ "submit"
+                            , tabindex 0
                             , value (t model.translations "Submit")
                             , disabled <| not <| submittable <| model
                             , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
