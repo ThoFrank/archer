@@ -102,6 +102,7 @@ class ParticipantsController < ApplicationController
   def destroy
     @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.find(params.expect(:id))
+    ParticipantMailer.registration_cancelation(@participant).deliver
     @participant.destroy!
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."
