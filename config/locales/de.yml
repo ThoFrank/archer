@@ -55,6 +55,8 @@ de:
       subject: Anmeldebestätigung %{tournament}
     registation_cancelation:
       subject: Abmeldung %{tournament}
+    registation_change:
+      subject: Ummeldung %{tournament}
 
   # https://github.com/svenfuchs/rails-i18n/blob/master/rails/locale/de.yml
   activerecord:

@@ -1,0 +1,9 @@
+<%= render "salutation" %>
+Your registration for <%= @participant.Tournament.name %> on <%= l @participant.Tournament.date_start.to_date %> changed:
+
+Name: <%= @participant.first_name %> <%= @participant.last_name %>
+Date of birth: <%= @participant.dob %>
+Classe: <%= @participant.tournament_class.name %>
+Target Face: <%= @participant.target_face.name %>
+
+<%= render "greeting" %>

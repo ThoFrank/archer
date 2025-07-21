@@ -83,3 +83,5 @@ en:
       subject: Registration Confirmation %{tournament}
     registation_cancelation:
       subject: Registration Cancelation %{tournament}
+    registation_change:
+      subject: Registration changed %{tournament}
