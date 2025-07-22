@@ -1,7 +1,6 @@
 <%= render "salutation" %>
-vielen Dank für deine Anmeldung für die Veranstaltung<%= @participant.Tournament.name %> am <%= l @participant.Tournament.date_start.to_date %>.
+deine Anmeldung für die Veranstalung <%= @participant.Tournament.name %> am <%= l @participant.Tournament.date_start.to_date %> wurde geändert:
 
-So hast du dich angemeldet:
 Name: <%= @participant.first_name %> <%= @participant.last_name %>
 Geburtsdatum: <%= @participant.dob %>
 Klasse: <%= @participant.tournament_class.name %>

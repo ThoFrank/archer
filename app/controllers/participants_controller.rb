@@ -93,6 +93,7 @@ class ParticipantsController < ApplicationController
     params["tournament_class"] = TournamentClass.find params["tournament_class"]
     logger.debug "Updating participant with #{params}"
     if @participant.update(params)
+      ParticipantMailer.registration_changed(@participant).deliver
       redirect_to tournament_participants_path(@tournament)
     else
       render :edit, status: :unprocessable_entity
@@ -102,6 +103,7 @@ class ParticipantsController < ApplicationController
   def destroy
     @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.find(params.expect(:id))
+    ParticipantMailer.registration_cancelation(@participant).deliver
     @participant.destroy!
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."
