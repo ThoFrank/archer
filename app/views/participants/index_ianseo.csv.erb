@@ -1,0 +1,84 @@
+<% require "csv" %>
+<%= CSV.generate(:col_sep => ";") do |csv|
+  target_faces = @tournament.target_faces.sort_by{ |tf| tf.id }
+
+  # Header
+  csv << [
+    "bib",
+    "session",
+    "division",
+    "class",
+    "target",
+    "individual qualification",
+    "team qualification",
+    "individual final",
+    "team final",
+    "mixed team final",
+    "last name",
+    "first name",
+    "gender",
+    "country code",
+    "country name",
+    "date of birth",
+    "subclass",
+    "country code 2",
+    "country name 2",
+    "country code 3",
+    "country name 3",
+  ]
+
+  # content
+  @participants.each do |p|
+    csv << [
+      # "bib",
+      p.id,
+      # "session",
+      1,
+      # "division",
+      "R",
+      # "class",
+      p.tournament_class.andand.name,
+      # "target",
+      nil,
+      # "individual qualification",
+      1,
+      # "team qualification",
+      1,
+      # "individual final",
+      1,
+      # "team final",
+      1,
+      # "mixed team final",
+      1,
+      # "last name",
+      p.last_name,
+      # "first name",
+      p.first_name,
+      # "gender",
+      0,
+      # "country code",
+      "PSV",
+      # "country name",
+      "PSV München",
+      # "date of birth",
+      p.dob,
+      # "subclass",
+      nil,
+      # "country code 2",
+      nil,
+      # "country name 2",
+      nil,
+      # "country code 3",
+      nil,
+      # "country name 3",
+      nil,
+    ]
+  end
+
+  # additional content outside the schema
+  @participants.each do |p|
+    csv << [ "##TARGET##", p.id, "R", p.tournament_class.name, target_faces.find_index(p.target_face)]
+    csv << [ "##EMAIL##", p.id, p.email]
+  end
+end %>
+
