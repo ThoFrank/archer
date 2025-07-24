@@ -43,6 +43,7 @@
     </div>
     <% if authenticated? %>
     <div class="flex">
+      <%= link_to (t ".Export to ianseo"), {controller: "participants", action: "index", format: "csv", query: "ianseo"}, class: "inline-block px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500" %>
       <%= link_to (t ".Download as csv"), {controller: "participants", action: "index", format: "csv"}, class: "inline-block px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500" %>
     </div>
     <% end %>

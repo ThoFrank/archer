@@ -57,6 +57,7 @@ en:
     index:
       Register: Register
       Download as csv: Download as csv
+      Export to ianseo: Export to ianseo
       Name: Name
       Class: Class
       Target Face: Target Face
