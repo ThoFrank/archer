@@ -72,4 +72,4 @@ gem "tailwindcss-rails", "~> 3.3"
 
 gem "andand", "~> 1.3"
 
-gem "importmap-rails", "~> 2.1"
+gem "importmap-rails", "~> 2.2"
