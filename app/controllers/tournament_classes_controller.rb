@@ -57,10 +57,6 @@ class TournamentClassesController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_tournament
-      @tournament = Tournament.find(params[:tournament_id])
-    end
-
     def set_tournament_class
       @tournament_class = TournamentClass.find(params.expect(:id))
     end
