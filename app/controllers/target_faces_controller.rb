@@ -55,11 +55,6 @@ class TargetFacesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_tournament
-      @tournament = Tournament.find(params.expect(:tournament_id))
-    end
-
     def set_target_face
       @target_face = TargetFace.find(params.expect(:id))
     end

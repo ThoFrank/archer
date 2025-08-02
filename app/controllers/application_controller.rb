@@ -14,4 +14,12 @@ class ApplicationController < ActionController::Base
   def default_url_options
     { locale: I18n.locale }
   end
+
+  def set_tournament
+    @tournament = Tournament.find(params[:tournament_id] || params[:id])
+    raise ActiveRecord::RecordNotFound unless @tournament.is_a? Tournament
+    if !authenticated? && @tournament.status == "archived"
+      raise ActiveRecord::RecordNotFound
+    end
+  end
 end

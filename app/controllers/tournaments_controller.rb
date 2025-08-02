@@ -1,11 +1,12 @@
 class TournamentsController < ApplicationController
   allow_unauthenticated_access only: %i[ index show ]
+  before_action :set_tournament, only: %i[ show edit update destroy]
+
   def index
     @tournaments = Tournament.all
   end
 
   def show
-    @tournament = Tournament.find(params[:id])
     if !authenticated? && @tournament.status == "archived"
       raise ActiveRecord::RecordNotFound
     end
@@ -27,11 +28,9 @@ class TournamentsController < ApplicationController
   end
 
   def edit
-    @tournament = Tournament.find(params[:id])
   end
 
   def update
-    @tournament = Tournament.find(params[:id])
     if @tournament.update(tournament_params)
       redirect_to @tournament
     else
@@ -40,7 +39,6 @@ class TournamentsController < ApplicationController
   end
 
   def destroy
-    @tournament = Tournament.find(params[:id])
     @tournament.participants.each(&:destroy)
     redirect_to tournament_path(@tournament), status: :see_other, notice: "Tournament destroyed."
   end

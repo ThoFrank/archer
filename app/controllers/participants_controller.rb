@@ -1,8 +1,8 @@
 class ParticipantsController < ApplicationController
   allow_unauthenticated_access only: %i[ index new create]
+  before_action :set_tournament
 
   def index
-    @tournament = Tournament.find(params[:tournament_id])
     @participants = @tournament.participants
     respond_to do |format|
       format.html
@@ -24,7 +24,6 @@ class ParticipantsController < ApplicationController
   end
 
   def new
-    @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.new
     @flags = {
       form_action_url: tournament_participants_path(@tournament),
@@ -44,8 +43,6 @@ class ParticipantsController < ApplicationController
   end
 
   def create
-    @tournament = Tournament.find(params[:tournament_id])
-
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
     params["tournament_class"] = TournamentClass.find params["tournament_class"]
@@ -64,7 +61,6 @@ class ParticipantsController < ApplicationController
   end
 
   def edit
-    @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.find(params.expect(:id))
     @flags = {
       form_action_url: tournament_participant_path(@tournament, @participant),
@@ -91,7 +87,6 @@ class ParticipantsController < ApplicationController
   end
 
   def update
-    @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.find(params.expect(:id))
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
@@ -106,7 +101,6 @@ class ParticipantsController < ApplicationController
   end
 
   def destroy
-    @tournament = Tournament.find(params[:tournament_id])
     @participant = Participant.find(params.expect(:id))
     ParticipantMailer.registration_cancelation(@participant).deliver
     @participant.destroy!
