@@ -51,7 +51,8 @@ class TournamentsController < ApplicationController
         :place,
         :date_start,
         :date_end,
-        :season_start_date
+        :season_start_date,
+        :status
       ])
     end
 end
