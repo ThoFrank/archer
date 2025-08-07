@@ -17,7 +17,7 @@ class ParticipantValidator < ActiveModel::Validator
       record.errors.add :target_face
     end
 
-    unless URI::MailTo::EMAIL_REGEXP.match?(record.email)
+    unless URI::MailTo::EMAIL_REGEXP.match?(record.registration.email)
       record.errors.add :email
     end
   end
@@ -27,6 +27,9 @@ class Participant < ApplicationRecord
   belongs_to :Tournament
   belongs_to :tournament_class
   belongs_to :target_face
+
+  has_one :registration_participant
+  has_one :registration, through: :registration_participant
 
   validates :Tournament, presence: true
   validates :tournament_class, presence: true

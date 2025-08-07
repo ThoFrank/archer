@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_180909) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_182044) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_180909) do
     t.datetime "date_end"
     t.date "season_start_date"
     t.string "status"
+    t.string "email"
   end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -85,10 +86,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_180909) do
     t.date "dob"
     t.integer "tournament_class_id"
     t.integer "target_face_id"
-    t.string "email"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
     t.index ["target_face_id"], name: "index_participants_on_target_face_id"
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
+  end
+
+  create_table "registration_participants", force: :cascade do |t|
+    t.integer "registration_id", null: false
+    t.integer "participant_id", null: false
+    t.index ["participant_id"], name: "index_registration_participants_on_participant_id"
+    t.index ["registration_id"], name: "index_registration_participants_on_registration_id"
   end
 
   create_table "registrations", force: :cascade do |t|
@@ -148,6 +155,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_180909) do
   add_foreign_key "comments", "articles"
   add_foreign_key "participants", "target_faces"
   add_foreign_key "participants", "tournament_classes"
+  add_foreign_key "registration_participants", "participants"
+  add_foreign_key "registration_participants", "registrations"
   add_foreign_key "registrations", "tournaments"
   add_foreign_key "sessions", "users"
   add_foreign_key "target_faces", "tournaments"

@@ -7,7 +7,6 @@ thomas:
   tournament_class: rec_herren
   target_face: spot
   dob: 2000-01-01
-  email: one@example.com
 
 svenya:
   first_name: Svenya
@@ -16,4 +15,3 @@ svenya:
   tournament_class: rec_damen
   target_face: 40cm
   dob: 2000-01-01
-  email: two@example.com
