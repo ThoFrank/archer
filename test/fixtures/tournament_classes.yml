@@ -12,3 +12,4 @@ rec_damen:
   age_start: 21
   age_end: 49
   tournament: indoor
+  target_faces: spot, 40cm
