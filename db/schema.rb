@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_02_151230) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_180909) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -91,6 +91,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_151230) do
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
   end
 
+  create_table "registrations", force: :cascade do |t|
+    t.integer "tournament_id", null: false
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_registrations_on_tournament_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -140,6 +148,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_151230) do
   add_foreign_key "comments", "articles"
   add_foreign_key "participants", "target_faces"
   add_foreign_key "participants", "tournament_classes"
+  add_foreign_key "registrations", "tournaments"
   add_foreign_key "sessions", "users"
   add_foreign_key "target_faces", "tournaments"
   add_foreign_key "target_faces_tournament_classes", "target_faces"
