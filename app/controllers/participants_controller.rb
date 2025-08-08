@@ -46,18 +46,27 @@ class ParticipantsController < ApplicationController
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
     params["tournament_class"] = TournamentClass.find params["tournament_class"]
+
     %w[ first_name last_name ].each do |p|
       params[p].strip!
     end
+    email = params.delete "email"
 
     @participant = Participant.new(params)
     @participant.Tournament = @tournament
-    if @participant.save
-      ParticipantMailer.registration_confirmation(@participant).deliver
-      redirect_to tournament_participants_path(@tournament)
-    else
-      render :new, status: :unprocessable_entity
+
+    @participant.transaction do
+      begin
+        registration = Registration.create(email: email, tournament: @tournament)
+        @participant.registration = registration
+        @participant.save!
+      rescue
+        render :new, status: :unprocessable_entity
+      end
     end
+
+    ParticipantMailer.registration_confirmation(@participant).deliver
+    redirect_to tournament_participants_path(@tournament)
   end
 
   def edit
@@ -78,7 +87,7 @@ class ParticipantsController < ApplicationController
       existing_archer: {
         first_name: @participant.first_name,
         last_name: @participant.last_name,
-        email: @participant.email || "",
+        email: @participant.registration.email || "",
         dob: @participant.dob || "",
         selected_class: @participant.tournament_class.andand.id.to_s || "",
         selected_target_face: @participant.target_face.andand.id.to_s  || ""
@@ -91,13 +100,24 @@ class ParticipantsController < ApplicationController
     params = participant_params.to_hash
     params["target_face"] = TargetFace.find (params["target_face"])
     params["tournament_class"] = TournamentClass.find params["tournament_class"]
-    logger.debug "Updating participant with #{params}"
-    if @participant.update(params)
-      ParticipantMailer.registration_changed(@participant).deliver
-      redirect_to tournament_participants_path(@tournament)
-    else
-      render :edit, status: :unprocessable_entity
+
+    %w[ first_name last_name ].each do |p|
+      params[p].strip!
     end
+    email = params.delete "email"
+
+    logger.debug "Updating participant with #{params}"
+    @participant.transaction do
+      begin
+        @participant.registration.update!(email: email)
+        @participant.update!(params)
+      rescue
+        render :new, status: :unprocessable_entity
+      end
+    end
+
+    ParticipantMailer.registration_changed(@participant).deliver
+    redirect_to tournament_participants_path(@tournament)
   end
 
   def destroy

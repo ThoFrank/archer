@@ -3,7 +3,7 @@ class TournamentClass < ApplicationRecord
   has_many :target_faces_tournament_classes, dependent: :destroy
   has_many :target_faces, through: :target_faces_tournament_classes
   # has_many :target_faces, join_table: :target_faces_tournament_classes
-  has_many :participants, dependent: :destroy
+  has_many :participants, dependent: :nullify
 
 
   # Date used for age calculation

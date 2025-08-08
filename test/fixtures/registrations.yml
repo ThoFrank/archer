@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tournament: indoor
+  email: one@example.com
+  participants: thomas
+
+two:
+  tournament: indoor
+  email: two@example.com
+  participants: svenya
