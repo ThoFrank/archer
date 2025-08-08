@@ -40,6 +40,7 @@ de:
       "Date of birth:": "Geburtsdatum:"
       "Class:": "Klasse:"
       "Target:": "Auflage:"
+      "Comment:": "Kommentar:"
       Submit: Anmelden
     edit:
       heading: "Aktualisiere Anmeldedaten für %{tournament}"
@@ -49,6 +50,7 @@ de:
       "Date of birth:": "Geburtsdatum:"
       "Class:": "Klasse:"
       "Target:": "Auflage:"
+      "Comment:": "Kommentar:"
       Submit: Speichern
       Delete: Löschen
   mail:

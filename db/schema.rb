@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_182044) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_194807) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -103,6 +103,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_182044) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "comment"
     t.index ["tournament_id"], name: "index_registrations_on_tournament_id"
   end
 

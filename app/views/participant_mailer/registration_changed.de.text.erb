@@ -5,5 +5,6 @@ Name: <%= @participant.first_name %> <%= @participant.last_name %>
 Geburtsdatum: <%= @participant.dob %>
 Klasse: <%= @participant.tournament_class.name %>
 Scheibe: <%= @participant.target_face.name %>
+Kommentar: <%= @participant.registration.comment %>
 
 <%= render "greeting" %>

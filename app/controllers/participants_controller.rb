@@ -51,13 +51,14 @@ class ParticipantsController < ApplicationController
       params[p].strip!
     end
     email = params.delete "email"
+    comment = params.delete "comment"
 
     @participant = Participant.new(params)
     @participant.Tournament = @tournament
 
     @participant.transaction do
       begin
-        registration = Registration.create(email: email, tournament: @tournament)
+        registration = Registration.create(email: email, tournament: @tournament, comment: comment)
         @participant.registration = registration
         @participant.save!
       rescue
@@ -90,7 +91,8 @@ class ParticipantsController < ApplicationController
         email: @participant.registration.email || "",
         dob: @participant.dob || "",
         selected_class: @participant.tournament_class.andand.id.to_s || "",
-        selected_target_face: @participant.target_face.andand.id.to_s  || ""
+        selected_target_face: @participant.target_face.andand.id.to_s  || "",
+        comment: @participant.registration.comment.to_s
       }
     }
   end
@@ -109,7 +111,7 @@ class ParticipantsController < ApplicationController
     logger.debug "Updating participant with #{params}"
     @participant.transaction do
       begin
-        @participant.registration.update!(email: email)
+        @participant.registration.update!(email: email, comment: params.delete("comment"))
         @participant.update!(params)
       rescue
         render :new, status: :unprocessable_entity
@@ -130,6 +132,6 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      params.expect(participant: [ :first_name, :last_name, :email, :dob, :tournament_class, :target_face ])
+      params.expect(participant: [ :first_name, :last_name, :email, :dob, :tournament_class, :target_face, :comment ])
     end
 end
