@@ -31,6 +31,7 @@ type alias ValidModel =
     , dob : Dob
     , selected_class : Maybe Class
     , selected_target_face : Maybe TargetFace
+    , comment : String
     }
 
 
@@ -76,6 +77,9 @@ init f =
 
         selected_target_face_id =
             Maybe.map (\a -> a.selected_target_face) f.existing_archer
+
+        comment =
+            Maybe.withDefault "" (Maybe.map (\a -> a.comment) f.existing_archer)
     in
     ( case ( decoded_translations, decoded_classed ) of
         ( Result.Ok translations, Result.Ok validClasses ) ->
@@ -112,6 +116,7 @@ init f =
                 , dob = dob
                 , selected_class = selected_class
                 , selected_target_face = selected_target_face
+                , comment = comment
                 }
 
         ( Result.Ok _, Result.Err e ) ->
@@ -138,6 +143,7 @@ type Msg
     | UpdateFirstName String
     | UpdateLastName String
     | UpdateEmail String
+    | UpdateComment String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -208,6 +214,9 @@ update msg mdl =
 
                     UpdateEmail e ->
                         { model | email = e }
+
+                    UpdateComment c ->
+                        { model | comment = c }
                 )
             , Cmd.none
             )
@@ -447,6 +456,10 @@ view mdl =
                                        )
                                 )
                             ]
+                      , div [ class "space-y-1" ]
+                            [ label [ for "comment", class input_label_class ] [ text (t model.translations "Comment:") ]
+                            , input [ id "comment", name "participant[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
+                            ]
                       , input
                             [ type_ "submit"
                             , tabindex 0
@@ -477,5 +490,6 @@ type alias Flags =
             , dob : String
             , selected_class : String
             , selected_target_face : String
+            , comment : String
             }
     }

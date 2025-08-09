@@ -6,5 +6,6 @@ Name: <%= @participant.first_name %> <%= @participant.last_name %>
 Date of birth: <%= @participant.dob %>
 Classe: <%= @participant.tournament_class.name %>
 Target Face: <%= @participant.target_face.name %>
+Comment: <%= @participant.registration.comment %>
 
 <%= render "greeting" %>

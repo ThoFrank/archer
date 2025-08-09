@@ -69,6 +69,7 @@ en:
       "Date of birth:": "Date of birth:"
       "Class:": "Class:"
       "Target:": "Target:"
+      "Comment:": "Comment:"
       Submit: Submit
     edit:
       heading: "Register for %{tournament}"
@@ -78,6 +79,7 @@ en:
       "Date of birth:": "Date of birth:"
       "Class:": "Class:"
       "Target:": "Target:"
+      "Comment:": "Comment:"
       Submit: Submit
   mail:
     registation_confirmation:
