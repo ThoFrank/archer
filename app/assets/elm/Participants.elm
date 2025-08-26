@@ -1,9 +1,9 @@
 module Participants exposing (main)
 
 import Browser
-import Class exposing (Class, class_in_range)
-import Date exposing (Date)
-import Dob exposing (Dob)
+import Class exposing (Class)
+import Date
+import Dob
 import Email
 import Html exposing (Html, div, form, input, label, option, select, text)
 import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, tabindex, type_, value)
@@ -12,8 +12,8 @@ import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
 import Json.Encode as JE
 import List exposing (filter, map)
-import Maybe exposing (andThen, withDefault)
-import Participant exposing (Participant)
+import Maybe exposing (andThen)
+import Participant exposing (Participant, ParticipantMsgType, available_classes, update_participant)
 import TargetFace exposing (TargetFace)
 import Time exposing (Month(..))
 
@@ -136,73 +136,10 @@ subscriptions _ =
     Sub.none
 
 
-type ParticipantMsgType
-    = SelectClass String
-    | SelectTargetFace String
-    | UpdateDob String
-    | UpdateFirstName String
-    | UpdateLastName String
-
-
 type Msg
     = ParticipantMsg ParticipantMsgType
     | UpdateEmail String
     | UpdateComment String
-
-
-update_participant : ParticipantMsgType -> Participant -> List Class -> Participant
-update_participant msg participant classes =
-    case msg of
-        SelectClass cls_id ->
-            let
-                p0 =
-                    participant
-
-                p1 =
-                    { p0
-                        | selected_class =
-                            classes
-                                |> filter (\{ id } -> id == cls_id)
-                                |> List.head
-                    }
-            in
-            { p1 | selected_target_face = updateSelectedTargetFace p1 }
-
-        SelectTargetFace tf ->
-            { participant
-                | selected_target_face =
-                    participant.selected_class
-                        |> andThen
-                            (\cls ->
-                                cls.possible_target_faces
-                                    |> List.filter (\t -> t.id == tf)
-                                    |> List.head
-                            )
-            }
-
-        UpdateDob dob ->
-            let
-                new_dob =
-                    Date.fromIsoString dob
-                        |> Result.map (\d -> Dob.Valid d)
-                        |> Result.withDefault (Dob.Invalid dob)
-
-                p0 =
-                    participant
-
-                p1 =
-                    { p0 | dob = new_dob }
-
-                p2 =
-                    { p1 | selected_class = updateSelectedClass classes p1 }
-            in
-            { p2 | selected_target_face = updateSelectedTargetFace p2 }
-
-        UpdateFirstName n ->
-            { participant | first_name = n }
-
-        UpdateLastName n ->
-            { participant | last_name = n }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -225,42 +162,6 @@ update msg mdl =
                 )
             , Cmd.none
             )
-
-
-updateSelectedClass : List Class -> Participant -> Maybe Class
-updateSelectedClass classes participant =
-    if
-        available_classes classes participant
-            |> map (\cls -> Just cls)
-            |> List.member participant.selected_class
-    then
-        participant.selected_class
-
-    else
-        Nothing
-
-
-updateSelectedTargetFace : Participant -> Maybe TargetFace
-updateSelectedTargetFace participant =
-    participant.selected_class
-        |> Maybe.andThen
-            (\cls ->
-                cls.possible_target_faces
-                    |> map (\tf -> Just tf)
-                    |> List.filter (\tf -> tf == participant.selected_target_face)
-                    |> List.head
-                    |> withDefault Nothing
-            )
-
-
-available_classes : List Class -> Participant -> List Class.Class
-available_classes classes participant =
-    case participant.dob of
-        Dob.Invalid _ ->
-            []
-
-        Dob.Valid dob ->
-            classes |> filter (class_in_range dob)
 
 
 submittable : ValidModel -> Bool
@@ -371,11 +272,11 @@ view mdl =
                         ]
                     , [ div [ class "space-y-1" ]
                             [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
-                            , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput (UpdateFirstName >> ParticipantMsg), value model.participant.first_name ] []
+                            , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg), value model.participant.first_name ] []
                             ]
                       , div [ class "space-y-1" ]
                             [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
-                            , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput (UpdateLastName >> ParticipantMsg), value model.participant.last_name ] []
+                            , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg), value model.participant.last_name ] []
                             ]
                       , div [ class "space-y-1" ]
                             [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
@@ -386,7 +287,7 @@ view mdl =
                             , input
                                 [ type_ "date"
                                 , property "autocomplete" (JE.string "bday")
-                                , onInput (UpdateDob >> ParticipantMsg)
+                                , onInput (Participant.UpdateDob >> ParticipantMsg)
                                 , value
                                     (case model.participant.dob of
                                         Dob.Invalid s ->
@@ -405,7 +306,7 @@ view mdl =
                       , div [ class "space-y-1" ]
                             [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
                             , select
-                                [ onInput (SelectClass >> ParticipantMsg)
+                                [ onInput (Participant.SelectClass >> ParticipantMsg)
                                 , value
                                     (case model.participant.selected_class of
                                         Nothing ->
@@ -433,7 +334,7 @@ view mdl =
                                 [ for "target_face", class input_label_class ]
                                 [ text (t model.translations "Target:") ]
                             , select
-                                [ onInput (SelectTargetFace >> ParticipantMsg)
+                                [ onInput (Participant.SelectTargetFace >> ParticipantMsg)
                                 , id "target_face"
                                 , name "participant[target_face]"
                                 , class valid_input_class
