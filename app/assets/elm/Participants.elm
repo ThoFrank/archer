@@ -407,7 +407,7 @@ view mdl =
                             ]
                       , div [ class "space-y-1" ]
                             [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
-                            , input [ id "email", type_ "email", name "participant[email]", class email_class, onInput UpdateEmail, value model.email ] []
+                            , input [ id "email", type_ "email", name "registration[email]", class email_class, onInput UpdateEmail, value model.email ] []
                             ]
                       , div [ class "space-y-1" ]
                             [ label [ for "dob", class input_label_class ] [ text (t model.translations "Date of birth:") ]
@@ -491,7 +491,7 @@ view mdl =
                             ]
                       , div [ class "space-y-1" ]
                             [ label [ for "comment", class input_label_class ] [ text (t model.translations "Comment:") ]
-                            , input [ id "comment", name "participant[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
+                            , input [ id "comment", name "registration[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
                             ]
                       , input
                             [ type_ "submit"

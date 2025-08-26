@@ -17,8 +17,8 @@ class ParticipantValidator < ActiveModel::Validator
       record.errors.add :target_face
     end
 
-    unless URI::MailTo::EMAIL_REGEXP.match?(record.registration.email)
-      record.errors.add :email
+    unless record.registration && URI::MailTo::EMAIL_REGEXP.match?(record.registration.email)
+      record.errors.add :registration
     end
   end
 end
