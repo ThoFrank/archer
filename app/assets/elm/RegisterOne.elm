@@ -1,4 +1,4 @@
-module Participants exposing (main)
+module RegisterOne exposing (main)
 
 import Browser
 import Class exposing (Class)

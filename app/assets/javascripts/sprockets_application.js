@@ -2,4 +2,4 @@
 //= require trix
 //= require_tree .
 
-//= require Participants
+//= require RegisterOne
