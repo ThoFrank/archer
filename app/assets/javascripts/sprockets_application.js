@@ -3,3 +3,4 @@
 //= require_tree .
 
 //= require RegisterOne
+//= require RegisterMultiple

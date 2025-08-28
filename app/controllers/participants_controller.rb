@@ -1,5 +1,5 @@
 class ParticipantsController < ApplicationController
-  allow_unauthenticated_access only: %i[ index new create]
+  allow_unauthenticated_access only: %i[ index new create multiple_new multiple_create ]
   before_action :set_tournament
 
   def index
@@ -90,7 +90,10 @@ class ParticipantsController < ApplicationController
   end
 
   def multiple_create
-    # raise :TODO
+    part_params = participants_params
+    reg_params = registration_params.merge!(tournament: @tournament)
+    raise "Can't handle anything except exactly one participant for now" unless part_params.length == 1
+    params["participant"] = params["participants"].first
     create
   end
 
@@ -161,6 +164,14 @@ class ParticipantsController < ApplicationController
       p["target_face"] = TargetFace.find (p["target_face"])
       p["tournament_class"] = TournamentClass.find p["tournament_class"]
       p
+    end
+
+    def participants_params
+      ps = params.expect(participants: [[ :first_name, :last_name, :dob, :tournament_class, :target_face ]]).map(&:to_hash)
+      ps.map do |p|
+        p["target_face"] = TargetFace.find (p["target_face"])
+        p["tournament_class"] = TournamentClass.find p["tournament_class"]
+      end
     end
 
     def registration_params
