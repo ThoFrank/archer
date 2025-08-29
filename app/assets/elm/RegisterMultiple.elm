@@ -191,7 +191,27 @@ update msg mdl =
                         }
 
                     RemoveParticipant i ->
-                        { model | participants = List.Extra.removeAt i model.participants }
+                        let
+                            m1 =
+                                { model | participants = List.Extra.removeAt i model.participants }
+
+                            m2 =
+                                if List.isEmpty m1.participants then
+                                    { m1
+                                        | participants =
+                                            [ { first_name = ""
+                                              , last_name = ""
+                                              , dob = Dob.Invalid ""
+                                              , selected_class = Nothing
+                                              , selected_target_face = Nothing
+                                              }
+                                            ]
+                                    }
+
+                                else
+                                    m1
+                        in
+                        m2
                 )
             , Cmd.none
             )
