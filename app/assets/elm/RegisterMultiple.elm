@@ -12,6 +12,7 @@ import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
 import Json.Encode as JE
 import List exposing (filter, map)
+import List.Extra
 import Maybe exposing (andThen)
 import Participant exposing (Participant, ParticipantMsgType, available_classes, update_participant)
 import TargetFace exposing (TargetFace)
@@ -142,6 +143,7 @@ type Msg
     | UpdateEmail String
     | UpdateComment String
     | AddParticipant
+    | RemoveParticipant Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -187,6 +189,9 @@ update msg mdl =
                                          }
                                        ]
                         }
+
+                    RemoveParticipant i ->
+                        { model | participants = List.Extra.removeAt i model.participants }
                 )
             , Cmd.none
             )
@@ -244,10 +249,10 @@ viewParticipant i participant model =
                     invalid_input_class
     in
     [ hr [] []
-    , div [ class "space-y-1" ]
+    , div [ class "space-y-1 flex w-full max-w-md" ]
         [ h3
             [ class
-                ("text-2xl font-bold mb-4 "
+                ("flex-none text-2xl font-bold mb-4 "
                     ++ (if Participant.submittable participant then
                             "text-gray-800"
 
@@ -257,6 +262,8 @@ viewParticipant i participant model =
                 )
             ]
             [ text ("#" ++ String.fromInt (i + 1)) ]
+        , div [ class "flex-1" ] []
+        , button [ class "flex-none text-2xl font-bold mb-4 text-gray-800", onClick (RemoveParticipant i) ] [ text "🗑️" ]
         ]
     , div [ class "space-y-1" ]
         [ label [ for ("first_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Given name:") ]
