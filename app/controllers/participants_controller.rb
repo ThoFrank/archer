@@ -92,9 +92,27 @@ class ParticipantsController < ApplicationController
   def multiple_create
     part_params = participants_params
     reg_params = registration_params.merge!(tournament: @tournament)
-    raise "Can't handle anything except exactly one participant for now" unless part_params.length == 1
-    params["participant"] = params["participants"].first
-    create
+    Participant.transaction do
+      begin
+        registration = Registration.create(reg_params)
+        part_params.each do |p|
+          puts "Part params: #{p}"
+          %w[ first_name last_name ].each do |field|
+            p[field].strip!
+          end
+          participant = Participant.new(p)
+          participant.registration = registration
+          participant.Tournament = @tournament
+          participant.save!
+        end
+      rescue => e
+        logger.error "Could not create participants: #{e}"
+        render :new, status: :unprocessable_content
+        return
+      end
+    end
+    # ParticipantMailer.registration_confirmation(@participant).deliver
+    redirect_to tournament_participants_path(@tournament)
   end
 
   def edit
@@ -167,10 +185,11 @@ class ParticipantsController < ApplicationController
     end
 
     def participants_params
-      ps = params.expect(participants: [[ :first_name, :last_name, :dob, :tournament_class, :target_face ]]).map(&:to_hash)
+      ps = params.expect(participants: [ [ :first_name, :last_name, :dob, :tournament_class, :target_face ] ]).map(&:to_hash)
       ps.map do |p|
         p["target_face"] = TargetFace.find (p["target_face"])
         p["tournament_class"] = TournamentClass.find p["tournament_class"]
+        p
       end
     end
 

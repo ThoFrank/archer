@@ -5,7 +5,7 @@ import Class exposing (Class)
 import Date
 import Dob
 import Email
-import Html exposing (Html, div, form, input, label, option, select, text, hr, h3, button )
+import Html exposing (Html, button, div, form, h3, hr, input, label, option, select, text)
 import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
@@ -103,12 +103,13 @@ init f =
 
                 participants : List Participant
                 participants =
-                    [{ first_name = first_name
-                    , last_name = last_name
-                    , dob = dob
-                    , selected_class = selected_class
-                    , selected_target_face = selected_target_face
-                    }]
+                    [ { first_name = first_name
+                      , last_name = last_name
+                      , dob = dob
+                      , selected_class = selected_class
+                      , selected_target_face = selected_target_face
+                      }
+                    ]
             in
             ValidatedModel
                 { flags = f
@@ -154,7 +155,17 @@ update msg mdl =
                 (case msg of
                     ParticipantMsg i pmsg ->
                         let
-                            participants = model.participants |> List.map (\p -> update_participant pmsg p model.classes)
+                            participants =
+                                model.participants
+                                    |> List.indexedMap
+                                        (\j ->
+                                            \p ->
+                                                if j == i then
+                                                    update_participant pmsg p model.classes
+
+                                                else
+                                                    p
+                                        )
                         in
                         { model | participants = participants }
 
@@ -165,14 +176,16 @@ update msg mdl =
                         { model | comment = c }
 
                     AddParticipant ->
-                        { model | participants = model.participants ++ 
-                            [{ first_name = ""
-                            , last_name = ""
-                            , dob = Dob.Invalid ""
-                            , selected_class = Nothing
-                            , selected_target_face = Nothing
-                            }]
-                            
+                        { model
+                            | participants =
+                                model.participants
+                                    ++ [ { first_name = ""
+                                         , last_name = ""
+                                         , dob = Dob.Invalid ""
+                                         , selected_class = Nothing
+                                         , selected_target_face = Nothing
+                                         }
+                                       ]
                         }
                 )
             , Cmd.none
@@ -187,21 +200,18 @@ submittable model =
         -- && (case model.participant.dob of
         --         Dob.Valid _ ->
         --             True
-
         --         Dob.Invalid _ ->
         --             False
         --    )
         -- && (case model.participant.selected_class of
         --         Just _ ->
         --             True
-
         --         Nothing ->
         --             False
         --    )
         -- && (case model.participant.selected_target_face of
         --         Just _ ->
         --             True
-
         --         Nothing ->
         --             False
         --    )
@@ -227,6 +237,7 @@ viewAvailableClasses classes participant =
                     [ text cls.name ]
             )
 
+
 viewParticipant : Int -> Participant -> ValidModel -> List (Html Msg)
 viewParticipant i participant model =
     let
@@ -243,6 +254,7 @@ viewParticipant i participant model =
 
             else
                 valid_input_class
+
         dob_class =
             case participant.dob of
                 Dob.Valid _ ->
@@ -252,17 +264,17 @@ viewParticipant i participant model =
                     invalid_input_class
     in
     [ hr [] []
-    , div [ class "space-y-1"] [ h3 [ class "text-2xl font-bold text-gray-800 mb-4"] [text ("#" ++ String.fromInt (i+1))]]
+    , div [ class "space-y-1" ] [ h3 [ class "text-2xl font-bold text-gray-800 mb-4" ] [ text ("#" ++ String.fromInt (i + 1)) ] ]
     , div [ class "space-y-1" ]
-        [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
-        , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participants[][first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg i), value participant.first_name ] []
+        [ label [ for ("first_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Given name:") ]
+        , input [ id ("first_name_" ++ String.fromInt i), property "autocomplete" (JE.string "given-name"), name "participants[][first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg i), value participant.first_name ] []
         ]
     , div [ class "space-y-1" ]
-        [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
-        , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participants[][last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg i), value participant.last_name ] []
+        [ label [ for ("last_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Last name:") ]
+        , input [ id ("last_name_" ++ String.fromInt i), property "autocomplete" (JE.string "family-name"), name "participants[][last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg i), value participant.last_name ] []
         ]
     , div [ class "space-y-1" ]
-        [ label [ for "dob", class input_label_class ] [ text (t model.translations "Date of birth:") ]
+        [ label [ for ("dob_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Date of birth:") ]
         , input
             [ type_ "date"
             , property "autocomplete" (JE.string "bday")
@@ -275,7 +287,7 @@ viewParticipant i participant model =
                     Dob.Valid d ->
                         Date.toIsoString d
                 )
-            , id "dob"
+            , id ("dob_" ++ String.fromInt i)
             , name "participants[][dob]"
             , class
                 dob_class
@@ -283,7 +295,7 @@ viewParticipant i participant model =
             []
         ]
     , div [ class "space-y-1" ]
-        [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
+        [ label [ for ("class_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Class:") ]
         , select
             [ onInput (Participant.SelectClass >> ParticipantMsg i)
             , value
@@ -294,7 +306,7 @@ viewParticipant i participant model =
                     Just c ->
                         c.id
                 )
-            , id "class"
+            , id ("class_" ++ String.fromInt i)
             , name "participants[][tournament_class]"
             , class valid_input_class
             ]
@@ -310,11 +322,11 @@ viewParticipant i participant model =
         ]
     , div [ class "space-y-1" ]
         [ label
-            [ for "target_face", class input_label_class ]
+            [ for ("target_face_" ++ String.fromInt i), class input_label_class ]
             [ text (t model.translations "Target:") ]
         , select
             [ onInput (Participant.SelectTargetFace >> ParticipantMsg i)
-            , id "target_face"
+            , id ("target_face_" ++ String.fromInt i)
             , name "participants[][target_face]"
             , class valid_input_class
             ]
@@ -343,22 +355,27 @@ viewParticipant i participant model =
         ]
     ]
 
+
 input_label_class =
     "block text-sm font-medium text-gray-700"
+
 
 valid_input_class =
     "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
 
+
 invalid_input_class =
     "block w-full max-w-md border border-red-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-red-500 focus:border-red-500"
 
+
 onClick : msg -> Html.Attribute msg
 onClick msg =
-  Html.Events.preventDefaultOn "click" (JD.map alwaysPreventDefault (JD.succeed msg))
+    Html.Events.preventDefaultOn "click" (JD.map alwaysPreventDefault (JD.succeed msg))
+
 
 alwaysPreventDefault : msg -> ( msg, Bool )
 alwaysPreventDefault msg =
-  ( msg, True )
+    ( msg, True )
 
 
 view : Model -> Html Msg
@@ -369,7 +386,6 @@ view mdl =
 
         ValidatedModel model ->
             let
-
                 email_class =
                     case Email.fromString model.email of
                         Just _ ->
@@ -377,7 +393,6 @@ view mdl =
 
                         Nothing ->
                             invalid_input_class
-
             in
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 (List.concat
@@ -397,24 +412,25 @@ view mdl =
                             [ label [ for "comment", class input_label_class ] [ text (t model.translations "Comment:") ]
                             , input [ id "comment", name "registration[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
                             ]
-                     ]
-                     ++
-                      List.concat (model.participants |> List.indexedMap (\i -> \p -> viewParticipant i p model))
-                     ++
-                     [ div [ class "space-y-1" ]
-                            [ button [ onClick AddParticipant
-                                     , tabindex 0
-                                     , class "block w-full max-w-md rounded-lg px-3 py-2 text-white font-medium bg-blue-600 focus:ring-blue-500 focus:border-blue-500"
-                                     ] [text "+"]]
-                     , input
-                            [ type_ "submit"
-                            , tabindex 0
-                            , value (t model.translations "Submit")
-                            , disabled <| not <| submittable <| model
-                            , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                            ]
-                            []
                       ]
+                        ++ List.concat (model.participants |> List.indexedMap (\i -> \p -> viewParticipant i p model))
+                        ++ [ div [ class "space-y-1" ]
+                                [ button
+                                    [ onClick AddParticipant
+                                    , tabindex 0
+                                    , class "block w-full max-w-md rounded-lg px-3 py-2 text-white font-medium bg-blue-600 focus:ring-blue-500 focus:border-blue-500"
+                                    ]
+                                    [ text "+" ]
+                                ]
+                           , input
+                                [ type_ "submit"
+                                , tabindex 0
+                                , value (t model.translations "Submit")
+                                , disabled <| not <| submittable <| model
+                                , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                ]
+                                []
+                           ]
                     ]
                 )
 
