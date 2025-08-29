@@ -3,6 +3,9 @@ vielen Dank für deine Anmeldung für die Veranstaltung <%= @registration.tourna
 
 Folgende Anmeldung ist eingegangen:
 Kommentar: <%= @registration.comment %>
+<% if @registration.tournament.enforce_club %>
+Verein: <%= @registration.participants.first.club %>
+<% end %>
 
 <% @registration.participants.each_with_index do |participant,index| %>
   <% if @registration.participants.length > 1 %>
