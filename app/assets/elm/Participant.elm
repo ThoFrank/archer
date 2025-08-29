@@ -114,3 +114,30 @@ update_participant msg participant classes =
 
         UpdateLastName n ->
             { participant | last_name = n }
+
+
+submittable : Participant -> Bool
+submittable participant =
+    not (String.isEmpty participant.first_name)
+        && not (String.isEmpty participant.last_name)
+        && (case participant.dob of
+                Dob.Valid _ ->
+                    True
+
+                Dob.Invalid _ ->
+                    False
+           )
+        && (case participant.selected_class of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+           )
+        && (case participant.selected_target_face of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
+           )

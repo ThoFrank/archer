@@ -194,27 +194,7 @@ update msg mdl =
 
 submittable : ValidModel -> Bool
 submittable model =
-    -- not (String.isEmpty model.participant.first_name)
-    True
-        -- && not (String.isEmpty model.participant.last_name)
-        -- && (case model.participant.dob of
-        --         Dob.Valid _ ->
-        --             True
-        --         Dob.Invalid _ ->
-        --             False
-        --    )
-        -- && (case model.participant.selected_class of
-        --         Just _ ->
-        --             True
-        --         Nothing ->
-        --             False
-        --    )
-        -- && (case model.participant.selected_target_face of
-        --         Just _ ->
-        --             True
-        --         Nothing ->
-        --             False
-        --    )
+    List.all Participant.submittable model.participants
         && (case Email.fromString model.email of
                 Just _ ->
                     True
@@ -264,7 +244,20 @@ viewParticipant i participant model =
                     invalid_input_class
     in
     [ hr [] []
-    , div [ class "space-y-1" ] [ h3 [ class "text-2xl font-bold text-gray-800 mb-4" ] [ text ("#" ++ String.fromInt (i + 1)) ] ]
+    , div [ class "space-y-1" ]
+        [ h3
+            [ class
+                ("text-2xl font-bold mb-4 "
+                    ++ (if Participant.submittable participant then
+                            "text-gray-800"
+
+                        else
+                            "text-red-800"
+                       )
+                )
+            ]
+            [ text ("#" ++ String.fromInt (i + 1)) ]
+        ]
     , div [ class "space-y-1" ]
         [ label [ for ("first_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Given name:") ]
         , input [ id ("first_name_" ++ String.fromInt i), property "autocomplete" (JE.string "given-name"), name "participants[][first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg i), value participant.first_name ] []
@@ -356,14 +349,17 @@ viewParticipant i participant model =
     ]
 
 
+input_label_class : String
 input_label_class =
     "block text-sm font-medium text-gray-700"
 
 
+valid_input_class : String
 valid_input_class =
     "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
 
 
+invalid_input_class : String
 invalid_input_class =
     "block w-full max-w-md border border-red-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-red-500 focus:border-red-500"
 

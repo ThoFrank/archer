@@ -11,7 +11,6 @@ testClass : Class.Class
 testClass =
     { id = "tC"
     , name = "testClass"
-    , restricted_to_gender = Nothing
     , start_dob = Date.fromCalendarDate 2020 Jan 1
     , end_dob = Date.fromCalendarDate 2020 Dec 31
     , possible_target_faces = []

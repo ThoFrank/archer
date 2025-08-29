@@ -166,29 +166,7 @@ update msg mdl =
 
 submittable : ValidModel -> Bool
 submittable model =
-    not (String.isEmpty model.participant.first_name)
-        && not (String.isEmpty model.participant.last_name)
-        && (case model.participant.dob of
-                Dob.Valid _ ->
-                    True
-
-                Dob.Invalid _ ->
-                    False
-           )
-        && (case model.participant.selected_class of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-           )
-        && (case model.participant.selected_target_face of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-           )
+    Participant.submittable model.participant
         && (case Email.fromString model.email of
                 Just _ ->
                     True
