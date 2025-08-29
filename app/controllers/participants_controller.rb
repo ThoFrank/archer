@@ -1,5 +1,5 @@
 class ParticipantsController < ApplicationController
-  allow_unauthenticated_access only: %i[ index new create]
+  allow_unauthenticated_access only: %i[ index new create multiple_new multiple_create ]
   before_action :set_tournament
 
   def index
@@ -42,31 +42,76 @@ class ParticipantsController < ApplicationController
     }
   end
 
+  def multiple_new
+    @tournament = Tournament.find(params[:tournament_id])
+
+    @flags = {
+      form_action_url: tournament_multiple_create_participants_path(@tournament),
+      csrf_token: form_authenticity_token,
+      translations: I18n.t("participants.new"),
+      classes: @tournament.tournament_classes.map do |cls|
+        {
+          id: cls.id.to_s,
+          name: cls.name,
+          start_dob: "#{cls.from_date}",
+          end_dob: "#{cls.to_date}",
+          possible_target_faces: cls.target_faces
+        }
+      end,
+      existing_archer: nil
+    }
+  end
+
   def create
-    params = participant_params.to_hash
-    params["target_face"] = TargetFace.find (params["target_face"])
-    params["tournament_class"] = TournamentClass.find params["tournament_class"]
+    part_params = participant_params
+    reg_params = registration_params.merge!(tournament: @tournament)
 
     %w[ first_name last_name ].each do |p|
-      params[p].strip!
+      part_params[p].strip!
     end
-    email = params.delete "email"
-    comment = params.delete "comment"
 
-    @participant = Participant.new(params)
+    @participant = Participant.new(part_params)
     @participant.Tournament = @tournament
 
     @participant.transaction do
       begin
-        registration = Registration.create(email: email, tournament: @tournament, comment: comment)
+        registration = Registration.create(reg_params)
         @participant.registration = registration
         @participant.save!
-      rescue
-        render :new, status: :unprocessable_entity
+      rescue => e
+        logger.error "Could not create participant: #{e}"
+        render :new, status: :unprocessable_content
+        return
       end
     end
 
-    ParticipantMailer.registration_confirmation(@participant).deliver
+    ParticipantMailer.registration_confirmation(@participant.registration).deliver
+    redirect_to tournament_participants_path(@tournament)
+  end
+
+  def multiple_create
+    part_params = participants_params
+    reg_params = registration_params.merge!(tournament: @tournament)
+    Participant.transaction do
+      begin
+        @registration = Registration.create(reg_params)
+        part_params.each do |p|
+          puts "Part params: #{p}"
+          %w[ first_name last_name ].each do |field|
+            p[field].strip!
+          end
+          participant = Participant.new(p)
+          participant.registration = @registration
+          participant.Tournament = @tournament
+          participant.save!
+        end
+      rescue => e
+        logger.error "Could not create participants: #{e}"
+        render :new, status: :unprocessable_content
+        return
+      end
+    end
+    ParticipantMailer.registration_confirmation(@registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -99,32 +144,37 @@ class ParticipantsController < ApplicationController
 
   def update
     @participant = Participant.find(params.expect(:id))
-    params = participant_params.to_hash
-    params["target_face"] = TargetFace.find (params["target_face"])
-    params["tournament_class"] = TournamentClass.find params["tournament_class"]
+
+    part_params = participant_params
+    reg_params = registration_params
 
     %w[ first_name last_name ].each do |p|
-      params[p].strip!
+      part_params[p].strip!
     end
-    email = params.delete "email"
 
     logger.debug "Updating participant with #{params}"
     @participant.transaction do
       begin
-        @participant.registration.update!(email: email, comment: params.delete("comment"))
-        @participant.update!(params)
-      rescue
-        render :new, status: :unprocessable_entity
+        @participant.registration.update!(reg_params)
+        @participant.update!(part_params)
+      rescue => e
+        logger.error "Could not update participant: #{e}"
+        render :new, status: :unprocessable_content
+        return
       end
     end
 
-    ParticipantMailer.registration_changed(@participant).deliver
+    ParticipantMailer.registration_changed(@participant.registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
   def destroy
     @participant = Participant.find(params.expect(:id))
-    ParticipantMailer.registration_cancelation(@participant).deliver
+    if @participant.registration.participants.length > 1
+      ParticipantMailer.registration_changed(@participant.registration).deliver
+    else
+      ParticipantMailer.registration_cancelation(@participant.registration).deliver
+    end
     @participant.destroy!
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."
@@ -132,6 +182,22 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      params.expect(participant: [ :first_name, :last_name, :email, :dob, :tournament_class, :target_face, :comment ])
+      p = params.expect(participant: [ :first_name, :last_name, :dob, :tournament_class, :target_face ]).to_hash
+      p["target_face"] = TargetFace.find (p["target_face"])
+      p["tournament_class"] = TournamentClass.find p["tournament_class"]
+      p
+    end
+
+    def participants_params
+      ps = params.expect(participants: [ [ :first_name, :last_name, :dob, :tournament_class, :target_face ] ]).map(&:to_hash)
+      ps.map do |p|
+        p["target_face"] = TargetFace.find (p["target_face"])
+        p["tournament_class"] = TournamentClass.find p["tournament_class"]
+        p
+      end
+    end
+
+    def registration_params
+      params.expect(registration: [ :email, :comment ]).to_hash
     end
 end

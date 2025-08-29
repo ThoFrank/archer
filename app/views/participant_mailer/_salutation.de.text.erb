@@ -1,1 +1,5 @@
-Hallo <%= @participant.first_name %>,
+<% if @registration.participants.length == 1 %>
+Hallo <%= @registration.participants.first.first_name %>,
+<% else %>
+Hallo!
+<% end %>
