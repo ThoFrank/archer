@@ -85,7 +85,7 @@ class ParticipantsController < ApplicationController
       end
     end
 
-    ParticipantMailer.registration_confirmation(@participant).deliver
+    ParticipantMailer.registration_confirmation(@participant.registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -94,14 +94,14 @@ class ParticipantsController < ApplicationController
     reg_params = registration_params.merge!(tournament: @tournament)
     Participant.transaction do
       begin
-        registration = Registration.create(reg_params)
+        @registration = Registration.create(reg_params)
         part_params.each do |p|
           puts "Part params: #{p}"
           %w[ first_name last_name ].each do |field|
             p[field].strip!
           end
           participant = Participant.new(p)
-          participant.registration = registration
+          participant.registration = @registration
           participant.Tournament = @tournament
           participant.save!
         end
@@ -111,7 +111,7 @@ class ParticipantsController < ApplicationController
         return
       end
     end
-    # ParticipantMailer.registration_confirmation(@participant).deliver
+    ParticipantMailer.registration_confirmation(@registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -164,13 +164,17 @@ class ParticipantsController < ApplicationController
       end
     end
 
-    ParticipantMailer.registration_changed(@participant).deliver
+    ParticipantMailer.registration_changed(@participant.registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
   def destroy
     @participant = Participant.find(params.expect(:id))
-    ParticipantMailer.registration_cancelation(@participant).deliver
+    if @participant.registration.participants.length > 1
+      ParticipantMailer.registration_changed(@participant.registration).deliver
+    else
+      ParticipantMailer.registration_cancelation(@participant.registration).deliver
+    end
     @participant.destroy!
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."

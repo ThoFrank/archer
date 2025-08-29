@@ -1,10 +1,16 @@
 <%= render "salutation" %>
-deine Anmeldung für die Veranstalung <%= @participant.Tournament.name %> am <%= l @participant.Tournament.date_start.to_date %> wurde geändert:
+deine Anmeldung für die Veranstalung <%= @registration.tournament.name %> am <%= l @registration.tournament.date_start.to_date %> wurde geändert:
 
-Name: <%= @participant.first_name %> <%= @participant.last_name %>
-Geburtsdatum: <%= @participant.dob %>
-Klasse: <%= @participant.tournament_class.name %>
-Scheibe: <%= @participant.target_face.name %>
-Kommentar: <%= @participant.registration.comment %>
+Kommentar: <%= @registration.comment %>
 
+<% @registration.participants.each_with_index do |participant,index| %>
+  <% if @registration.participants.length > 1 %>
+# <%= index %>
+  <% end %>
+Name: <%= participant.first_name %> <%= participant.last_name %>
+Geburtsdatum: <%= participant.dob %>
+Klasse: <%= participant.tournament_class.name %>
+Scheibe: <%= participant.target_face.name %>
+
+<% end %>
 <%= render "greeting" %>

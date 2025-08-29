@@ -1,11 +1,17 @@
 <%= render "salutation" %>
-Thanks for your registration for <%= @participant.Tournament.name %> on <%= l @participant.Tournament.date_start.to_date %>.
+Thanks for your registration for <%= @registration.tournament.name %> on <%= l @registration.tournament.date_start.to_date %>.
 
 Your registration:
-Name: <%= @participant.first_name %> <%= @participant.last_name %>
-Date of birth: <%= @participant.dob %>
-Classe: <%= @participant.tournament_class.name %>
-Target Face: <%= @participant.target_face.name %>
-Comment: <%= @participant.registration.comment %>
+Comment: <%= @registration.comment %>
 
+<% @registration.participants.each_with_index do |participant,index| %>
+  <% if @registration.participants.length > 1 %>
+# <%= index %>
+  <% end %>
+Name: <%= participant.first_name %> <%= participant.last_name %>
+Date of birth: <%= participant.dob %>
+Classe: <%= participant.tournament_class.name %>
+Target Face: <%= participant.target_face.name %>
+
+<% end %>
 <%= render "greeting" %>
