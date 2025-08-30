@@ -5,8 +5,8 @@ import Class exposing (Class)
 import Date
 import Dob
 import Email
-import Html exposing (Html, div, form, input, label, option, select, text)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, tabindex, type_, value)
+import Html exposing (Html, datalist, div, form, input, label, option, select, text)
+import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
@@ -53,6 +53,9 @@ init f =
 
         last_name =
             Maybe.withDefault "" (Maybe.map (\a -> a.last_name) f.existing_archer)
+
+        club =
+            Maybe.withDefault "" (Maybe.map (\a -> a.club) f.existing_archer)
 
         email =
             Maybe.withDefault "" (Maybe.map (\a -> a.email) f.existing_archer)
@@ -108,6 +111,7 @@ init f =
                     , dob = dob
                     , selected_class = selected_class
                     , selected_target_face = selected_target_face
+                    , club = club
                     }
             in
             ValidatedModel
@@ -222,6 +226,13 @@ view mdl =
                     else
                         valid_input_class
 
+                club_class =
+                    if String.isEmpty model.participant.club then
+                        invalid_input_class
+
+                    else
+                        valid_input_class
+
                 email_class =
                     case Email.fromString model.email of
                         Just _ ->
@@ -256,7 +267,19 @@ view mdl =
                             [ label [ for "last_name", class input_label_class ] [ text (t model.translations "Last name:") ]
                             , input [ id "last_name", property "autocomplete" (JE.string "family-name"), name "participant[last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg), value model.participant.last_name ] []
                             ]
-                      , div [ class "space-y-1" ]
+                      ]
+                    , if model.flags.require_club then
+                        [ div [ class "space-y-1" ]
+                            [ label [ for "club", class input_label_class ] [ text (t model.translations "Club:") ]
+                            , input [ id "club", name "participant[club]", class club_class, onInput (Participant.UpdateClub >> ParticipantMsg), value model.participant.club, list "club_suggestions" ] []
+                            ]
+                        , datalist [ id "club_suggestions" ]
+                            (model.flags.known_clubs |> List.map (\c -> option [ value c ] []))
+                        ]
+
+                      else
+                        []
+                    , [ div [ class "space-y-1" ]
                             [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
                             , input [ id "email", type_ "email", name "registration[email]", class email_class, onInput UpdateEmail, value model.email ] []
                             ]
@@ -370,10 +393,13 @@ type alias Flags =
         Maybe
             { first_name : String
             , last_name : String
+            , club : String
             , email : String
             , dob : String
             , selected_class : String
             , selected_target_face : String
             , comment : String
             }
+    , require_club : Bool
+    , known_clubs : List String
     }

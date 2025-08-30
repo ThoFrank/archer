@@ -1,14 +1,16 @@
 <% require "csv" %>
 <%= CSV.generate(:col_sep => ";") do |csv|
-  csv << ["First Name", "Last Name", "Email", "Dob", "Class", "Target Face"]
+  csv << ["First Name", "Last Name", "Club", "Email", "Dob", "Class", "Target Face", "Comment"]
   @participants.each do |p|
     csv << [
       p.first_name,
       p.last_name,
+      p.club,
       p.registration.email,
       p.dob,
       p.tournament_class.andand.name,
       p.target_face.andand.name,
-    ]
+      p.registration.comment,
+    ].map { |e| e.blank? ? nil : e }
   end
 end %>

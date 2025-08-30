@@ -5,8 +5,8 @@ import Class exposing (Class)
 import Date
 import Dob
 import Email
-import Html exposing (Html, button, div, form, h3, hr, input, label, option, select, text)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, method, name, property, selected, tabindex, type_, value)
+import Html exposing (Html, button, datalist, div, form, h3, hr, input, label, option, select, text)
+import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
@@ -29,6 +29,7 @@ type alias ValidModel =
     , translations : I18Next.Translations
     , classes : List Class
     , email : String
+    , club : String
     , comment : String
     , participants : List Participant
     }
@@ -106,6 +107,7 @@ init f =
                 participants =
                     [ { first_name = first_name
                       , last_name = last_name
+                      , club = ""
                       , dob = dob
                       , selected_class = selected_class
                       , selected_target_face = selected_target_face
@@ -119,6 +121,7 @@ init f =
                 , participants = participants
                 , email = email
                 , comment = comment
+                , club = ""
                 }
 
         ( Result.Ok _, Result.Err e ) ->
@@ -141,6 +144,7 @@ subscriptions _ =
 type Msg
     = ParticipantMsg Int ParticipantMsgType
     | UpdateEmail String
+    | UpdateClub String
     | UpdateComment String
     | AddParticipant
     | RemoveParticipant Int
@@ -174,6 +178,12 @@ update msg mdl =
                     UpdateEmail e ->
                         { model | email = e }
 
+                    UpdateClub c ->
+                        { model
+                            | participants = List.map (\p -> { p | club = c }) model.participants
+                            , club = c
+                        }
+
                     UpdateComment c ->
                         { model | comment = c }
 
@@ -183,6 +193,7 @@ update msg mdl =
                                 model.participants
                                     ++ [ { first_name = ""
                                          , last_name = ""
+                                         , club = model.club
                                          , dob = Dob.Invalid ""
                                          , selected_class = Nothing
                                          , selected_target_face = Nothing
@@ -201,6 +212,7 @@ update msg mdl =
                                         | participants =
                                             [ { first_name = ""
                                               , last_name = ""
+                                              , club = model.club
                                               , dob = Dob.Invalid ""
                                               , selected_class = Nothing
                                               , selected_target_face = Nothing
@@ -292,6 +304,9 @@ viewParticipant i participant model =
     , div [ class "space-y-1" ]
         [ label [ for ("last_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Last name:") ]
         , input [ id ("last_name_" ++ String.fromInt i), property "autocomplete" (JE.string "family-name"), name "participants[][last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg i), value participant.last_name ] []
+        ]
+    , div [ class "space-y-1" ]
+        [ input [ id ("club_" ++ String.fromInt i), type_ "hidden", autocomplete False, name "participants[][club]", value model.club ] []
         ]
     , div [ class "space-y-1" ]
         [ label [ for ("dob_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Date of birth:") ]
@@ -416,6 +431,13 @@ view mdl =
 
                         Nothing ->
                             invalid_input_class
+
+                club_class =
+                    if String.isEmpty model.club then
+                        invalid_input_class
+
+                    else
+                        valid_input_class
             in
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 (List.concat
@@ -431,29 +453,41 @@ view mdl =
                             [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
                             , input [ id "email", type_ "email", name "registration[email]", class email_class, onInput UpdateEmail, value model.email ] []
                             ]
-                      , div [ class "space-y-1" ]
+                      ]
+                    , if model.flags.require_club then
+                        [ div [ class "space-y-1" ]
+                            [ label [ for "club", class input_label_class ] [ text (t model.translations "Club:") ]
+                            , input [ id "club", name "participant[club]", class club_class, onInput UpdateClub, value model.club, list "club_suggestions" ] []
+                            ]
+                        , datalist [ id "club_suggestions" ]
+                            (model.flags.known_clubs |> List.map (\c -> option [ value c ] []))
+                        ]
+
+                      else
+                        []
+                    , [ div [ class "space-y-1" ]
                             [ label [ for "comment", class input_label_class ] [ text (t model.translations "Comment:") ]
                             , input [ id "comment", name "registration[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
                             ]
                       ]
-                        ++ List.concat (model.participants |> List.indexedMap (\i -> \p -> viewParticipant i p model))
-                        ++ [ div [ class "space-y-1" ]
-                                [ button
-                                    [ onClick AddParticipant
-                                    , tabindex 0
-                                    , class "block w-full max-w-md rounded-lg px-3 py-2 text-white font-medium bg-blue-600 focus:ring-blue-500 focus:border-blue-500"
-                                    ]
-                                    [ text "+" ]
-                                ]
-                           , input
-                                [ type_ "submit"
+                    , List.concat (model.participants |> List.indexedMap (\i -> \p -> viewParticipant i p model))
+                    , [ div [ class "space-y-1" ]
+                            [ button
+                                [ onClick AddParticipant
                                 , tabindex 0
-                                , value (t model.translations "Submit")
-                                , disabled <| not <| submittable <| model
-                                , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                , class "block w-full max-w-md rounded-lg px-3 py-2 text-white font-medium bg-blue-600 focus:ring-blue-500 focus:border-blue-500"
                                 ]
-                                []
-                           ]
+                                [ text "+" ]
+                            ]
+                      , input
+                            [ type_ "submit"
+                            , tabindex 0
+                            , value (t model.translations "Submit")
+                            , disabled <| not <| submittable <| model
+                            , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            ]
+                            []
+                      ]
                     ]
                 )
 
@@ -471,10 +505,13 @@ type alias Flags =
         Maybe
             { first_name : String
             , last_name : String
+            , club : String
             , email : String
             , dob : String
             , selected_class : String
             , selected_target_face : String
             , comment : String
             }
+    , require_club : Bool
+    , known_clubs : List String
     }

@@ -2,6 +2,9 @@
 Your registration for <%= @registration.tournament.name %> on <%= l @registration.tournament.date_start.to_date %> changed:
 
 Comment: <%= @registration.comment %>
+<% if @registration.tournament.enforce_club %>
+Club: <%= @registration.participants.first.club %>
+<% end %>
 
 <% @registration.participants.each_with_index do |participant,index| %>
   <% if @registration.participants.length > 1 %>
