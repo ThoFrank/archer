@@ -9,6 +9,9 @@
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Name" %></th>
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Class" %></th>
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Target Face" %></th>
+        <% if @tournament.enforce_club %>
+          <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Club" %></th>
+        <% end %>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200">
@@ -33,6 +36,11 @@
           <td class="px-6 py-4 text-gray-600">
             <%= p.target_face.andand.name %>
           </td>
+          <% if @tournament.enforce_club %>
+            <td class="px-6 py-4 text-gray-600">
+              <%= p.club %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

@@ -36,6 +36,7 @@ class Participant < ApplicationRecord
   validates :target_face, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
+  validates :club, presence: true, if: Proc.new { |record| record.Tournament.enforce_club }
   validates :dob, presence: true
   validates_with ParticipantValidator
 end

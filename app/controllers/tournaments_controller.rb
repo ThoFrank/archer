@@ -52,7 +52,8 @@ class TournamentsController < ApplicationController
         :date_start,
         :date_end,
         :season_start_date,
-        :status
+        :status,
+        :enforce_club
       ])
     end
 end

@@ -11,6 +11,7 @@ import TargetFace exposing (TargetFace)
 type alias Participant =
     { first_name : String
     , last_name : String
+    , club : String
     , dob : Dob
     , selected_class : Maybe Class
     , selected_target_face : Maybe TargetFace
@@ -23,6 +24,7 @@ type ParticipantMsgType
     | UpdateDob String
     | UpdateFirstName String
     | UpdateLastName String
+    | UpdateClub String
 
 
 available_classes : List Class -> Participant -> List Class.Class
@@ -115,11 +117,15 @@ update_participant msg participant classes =
         UpdateLastName n ->
             { participant | last_name = n }
 
+        UpdateClub c ->
+            { participant | club = c }
+
 
 submittable : Participant -> Bool
 submittable participant =
     not (String.isEmpty participant.first_name)
         && not (String.isEmpty participant.last_name)
+        && not (String.isEmpty participant.club)
         && (case participant.dob of
                 Dob.Valid _ ->
                     True

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_194807) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_29_123345) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_194807) do
     t.date "season_start_date"
     t.string "status"
     t.string "email"
+    t.boolean "enforce_club"
   end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -86,6 +87,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_194807) do
     t.date "dob"
     t.integer "tournament_class_id"
     t.integer "target_face_id"
+    t.string "club"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
     t.index ["target_face_id"], name: "index_participants_on_target_face_id"
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
