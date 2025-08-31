@@ -33,6 +33,7 @@ de:
       Name: Name
       Class: Klasse
       Target Face: Scheibe
+      Club: Verein
     new:
       heading: "Anmeldung für %{tournament}"
       "Given name:": "Vorname:"
@@ -42,6 +43,7 @@ de:
       "Class:": "Klasse:"
       "Target:": "Auflage:"
       "Comment:": "Kommentar:"
+      "Club:": "Verein:"
       Submit: Anmelden
     edit:
       heading: "Aktualisiere Anmeldedaten für %{tournament}"
