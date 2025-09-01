@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_29_123345) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_31_100658) do
   create_table "Tournaments", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -78,6 +78,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_123345) do
     t.index ["article_id"], name: "index_comments_on_article_id"
   end
 
+  create_table "groups", force: :cascade do |t|
+    t.string "name"
+    t.integer "tournament_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tournament_id"], name: "index_groups_on_tournament_id"
+  end
+
   create_table "participants", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -88,7 +96,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_123345) do
     t.integer "tournament_class_id"
     t.integer "target_face_id"
     t.string "club"
+    t.integer "group_id"
     t.index ["Tournament_id"], name: "index_participants_on_Tournament_id"
+    t.index ["group_id"], name: "index_participants_on_group_id"
     t.index ["target_face_id"], name: "index_participants_on_target_face_id"
     t.index ["tournament_class_id"], name: "index_participants_on_tournament_class_id"
   end
@@ -156,6 +166,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_123345) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "articles"
+  add_foreign_key "groups", "tournaments"
+  add_foreign_key "participants", "groups"
   add_foreign_key "participants", "target_faces"
   add_foreign_key "participants", "tournament_classes"
   add_foreign_key "registration_participants", "participants"

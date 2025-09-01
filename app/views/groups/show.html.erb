@@ -1,0 +1,19 @@
+<% content_for :title, @group.name %>
+
+<div class="w-full p-6">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl"><%= @group.name %></h1>
+
+  <% if authenticated? %>
+    <%= link_to "Edit this tournament class", edit_tournament_group_path(@tournament, @group), class: "mt-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% end %>
+  <%= link_to "Back to tournament classes", tournament_groups_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+  <% if authenticated? %>
+    <div class="inline-block ml-2">
+      <%= button_to "Destroy this tournament class", tournament_group_path, method: :delete, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
+    </div>
+  <% end %>
+</div>

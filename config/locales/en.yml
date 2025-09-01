@@ -46,6 +46,7 @@ en:
       Place: Place
       Go to registration: Go to registration
       Current number of participants: Current number of participants
+      Manage Groups: Manage Groups
   tournament_classes:
     index:
       Tournament Classes: Tournament Classes
@@ -83,6 +84,10 @@ en:
       "Target:": "Target:"
       "Comment:": "Comment:"
       Submit: Submit
+  groups:
+    index:
+      Groups: Groups
+      Name: Name
   mail:
     registation_confirmation:
       subject: Registration Confirmation %{tournament}
