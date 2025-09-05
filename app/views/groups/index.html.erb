@@ -1,0 +1,32 @@
+<% content_for :title, "Classes" %>
+
+<div class="w-full p-6">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl"><%= t ".Groups" %></h1>
+    <% if authenticated? %>
+      <%= link_to (t ".New group"), new_tournament_group_path(@tournament), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+    <% end %>
+  </div>
+
+  <table class="mt-6 min-w-full table-auto border-collapse border border-gray-200 shadow-md rounded-lg overflow-x-auto">
+    <thead>
+      <tr class="bg-gray-100 text-gray-700">
+        <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Name" %></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      <% @groups.each do |g| %>
+        <tr class="hover:bg-gray-50" data-url="<%= tournament_group_path(@tournament, g) %>">
+          <td class="px-6 py-4 text-gray-800">
+            <%= g.name %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>

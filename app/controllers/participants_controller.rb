@@ -40,7 +40,8 @@ class ParticipantsController < ApplicationController
       end,
       existing_archer: nil,
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact
+      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
     }
   end
 
@@ -62,7 +63,8 @@ class ParticipantsController < ApplicationController
       end,
       existing_archer: nil,
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact
+      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
     }
   end
 
@@ -142,10 +144,12 @@ class ParticipantsController < ApplicationController
         dob: @participant.dob || "",
         selected_class: @participant.tournament_class.andand.id.to_s || "",
         selected_target_face: @participant.target_face.andand.id.to_s  || "",
-        comment: @participant.registration.comment.to_s
+        comment: @participant.registration.comment.to_s,
+        group_id: @participant.group_id || -1
       },
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact
+      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
     }
   end
 
@@ -189,17 +193,19 @@ class ParticipantsController < ApplicationController
 
   private
     def participant_params
-      p = params.expect(participant: [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face ]).to_hash
+      p = params.expect(participant: [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face, :group ]).to_hash
       p["target_face"] = TargetFace.find (p["target_face"])
       p["tournament_class"] = TournamentClass.find p["tournament_class"]
+      p["group"] = Group.find p["group"]
       p
     end
 
     def participants_params
-      ps = params.expect(participants: [ [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face ] ]).map(&:to_hash)
+      ps = params.expect(participants: [ [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face, :group ] ]).map(&:to_hash)
       ps.map do |p|
         p["target_face"] = TargetFace.find (p["target_face"])
         p["tournament_class"] = TournamentClass.find p["tournament_class"]
+      p["group"] = Group.find p["group"]
         p
       end
     end

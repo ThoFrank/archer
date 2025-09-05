@@ -15,6 +15,7 @@ type alias Participant =
     , dob : Dob
     , selected_class : Maybe Class
     , selected_target_face : Maybe TargetFace
+    , group : Maybe Int
     }
 
 
@@ -25,6 +26,7 @@ type ParticipantMsgType
     | UpdateFirstName String
     | UpdateLastName String
     | UpdateClub String
+    | SelectGroup Int
 
 
 available_classes : List Class -> Participant -> List Class.Class
@@ -120,9 +122,19 @@ update_participant msg participant classes =
         UpdateClub c ->
             { participant | club = c }
 
+        SelectGroup g ->
+            { participant
+                | group =
+                    if g >= 0 then
+                        Just g
 
-submittable : Participant -> Bool
-submittable participant =
+                    else
+                        Nothing
+            }
+
+
+submittable : List Int -> Participant -> Bool
+submittable groups participant =
     not (String.isEmpty participant.first_name)
         && not (String.isEmpty participant.last_name)
         && not (String.isEmpty participant.club)
@@ -146,4 +158,17 @@ submittable participant =
 
                 Nothing ->
                     False
+           )
+        && (List.isEmpty groups
+                || (groups
+                        |> List.any
+                            (\g ->
+                                case participant.group of
+                                    Just gr ->
+                                        gr == g
+
+                                    Nothing ->
+                                        False
+                            )
+                   )
            )

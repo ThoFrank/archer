@@ -76,6 +76,18 @@ init f =
 
         comment =
             Maybe.withDefault "" (Maybe.map (\a -> a.comment) f.existing_archer)
+
+        selected_group_id =
+            f.existing_archer
+                |> Maybe.map (\a -> a.group_id)
+                |> Maybe.andThen
+                    (\g ->
+                        if List.any (\( i, _ ) -> i == g) f.available_groups then
+                            Just g
+
+                        else
+                            Nothing
+                    )
     in
     ( case ( decoded_translations, decoded_classed ) of
         ( Result.Ok translations, Result.Ok validClasses ) ->
@@ -112,6 +124,7 @@ init f =
                     , selected_class = selected_class
                     , selected_target_face = selected_target_face
                     , club = club
+                    , group = selected_group_id
                     }
             in
             ValidatedModel
@@ -170,7 +183,11 @@ update msg mdl =
 
 submittable : ValidModel -> Bool
 submittable model =
-    Participant.submittable model.participant
+    let
+        ( groups, _ ) =
+            List.unzip model.flags.available_groups
+    in
+    Participant.submittable groups model.participant
         && (case Email.fromString model.email of
                 Just _ ->
                     True
@@ -304,7 +321,48 @@ view mdl =
                                 ]
                                 []
                             ]
-                      , div [ class "space-y-1" ]
+                      ]
+                    , if List.isEmpty model.flags.available_groups then
+                        []
+
+                      else
+                        [ div [ class "space-y-1" ]
+                            [ label [ for "group", class input_label_class ] [ text (t model.translations "Group:") ]
+                            , select
+                                [ onInput ((String.toInt >> Maybe.withDefault -1) >> Participant.SelectGroup >> ParticipantMsg)
+                                , value
+                                    (case model.participant.group of
+                                        Nothing ->
+                                            "--"
+
+                                        Just g ->
+                                            String.fromInt g
+                                    )
+                                , id "group"
+                                , name "participant[group]"
+                                , class valid_input_class
+                                ]
+                                (option
+                                    [ name "Group"
+                                    , disabled False
+                                    , selected (model.participant.selected_class == Nothing)
+                                    , value "--"
+                                    ]
+                                    [ text "--" ]
+                                    :: (model.flags.available_groups
+                                            |> List.map
+                                                (\( i, g ) ->
+                                                    option
+                                                        [ value (String.fromInt i)
+                                                        , selected (model.participant.group == Just i)
+                                                        ]
+                                                        [ text g ]
+                                                )
+                                       )
+                                )
+                            ]
+                        ]
+                    , [ div [ class "space-y-1" ]
                             [ label [ for "class", class input_label_class ] [ text (t model.translations "Class:") ]
                             , select
                                 [ onInput (Participant.SelectClass >> ParticipantMsg)
@@ -399,7 +457,9 @@ type alias Flags =
             , selected_class : String
             , selected_target_face : String
             , comment : String
+            , group_id : Int
             }
     , require_club : Bool
     , known_clubs : List String
+    , available_groups : List ( Int, String )
     }

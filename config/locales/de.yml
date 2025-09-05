@@ -17,6 +17,7 @@ de:
       Place: Ort
       Go to registration: Zur Anmeldung
       Current number of participants: Aktuelle Anzahl der Anmeldungen
+      Manage Groups: Gruppen bearbeiten
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen
@@ -44,6 +45,7 @@ de:
       "Target:": "Auflage:"
       "Comment:": "Kommentar:"
       "Club:": "Verein:"
+      "Group:": "Gruppe:"
       Submit: Anmelden
     edit:
       heading: "Aktualisiere Anmeldedaten für %{tournament}"
@@ -54,8 +56,13 @@ de:
       "Class:": "Klasse:"
       "Target:": "Auflage:"
       "Comment:": "Kommentar:"
+      "Group:": "Gruppe:"
       Submit: Speichern
       Delete: Löschen
+  groups:
+    index:
+      Groups: Gruppen
+      Name: Name
   mail:
     registation_confirmation:
       subject: Anmeldebestätigung %{tournament}
