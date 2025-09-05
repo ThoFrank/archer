@@ -12,6 +12,9 @@
         <% if @tournament.enforce_club %>
           <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Club" %></th>
         <% end %>
+        <% if @tournament.groups.any? %>
+          <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Group" %></th>
+        <% end %>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200">
@@ -39,6 +42,11 @@
           <% if @tournament.enforce_club %>
             <td class="px-6 py-4 text-gray-600">
               <%= p.club %>
+            </td>
+          <% end %>
+          <% if @tournament.groups.any? %>
+            <td class="px-6 py-4 text-gray-600">
+              <%= p.group.andand.name %>
             </td>
           <% end %>
         </tr>

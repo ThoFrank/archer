@@ -73,6 +73,7 @@ en:
       "Class:": "Class:"
       "Target:": "Target:"
       "Comment:": "Comment:"
+      "Group:": "Group:"
       Submit: Submit
     edit:
       heading: "Register for %{tournament}"
@@ -83,6 +84,7 @@ en:
       "Class:": "Class:"
       "Target:": "Target:"
       "Comment:": "Comment:"
+      "Group:": "Group:"
       Submit: Submit
   groups:
     index:

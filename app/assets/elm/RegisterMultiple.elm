@@ -75,6 +75,10 @@ init f =
 
         comment =
             Maybe.withDefault "" (Maybe.map (\a -> a.comment) f.existing_archer)
+
+        -- TODO
+        selected_group_id =
+            Nothing
     in
     ( case ( decoded_translations, decoded_classed ) of
         ( Result.Ok translations, Result.Ok validClasses ) ->
@@ -111,6 +115,7 @@ init f =
                       , dob = dob
                       , selected_class = selected_class
                       , selected_target_face = selected_target_face
+                      , group = selected_group_id
                       }
                     ]
             in
@@ -197,6 +202,7 @@ update msg mdl =
                                          , dob = Dob.Invalid ""
                                          , selected_class = Nothing
                                          , selected_target_face = Nothing
+                                         , group = Nothing
                                          }
                                        ]
                         }
@@ -216,6 +222,7 @@ update msg mdl =
                                               , dob = Dob.Invalid ""
                                               , selected_class = Nothing
                                               , selected_target_face = Nothing
+                                              , group = Nothing
                                               }
                                             ]
                                     }
@@ -231,7 +238,11 @@ update msg mdl =
 
 submittable : ValidModel -> Bool
 submittable model =
-    List.all Participant.submittable model.participants
+    let
+        ( groups, _ ) =
+            List.unzip model.flags.available_groups
+    in
+    List.all (Participant.submittable groups) model.participants
         && (case Email.fromString model.email of
                 Just _ ->
                     True
@@ -279,13 +290,16 @@ viewParticipant i participant model =
 
                 Dob.Invalid _ ->
                     invalid_input_class
+
+        ( groups, _ ) =
+            List.unzip model.flags.available_groups
     in
     [ hr [] []
     , div [ class "space-y-1 flex w-full max-w-md" ]
         [ h3
             [ class
                 ("flex-none text-2xl font-bold mb-4 "
-                    ++ (if Participant.submittable participant then
+                    ++ (if Participant.submittable groups participant then
                             "text-gray-800"
 
                         else
@@ -329,66 +343,108 @@ viewParticipant i participant model =
             ]
             []
         ]
-    , div [ class "space-y-1" ]
-        [ label [ for ("class_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Class:") ]
-        , select
-            [ onInput (Participant.SelectClass >> ParticipantMsg i)
-            , value
-                (case participant.selected_class of
-                    Nothing ->
-                        "--"
-
-                    Just c ->
-                        c.id
-                )
-            , id ("class_" ++ String.fromInt i)
-            , name "participants[][tournament_class]"
-            , class valid_input_class
-            ]
-            (option
-                [ name "Class"
-                , disabled False
-                , selected (participant.selected_class == Nothing)
-                , value "--"
-                ]
-                [ text "--" ]
-                :: viewAvailableClasses model.classes participant
-            )
-        ]
-    , div [ class "space-y-1" ]
-        [ label
-            [ for ("target_face_" ++ String.fromInt i), class input_label_class ]
-            [ text (t model.translations "Target:") ]
-        , select
-            [ onInput (Participant.SelectTargetFace >> ParticipantMsg i)
-            , id ("target_face_" ++ String.fromInt i)
-            , name "participants[][target_face]"
-            , class valid_input_class
-            ]
-            (option
-                [ selected (participant.selected_target_face == Nothing)
-                , disabled False
-                , value "--"
-                ]
-                [ text "--" ]
-                :: (case participant.selected_class of
-                        Nothing ->
-                            []
-
-                        Just { possible_target_faces } ->
-                            map
-                                (\tf ->
-                                    option
-                                        [ selected (participant.selected_target_face == Just tf)
-                                        , value tf.id
-                                        ]
-                                        [ text tf.name ]
-                                )
-                                possible_target_faces
-                   )
-            )
-        ]
     ]
+        ++ (if List.isEmpty model.flags.available_groups then
+                []
+
+            else
+                [ div [ class "space-y-1" ]
+                    [ label [ for "group", class input_label_class ] [ text (t model.translations "Group:") ]
+                    , select
+                        [ onInput ((String.toInt >> Maybe.withDefault -1) >> Participant.SelectGroup >> ParticipantMsg i)
+                        , value
+                            (case participant.group of
+                                Nothing ->
+                                    "--"
+
+                                Just g ->
+                                    String.fromInt g
+                            )
+                        , id "group"
+                        , name "participants[][group]"
+                        , class valid_input_class
+                        ]
+                        (option
+                            [ name "Group"
+                            , disabled False
+                            , selected (participant.selected_class == Nothing)
+                            , value "--"
+                            ]
+                            [ text "--" ]
+                            :: (model.flags.available_groups
+                                    |> List.map
+                                        (\( j, g ) ->
+                                            option
+                                                [ value (String.fromInt j)
+                                                , selected (participant.group == Just i)
+                                                ]
+                                                [ text g ]
+                                        )
+                               )
+                        )
+                    ]
+                ]
+                    ++ [ div [ class "space-y-1" ]
+                            [ label [ for ("class_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Class:") ]
+                            , select
+                                [ onInput (Participant.SelectClass >> ParticipantMsg i)
+                                , value
+                                    (case participant.selected_class of
+                                        Nothing ->
+                                            "--"
+
+                                        Just c ->
+                                            c.id
+                                    )
+                                , id ("class_" ++ String.fromInt i)
+                                , name "participants[][tournament_class]"
+                                , class valid_input_class
+                                ]
+                                (option
+                                    [ name "Class"
+                                    , disabled False
+                                    , selected (participant.selected_class == Nothing)
+                                    , value "--"
+                                    ]
+                                    [ text "--" ]
+                                    :: viewAvailableClasses model.classes participant
+                                )
+                            ]
+                       , div [ class "space-y-1" ]
+                            [ label
+                                [ for ("target_face_" ++ String.fromInt i), class input_label_class ]
+                                [ text (t model.translations "Target:") ]
+                            , select
+                                [ onInput (Participant.SelectTargetFace >> ParticipantMsg i)
+                                , id ("target_face_" ++ String.fromInt i)
+                                , name "participants[][target_face]"
+                                , class valid_input_class
+                                ]
+                                (option
+                                    [ selected (participant.selected_target_face == Nothing)
+                                    , disabled False
+                                    , value "--"
+                                    ]
+                                    [ text "--" ]
+                                    :: (case participant.selected_class of
+                                            Nothing ->
+                                                []
+
+                                            Just { possible_target_faces } ->
+                                                map
+                                                    (\tf ->
+                                                        option
+                                                            [ selected (participant.selected_target_face == Just tf)
+                                                            , value tf.id
+                                                            ]
+                                                            [ text tf.name ]
+                                                    )
+                                                    possible_target_faces
+                                       )
+                                )
+                            ]
+                       ]
+           )
 
 
 input_label_class : String
@@ -514,4 +570,5 @@ type alias Flags =
             }
     , require_club : Bool
     , known_clubs : List String
+    , available_groups : List ( Int, String )
     }

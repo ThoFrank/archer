@@ -27,6 +27,7 @@ class Participant < ApplicationRecord
   belongs_to :Tournament
   belongs_to :tournament_class
   belongs_to :target_face
+  belongs_to :group, optional: true
 
   has_one :registration_participant
   has_one :registration, through: :registration_participant
@@ -37,6 +38,7 @@ class Participant < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :club, presence: true, if: Proc.new { |record| record.Tournament.enforce_club }
+  validates :group, presence: true, if: Proc.new { |record| record.Tournament.groups.any? }
   validates :dob, presence: true
   validates_with ParticipantValidator
 end
