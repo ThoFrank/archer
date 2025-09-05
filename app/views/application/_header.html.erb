@@ -2,7 +2,9 @@
   <div class="container mx-auto flex justify-between items-center py-4 px-6 overflow-x-auto">
     <!-- Left Side: Navigation Links -->
     <nav class="flex space-x-6 items-center">
-      <a href="/"><img class="text-gray-700 hover:text-blue-600 font-medium h-[2rem] min-w-[2rem]" alt="Home" src="/icon.png"></a>
+      <% unless params['hidden_home_btn'] %>
+        <a href="/"><img class="text-gray-700 hover:text-blue-600 font-medium h-[2rem] min-w-[2rem]" alt="Home" src="/icon.png"></a>
+      <% end %>
       <% if @tournament && @tournament.id %>
         <a href="<%= tournament_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Tournament"%></a>
         <a href="<%= tournament_participants_path(@tournament) %>" class="text-gray-700 hover:text-blue-600 font-medium"><%= t "Participants"%></a>

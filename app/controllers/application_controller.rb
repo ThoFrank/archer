@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   around_action :switch_locale
+  before_action :set_hidden_home_btn
 
   def switch_locale(&action)
     locale = params[:locale] if I18n.locale_available? params[:locale]
@@ -11,8 +12,15 @@ class ApplicationController < ActionController::Base
     I18n.with_locale(locale, &action)
   end
 
+  def set_hidden_home_btn
+    @home_hidden = params["hidden_home_btn"]
+  end
+
   def default_url_options
-    { locale: I18n.locale }
+    {
+      locale: I18n.locale,
+      hidden_home_btn: @home_hidden
+    }
   end
 
   def set_tournament
