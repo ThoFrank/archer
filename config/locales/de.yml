@@ -25,6 +25,7 @@ de:
       Name: Name
       Minimum Age: Minimales Alter
       Maximum Age: Maximales Alter
+      Target Faces: Auflagen
   participants:
     index:
       Register: Anmelden

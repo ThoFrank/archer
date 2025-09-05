@@ -54,6 +54,7 @@ en:
       Name: Name
       Minimum Age: Minimum Age
       Maximum Age: Maximum Age      
+      Target Faces: Target Faces
   participants:
     index:
       Register: Register
