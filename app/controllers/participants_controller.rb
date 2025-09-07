@@ -72,8 +72,8 @@ class ParticipantsController < ApplicationController
     part_params = participant_params
     reg_params = registration_params.merge!(tournament: @tournament)
 
-    %w[ first_name last_name ].each do |p|
-      part_params[p].strip!
+    %w[ first_name last_name club ].each do |p|
+      part_params[p].andand.strip!
     end
 
     @participant = Participant.new(part_params)
@@ -103,8 +103,8 @@ class ParticipantsController < ApplicationController
         @registration = Registration.create(reg_params)
         part_params.each do |p|
           puts "Part params: #{p}"
-          %w[ first_name last_name ].each do |field|
-            p[field].strip!
+          %w[ first_name last_name club ].each do |field|
+            p[field].andand.strip!
           end
           participant = Participant.new(p)
           participant.registration = @registration
@@ -159,8 +159,8 @@ class ParticipantsController < ApplicationController
     part_params = participant_params
     reg_params = registration_params
 
-    %w[ first_name last_name ].each do |p|
-      part_params[p].strip!
+    %w[ first_name last_name club ].each do |p|
+      part_params[p].andand.strip!
     end
 
     logger.debug "Updating participant with #{params}"
@@ -196,7 +196,7 @@ class ParticipantsController < ApplicationController
       p = params.expect(participant: [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face, :group ]).to_hash
       p["target_face"] = TargetFace.find (p["target_face"])
       p["tournament_class"] = TournamentClass.find p["tournament_class"]
-      p["group"] = Group.find p["group"]
+      p["group"] = Group.find p["group"] if p["group"]
       p
     end
 
@@ -205,7 +205,7 @@ class ParticipantsController < ApplicationController
       ps.map do |p|
         p["target_face"] = TargetFace.find (p["target_face"])
         p["tournament_class"] = TournamentClass.find p["tournament_class"]
-      p["group"] = Group.find p["group"]
+        p["group"] = Group.find p["group"] if p["group"]
         p
       end
     end

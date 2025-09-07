@@ -187,7 +187,7 @@ submittable model =
         ( groups, _ ) =
             List.unzip model.flags.available_groups
     in
-    Participant.submittable groups model.participant
+    Participant.submittable groups model.flags.require_club model.participant
         && (case Email.fromString model.email of
                 Just _ ->
                     True

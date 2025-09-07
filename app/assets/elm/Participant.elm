@@ -133,11 +133,11 @@ update_participant msg participant classes =
             }
 
 
-submittable : List Int -> Participant -> Bool
-submittable groups participant =
+submittable : List Int -> Bool -> Participant -> Bool
+submittable groups require_club participant =
     not (String.isEmpty participant.first_name)
         && not (String.isEmpty participant.last_name)
-        && not (String.isEmpty participant.club)
+        && not (require_club && String.isEmpty participant.club)
         && (case participant.dob of
                 Dob.Valid _ ->
                     True

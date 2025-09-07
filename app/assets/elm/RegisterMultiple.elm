@@ -242,7 +242,7 @@ submittable model =
         ( groups, _ ) =
             List.unzip model.flags.available_groups
     in
-    List.all (Participant.submittable groups) model.participants
+    List.all (Participant.submittable groups model.flags.require_club) model.participants
         && (case Email.fromString model.email of
                 Just _ ->
                     True
@@ -299,7 +299,7 @@ viewParticipant i participant model =
         [ h3
             [ class
                 ("flex-none text-2xl font-bold mb-4 "
-                    ++ (if Participant.submittable groups participant then
+                    ++ (if Participant.submittable groups model.flags.require_club participant then
                             "text-gray-800"
 
                         else
