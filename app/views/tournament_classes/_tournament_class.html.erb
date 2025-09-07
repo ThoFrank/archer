@@ -7,6 +7,12 @@
     <b>Age end:</b> <%= @tournament_class.age_end %>
   </div>
 
+  <% if @tournament_class.price %>
+  <div>
+    <b>Price:</b> <%= @tournament_class.price / 100 %>,<%= format("%02d", @tournament_class.price % 100) %>€
+  </div>
+  <% end %>
+
   <div class="mt-6 mb-6">
     <b>Available Target Faces:</b>
     <ul class="list-disc list-inside">
