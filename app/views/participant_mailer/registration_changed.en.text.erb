@@ -12,8 +12,18 @@ Club: <%= @registration.participants.first.club %>
   <% end %>
 Name: <%= participant.first_name %> <%= participant.last_name %>
 Date of birth: <%= participant.dob %>
-Classe: <%= participant.tournament_class.name %>
+Class: <%= participant.tournament_class.name %>
 Target Face: <%= participant.target_face.name %>
+  <% if participant.tournament_class.price %>
+Price: <%= participant.tournament_class.price / 100 %>,<%= format("%02d", participant.tournament_class.price % 100) %>€
+  <% end %>
 
 <% end %>
+<% if @registration.participants.length > 1 %>
+  <% sum = @registration.participants.map { |p| p.tournament_class.price }.compact.sum %>
+  <% if sum > 0 %>
+Total: <%= sum / 100 %>,<%= format("%02d", sum % 100) %>€
+  <% end %>
+<% end %>
+
 <%= render "greeting" %>
