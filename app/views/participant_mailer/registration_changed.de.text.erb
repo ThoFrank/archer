@@ -26,4 +26,8 @@ Summe der Startgelder: <%= sum / 100 %>,<%= format("%02d", sum % 100) %>€
   <% end %>
 <% end %>
 
+<% if @registration.tournament.mail_text %>
+<%= @registration.tournament.mail_text %>
+
+<% end %>
 <%= render "greeting" %>
