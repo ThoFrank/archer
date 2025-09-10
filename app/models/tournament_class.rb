@@ -8,7 +8,7 @@ class TournamentClass < ApplicationRecord
 
   # Date used for age calculation
   def base_date
-    self.tournament.andand.season_start_date || self.tournament.andand.date_start.to_date || Date.today
+    self.tournament.andand.season_start_date || self.tournament.andand.date_start.andand.to_date || Date.today
   end
 
   # Latest birthday date allowed for the class

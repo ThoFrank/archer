@@ -22,7 +22,7 @@
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200">
-      <% @tournament_classes.sort_by {|c| -c.participants.count}.each do |c| %>
+      <% @tournament_classes.sort_by.with_index {|c, i| [-c.participants.count, i]}.each do |c| %>
         <tr class="hover:bg-gray-50" data-url="<%= tournament_tournament_class_path(@tournament, c) %>">
           <td class="px-6 py-4 text-gray-800">
             <%= c.name %>
