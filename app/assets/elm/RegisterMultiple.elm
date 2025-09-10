@@ -384,67 +384,67 @@ viewParticipant i participant model =
                         )
                     ]
                 ]
-                    ++ [ div [ class "space-y-1" ]
-                            [ label [ for ("class_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Class:") ]
-                            , select
-                                [ onInput (Participant.SelectClass >> ParticipantMsg i)
-                                , value
-                                    (case participant.selected_class of
-                                        Nothing ->
-                                            "--"
-
-                                        Just c ->
-                                            c.id
-                                    )
-                                , id ("class_" ++ String.fromInt i)
-                                , name "participants[][tournament_class]"
-                                , class valid_input_class
-                                ]
-                                (option
-                                    [ name "Class"
-                                    , disabled False
-                                    , selected (participant.selected_class == Nothing)
-                                    , value "--"
-                                    ]
-                                    [ text "--" ]
-                                    :: viewAvailableClasses model.classes participant
-                                )
-                            ]
-                       , div [ class "space-y-1" ]
-                            [ label
-                                [ for ("target_face_" ++ String.fromInt i), class input_label_class ]
-                                [ text (t model.translations "Target:") ]
-                            , select
-                                [ onInput (Participant.SelectTargetFace >> ParticipantMsg i)
-                                , id ("target_face_" ++ String.fromInt i)
-                                , name "participants[][target_face]"
-                                , class valid_input_class
-                                ]
-                                (option
-                                    [ selected (participant.selected_target_face == Nothing)
-                                    , disabled False
-                                    , value "--"
-                                    ]
-                                    [ text "--" ]
-                                    :: (case participant.selected_class of
-                                            Nothing ->
-                                                []
-
-                                            Just { possible_target_faces } ->
-                                                map
-                                                    (\tf ->
-                                                        option
-                                                            [ selected (participant.selected_target_face == Just tf)
-                                                            , value tf.id
-                                                            ]
-                                                            [ text tf.name ]
-                                                    )
-                                                    possible_target_faces
-                                       )
-                                )
-                            ]
-                       ]
            )
+        ++ [ div [ class "space-y-1" ]
+                [ label [ for ("class_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Class:") ]
+                , select
+                    [ onInput (Participant.SelectClass >> ParticipantMsg i)
+                    , value
+                        (case participant.selected_class of
+                            Nothing ->
+                                "--"
+
+                            Just c ->
+                                c.id
+                        )
+                    , id ("class_" ++ String.fromInt i)
+                    , name "participants[][tournament_class]"
+                    , class valid_input_class
+                    ]
+                    (option
+                        [ name "Class"
+                        , disabled False
+                        , selected (participant.selected_class == Nothing)
+                        , value "--"
+                        ]
+                        [ text "--" ]
+                        :: viewAvailableClasses model.classes participant
+                    )
+                ]
+           , div [ class "space-y-1" ]
+                [ label
+                    [ for ("target_face_" ++ String.fromInt i), class input_label_class ]
+                    [ text (t model.translations "Target:") ]
+                , select
+                    [ onInput (Participant.SelectTargetFace >> ParticipantMsg i)
+                    , id ("target_face_" ++ String.fromInt i)
+                    , name "participants[][target_face]"
+                    , class valid_input_class
+                    ]
+                    (option
+                        [ selected (participant.selected_target_face == Nothing)
+                        , disabled False
+                        , value "--"
+                        ]
+                        [ text "--" ]
+                        :: (case participant.selected_class of
+                                Nothing ->
+                                    []
+
+                                Just { possible_target_faces } ->
+                                    map
+                                        (\tf ->
+                                            option
+                                                [ selected (participant.selected_target_face == Just tf)
+                                                , value tf.id
+                                                ]
+                                                [ text tf.name ]
+                                        )
+                                        possible_target_faces
+                           )
+                    )
+                ]
+           ]
 
 
 input_label_class : String
