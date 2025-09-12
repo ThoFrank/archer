@@ -29,6 +29,7 @@
 
   # content
   @participants.each do |p|
+    club = p.club || ENV.fetch("ARCHER_DEFAULT_CLUB", "Archer Archery")
     csv << [
       # "bib",
       p.id,
@@ -57,9 +58,9 @@
       # "gender",
       0,
       # "country code",
-      Digest::SHA1.hexdigest(p.club)[..5],
+      Digest::SHA1.hexdigest(club)[..5],
       # "country name",
-      p.club,
+      club,
       # "date of birth",
       p.dob,
       # "subclass",

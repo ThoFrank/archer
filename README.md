@@ -10,6 +10,7 @@ Following environment variables are available for configuration:
 
 ```
 RAILS_MASTER_KEY # See https://github.com/ThoFrank/archer/issues/12
+ARCHER_DEFAULT_CLUB
 ARCHER_DEFAULT_MAIL_ADDRESS
 ARCHER_SMTP_ADDRESS
 ARCHER_SMTP_USERNAME
