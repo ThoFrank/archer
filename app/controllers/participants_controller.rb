@@ -76,6 +76,8 @@ class ParticipantsController < ApplicationController
       part_params[p].andand.strip!
     end
 
+    part_params["club"] = nil unless @tournament.enforce_club
+
     @participant = Participant.new(part_params)
     @participant.Tournament = @tournament
 
