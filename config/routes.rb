@@ -5,12 +5,6 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # get "/articles", to: "articles#index"
-  # get "/articles/:id", to: "articles#show"
-  resources :articles do
-    resources :comments
-  end
-
   resources :tournaments do
     get "/participants/multiple_new", to: "participants#multiple_new", as: :multiple_new_participants
     post "/participants/multiple", to: "participants#multiple_create", as: :multiple_create_participants
