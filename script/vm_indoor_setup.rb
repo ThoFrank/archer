@@ -31,8 +31,8 @@ classes = [
  { name: 'Recurve Junioren w', age_start: 18, age_end: 20, target_faces: [ '40cm', '40cm Spot' ] },
  { name: 'Recurve Master m', age_start: 50, age_end: 65, target_faces: [ '40cm', '40cm Spot' ] },
  { name: 'Recurve Master w', age_start: 50, age_end: 65, target_faces: [ '40cm', '40cm Spot' ] },
- { name: 'Recurve Senioren m', age_start: 66, age_end: 120, target_faces: [ '40cm', '40cm Spot' ] },
- { name: 'Recurve Senioren w', age_start: 66, age_end: 120, target_faces: [ '40cm', '40cm Spot' ] },
+ { name: 'Recurve Senioren m', age_start: 66, age_end: 120, target_faces: [ '40cm', '40cm Vegas Spot' ] },
+ { name: 'Recurve Senioren w', age_start: 66, age_end: 120, target_faces: [ '40cm', '40cm Vegas Spot' ] },
  { name: 'Compound Herren', age_start: 21, age_end: 49, target_faces: [ '40cm Spot' ] },
  { name: 'Compound Damen', age_start: 21, age_end: 49, target_faces: [ '40cm Spot' ] },
  { name: 'Compound Schüler A m/w', age_start: 13, age_end: 14, target_faces: [ '60cm Spot (6-10 Ring)' ] },
@@ -49,7 +49,8 @@ classes = [
  { name: 'Blank Jugend m/w', age_start: 15, age_end: 17, target_faces: [ '40cm' ] },
  { name: 'Blank Master m', age_start: 50, age_end: 65, target_faces: [ '40cm Spot' ] },
  { name: 'Blank Master w', age_start: 50, age_end: 120, target_faces: [ '40cm Spot' ] },
- { name: 'Blank Senioren m', age_start: 66, age_end: 120, target_faces: [ '40cm Spot' ] }
+ { name: 'Blank Senioren m', age_start: 66, age_end: 120, target_faces: [ '40cm Spot' ] },
+ { name: 'Offene Klasse', age_start: 1, age_end: 120, target_faces: [ '60cm' ] }
 ]
 
 tfs.each do |tf|
