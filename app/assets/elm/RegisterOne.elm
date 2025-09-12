@@ -230,25 +230,25 @@ view mdl =
         ValidatedModel model ->
             let
                 first_name_class =
-                    if String.isEmpty model.participant.first_name then
-                        invalid_input_class
+                    if Participant.first_name_is_valid model.participant then
+                        valid_input_class
 
                     else
-                        valid_input_class
+                        invalid_input_class
 
                 last_name_class =
-                    if String.isEmpty model.participant.last_name then
-                        invalid_input_class
+                    if Participant.last_name_is_valid model.participant then
+                        valid_input_class
 
                     else
-                        valid_input_class
+                        invalid_input_class
 
                 club_class =
-                    if String.isEmpty model.participant.club then
-                        invalid_input_class
+                    if Participant.club_is_valid model.participant then
+                        valid_input_class
 
                     else
-                        valid_input_class
+                        invalid_input_class
 
                 email_class =
                     case Email.fromString model.email of
@@ -259,12 +259,35 @@ view mdl =
                             invalid_input_class
 
                 dob_class =
-                    case model.participant.dob of
-                        Dob.Valid _ ->
-                            valid_input_class
+                    if Participant.dob_is_valid model.participant then
+                        valid_input_class
 
-                        Dob.Invalid _ ->
-                            invalid_input_class
+                    else
+                        invalid_input_class
+
+                ( groups, _ ) =
+                    List.unzip model.flags.available_groups
+
+                group_class =
+                    if Participant.selected_group_is_valid groups model.participant then
+                        valid_input_class
+
+                    else
+                        invalid_input_class
+
+                class_class =
+                    if Participant.selected_class_is_valid model.participant then
+                        valid_input_class
+
+                    else
+                        invalid_input_class
+
+                target_face_class =
+                    if Participant.selected_target_face_is_valid model.participant then
+                        valid_input_class
+
+                    else
+                        invalid_input_class
             in
             form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 (List.concat
@@ -340,7 +363,7 @@ view mdl =
                                     )
                                 , id "group"
                                 , name "participant[group]"
-                                , class valid_input_class
+                                , class group_class
                                 ]
                                 (option
                                     [ name "Group"
@@ -376,7 +399,7 @@ view mdl =
                                     )
                                 , id "class"
                                 , name "participant[tournament_class]"
-                                , class valid_input_class
+                                , class class_class
                                 ]
                                 (option
                                     [ name "Class"
@@ -396,7 +419,7 @@ view mdl =
                                 [ onInput (Participant.SelectTargetFace >> ParticipantMsg)
                                 , id "target_face"
                                 , name "participant[target_face]"
-                                , class valid_input_class
+                                , class target_face_class
                                 ]
                                 (option
                                     [ selected (model.participant.selected_target_face == Nothing)

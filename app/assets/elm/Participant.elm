@@ -132,43 +132,69 @@ update_participant msg participant classes =
                         Nothing
             }
 
+first_name_is_valid : Participant -> Bool
+first_name_is_valid participant =
+    not (participant.first_name |> String.trim |> String.isEmpty)
+
+last_name_is_valid : Participant -> Bool
+last_name_is_valid participant =
+    not (participant.last_name |> String.trim |> String.isEmpty)
+
+club_is_valid : Participant -> Bool
+club_is_valid participant =
+    not (participant.club |> String.trim |> String.isEmpty)
+
+dob_is_valid : Participant -> Bool
+dob_is_valid participant =
+    case participant.dob of
+        Dob.Valid _ ->
+            True
+
+        Dob.Invalid _ ->
+            False
+
+selected_class_is_valid : Participant -> Bool
+selected_class_is_valid participant =
+    case participant.selected_class of
+        Just _ ->
+            True
+
+        Nothing ->
+            False
+
+selected_target_face_is_valid : Participant -> Bool
+selected_target_face_is_valid participant =
+    case participant.selected_target_face of
+        Just _ ->
+            True
+
+        Nothing ->
+            False
+
+selected_group_is_valid : List Int -> Participant -> Bool
+selected_group_is_valid groups participant =
+    List.isEmpty groups
+        || (groups
+                |> List.any
+                    (\g ->
+                        case participant.group of
+                            Just gr ->
+                                gr == g
+
+                            Nothing ->
+                                False
+                    )
+           )
+    
 
 submittable : List Int -> Bool -> Participant -> Bool
 submittable groups require_club participant =
-    not (String.isEmpty participant.first_name)
-        && not (String.isEmpty participant.last_name)
-        && not (require_club && String.isEmpty participant.club)
-        && (case participant.dob of
-                Dob.Valid _ ->
-                    True
-
-                Dob.Invalid _ ->
-                    False
-           )
-        && (case participant.selected_class of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-           )
-        && (case participant.selected_target_face of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-           )
-        && (List.isEmpty groups
-                || (groups
-                        |> List.any
-                            (\g ->
-                                case participant.group of
-                                    Just gr ->
-                                        gr == g
-
-                                    Nothing ->
-                                        False
-                            )
-                   )
-           )
+    List.all identity
+        [ first_name_is_valid participant 
+        , last_name_is_valid participant 
+        , require_club && club_is_valid participant 
+        , dob_is_valid participant 
+        , selected_class_is_valid participant 
+        , selected_target_face_is_valid participant 
+        , selected_group_is_valid groups participant 
+        ]
