@@ -14,6 +14,9 @@ Name: <%= participant.first_name %> <%= participant.last_name %>
 Geburtsdatum: <%= participant.dob %>
 Klasse: <%= participant.tournament_class.name %>
 Scheibe: <%= participant.target_face.name %>
+  <% if participant.group %>
+Gruppe: <%= participant.group.name %>
+  <% end %>
   <% if participant.tournament_class.price %>
 Startgeld: <%= participant.tournament_class.price / 100 %>,<%= format("%02d", participant.tournament_class.price % 100) %>€
   <% end %>
