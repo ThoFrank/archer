@@ -18,9 +18,14 @@
   <%= t ".Place" %>: <%= @tournament.place %>
   </p>
 
-  <p class="text-lg text-gray-600 mb-6">
+  <div class="text-lg text-gray-600 mb-6">
     <%= t ".Current number of participants" %>: <%= @tournament.participants.count %>
-  </p>
+    <% @tournament.groups.each do |g| %>
+      <div>
+        <%= g.name %>: <%= g.participants.count.to_s %>
+      </div>
+    <% end %>
+  </div>
 
   <div class="prose prose-a:text-blue-600 prose-a:hover:text-blue-700 mb-6">
     <%= @tournament.description %>
