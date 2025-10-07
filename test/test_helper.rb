@@ -20,3 +20,8 @@ module ActiveSupport
     end
   end
 end
+
+# Usefull for debugging controller tests
+# Rails.logger = Logger.new(STDOUT)
+# ActiveRecord::Base.logger = Logger.new(STDOUT)
+# Rails.logger.level = Logger::DEBUG

@@ -15,3 +15,23 @@ svenya:
   tournament_class: rec_damen
   target_face: 40cm
   dob: 2000-01-01
+
+one:
+  first_name: First
+  last_name: from common Registration
+  club: FooBar
+  group: morning
+  Tournament: indoor
+  tournament_class: rec_herren
+  target_face: spot
+  dob: 2000-01-01
+
+two:
+  first_name: Second
+  last_name: from common Registration
+  club: FooBar
+  group: afternoon
+  Tournament: indoor
+  tournament_class: rec_damen
+  target_face: 40cm
+  dob: 2000-01-01
