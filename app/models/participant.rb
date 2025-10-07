@@ -29,8 +29,8 @@ class Participant < ApplicationRecord
   belongs_to :target_face
   belongs_to :group, optional: true
 
-  has_one :registration_participant
-  has_one :registration, through: :registration_participant
+  has_one :registration_participant, dependent: :delete
+  has_one :registration, through: :registration_participant, dependent: :destroy
 
   validates :Tournament, presence: true
   validates :tournament_class, presence: true

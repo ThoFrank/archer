@@ -181,12 +181,20 @@ class ParticipantsController < ApplicationController
 
   def destroy
     @participant = Participant.find(params.expect(:id))
-    if @participant.registration.participants.length > 1
-      ParticipantMailer.registration_changed(@participant.registration).deliver
-    else
-      ParticipantMailer.registration_cancelation(@participant.registration).deliver
-    end
+    @registration = @participant.registration
+
+    # generate the mail before actually deleting
+    mail = ParticipantMailer.registration_cancelation(@registration)
+
     @participant.destroy!
+    unless @registration.participants.empty?
+      # other participants left -> registration not canceled but changed
+      mail = ParticipantMailer.registration_changed(@registration)
+    else
+      @registration.destroy!
+    end
+
+    mail.deliver
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Participant was successfully destroyed."
   end

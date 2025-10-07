@@ -9,3 +9,8 @@ two:
   tournament: indoor
   email: two@example.com
   participants: svenya
+
+three:
+  tournament: indoor
+  email: three@example.com
+  participants: [one, two]
