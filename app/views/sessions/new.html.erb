@@ -28,4 +28,14 @@
       </div>
     </div>
   <% end %>
+
+  <% if Rails.env.development? %>
+    <div class="mt-4 flex justify-between items-center">
+      <%= form_tag('/auth/developer', method: 'post', data: {turbo: false}) do %>
+        <button type='submit' class= "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300">
+          Login with Developer
+        </button>
+      <% end %>
+    </div>
+  <% end %>
 </div>

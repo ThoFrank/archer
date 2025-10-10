@@ -6,7 +6,17 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(params.permit(:email_address, :password))
+    # See if omniauth was used
+    user_info = request.env["omniauth.auth"]
+    if user_info
+      user = User.find_by(email_address: user_info.info.email, password_digest: user_info.provider)
+      user ||= User.create!(email_address: user_info.info.email, password_digest: user_info.provider)
+    end
+
+    # Fall back to local user
+    user ||= User.authenticate_by(params.permit(:email_address, :password))
+
+    if user
       start_new_session_for user
       redirect_to after_authentication_url
     else
