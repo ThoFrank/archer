@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "auth/:provider/callback", to: "sessions#create"
   resource :session
   resources :passwords, param: :token
   root "tournaments#index"

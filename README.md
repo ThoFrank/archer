@@ -15,7 +15,32 @@ ARCHER_DEFAULT_MAIL_ADDRESS
 ARCHER_SMTP_ADDRESS
 ARCHER_SMTP_USERNAME
 ARCHER_SMTP_PASSWORD
+ARCHER_OIDC_NAME
+ARCHER_OIDC_HOST
+ARCHER_OIDC_CLIENT_ID
+ARCHER_OIDC_SECRET_KEY
+ARCHER_OIDC_CALLBACK_URI
 ```
+
+### Login with Nextcloud via oidc
+
+Assuming you have your Nextcloud instance at cloud.example.com. And your Archer instance at archer.example.com
+
+Set the following ENV Variables for ARCHER:
+```
+ARCHER_OIDC_NAME=Nextcloud
+ARCHER_OIDC_HOST=cloud.example.com
+ARCHER_OIDC_CLIENT_ID=FROM_NEXTCLOUD
+ARCHER_OIDC_SECRET_KEY=FROM_NEXTCLOUD
+ARCHER_OIDC_CALLBACK_URI=https://archer.example.com/auth/nextcloud/callback
+```
+
+In the Nextcloud OpenID Connect Provider plugin configuration create an entry with:
+
+- Callback-URI: `https://archer.example.com/auth/nextcloud/callback`
+- Default settings otherwise
+
+You might want to create a new group for users and restrict the oidc client to only that group to be able to restrict who has access to Archer.
 
 ## Development
 
