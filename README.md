@@ -20,6 +20,7 @@ ARCHER_OIDC_HOST
 ARCHER_OIDC_CLIENT_ID
 ARCHER_OIDC_SECRET_KEY
 ARCHER_OIDC_CALLBACK_URI
+ARCHER_FRAME_ANCESTORS # urls split by "," allowed as iframe hosts
 ```
 
 ### Login with Nextcloud via oidc

@@ -23,6 +23,7 @@ Rails.application.configure do
   # # Report violations without enforcing the policy.
   # # config.content_security_policy_report_only = true
   config.content_security_policy do |policy|
-    policy.frame_ancestors "https://bogen-psv.de"
+    a = ENV["ARCHER_FRAME_ANCESTORS"].andand.split(",").andand.map(&:strip)
+    policy.frame_ancestors *a if a
   end
 end
