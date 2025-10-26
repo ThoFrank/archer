@@ -1,5 +1,5 @@
 <% require "csv" %>
-<%= CSV.generate(:col_sep => ";") do |csv|
+<%= raw (CSV.generate(:col_sep => ";") do |csv|
   target_faces = @tournament.target_faces.sort_by{ |tf| tf.id }
 
   # Header
@@ -81,5 +81,5 @@
     csv << [ "##TARGET##", p.id, "R", p.tournament_class.name, target_faces.find_index(p.target_face)]
     csv << [ "##EMAIL##", p.id, p.registration.email]
   end
-end %>
+end) %>
 
