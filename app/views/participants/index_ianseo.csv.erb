@@ -34,7 +34,7 @@
       # "bib",
       p.id,
       # "session",
-      1,
+      (@tournament.groups.find_index(p.group) || 0) + 1,
       # "division",
       "R",
       # "class",
