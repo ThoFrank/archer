@@ -44,6 +44,6 @@ class GroupsController < ApplicationController
       @group = Group.find(params.expect(:id))
     end
     def group_params
-      params.expect(group: [ :name ])
+      params.expect(group: [ :name, :status ])
     end
 end

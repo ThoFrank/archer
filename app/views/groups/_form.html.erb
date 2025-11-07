@@ -17,6 +17,9 @@
     <% group.errors.full_messages_for(:name).each do |message| %>
       <div class="text-sm text-red-600"><%= message %></div>
     <% end %>
+
+    <%= form.collection_radio_buttons :status, Group.statuses, :second, :first %>
+
   </div>
 
   <div class="space-y-1">
