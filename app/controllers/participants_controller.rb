@@ -41,7 +41,7 @@ class ParticipantsController < ApplicationController
       existing_archer: nil,
       require_club: @tournament.enforce_club || false,
       known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
-      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
+      available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
     }
   end
 
@@ -64,7 +64,7 @@ class ParticipantsController < ApplicationController
       existing_archer: nil,
       require_club: @tournament.enforce_club || false,
       known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
-      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
+      available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
     }
   end
 
