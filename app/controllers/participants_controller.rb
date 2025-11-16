@@ -3,7 +3,7 @@ class ParticipantsController < ApplicationController
   before_action :set_tournament
 
   def index
-    @participants = @tournament.participants
+    @participants = @tournament.participants.includes(:tournament_class, :target_face, :group)
     respond_to do |format|
       format.html
       format.csv do
