@@ -8,7 +8,7 @@ Club: <%= @registration.participants.first.club %>
 
 <% @registration.participants.each_with_index do |participant,index| %>
   <% if @registration.participants.length > 1 %>
-# <%= index %>
+# <%= index + 1 %>
   <% end %>
 Name: <%= participant.first_name %> <%= participant.last_name %>
 Date of birth: <%= participant.dob %>
