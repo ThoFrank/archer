@@ -63,7 +63,7 @@ class TournamentClassesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def tournament_class_params
-      p = params.expect(tournament_class: [ :name, :age_start, :age_end, :price, { target_faces: [] } ])
+      p = params.expect(tournament_class: [ :name, :age_start, :age_end, :price, :ianseo_name, :ianseo_division, { target_faces: [] } ])
       p["target_faces"] ||= []
       p["target_faces"] = p["target_faces"].map { |tf| @tournament.target_faces.find(tf.to_i) }
       p
