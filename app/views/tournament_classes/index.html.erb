@@ -19,6 +19,9 @@
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Minimum Age" %></th>
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Maximum Age" %></th>
         <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= t ".Target Faces" %></th>
+        <% if authenticated? %>
+          <th class="px-6 py-3 text-left text-sm font-semibold border-b border-gray-300"><%= "Ianseo" %></th>
+        <% end %>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-200">
@@ -36,6 +39,11 @@
           <td class="px-6 py-4 text-gray-600">
             <%= c.target_faces.map{ |tf| tf.name }.join(", ") %>
           </td>
+          <% if authenticated? %>
+            <td class="px-6 py-4 text-gray-600">
+              <%= c.ianseo_division %>-<%= c.ianseo_name %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
