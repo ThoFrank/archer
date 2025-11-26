@@ -46,6 +46,22 @@
   </div>
 
   <div class="space-y-1">
+    <%= form.label :ianseo_name, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :ianseo_name, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
+    <% tournament.errors.full_messages_for(:ianseo_name).each do |message| %>
+      <div class="text-sm text-red-600"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="space-y-1">
+    <%= form.label :ianseo_division, class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :ianseo_division, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
+    <% tournament.errors.full_messages_for(:ianseo_division).each do |message| %>
+      <div class="text-sm text-red-600"><%= message %></div>
+    <% end %>
+  </div>
+
+  <div class="space-y-1">
     <%= form.label :price, class: "block text-sm font-medium text-gray-700" %>
     <%= form.number_field :price, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:price).each do |message| %>

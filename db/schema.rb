@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_204920) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_26_165659) do
   create_table "Tournaments", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "date_end"
@@ -134,6 +134,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_204920) do
     t.integer "age_end"
     t.integer "age_start"
     t.datetime "created_at", null: false
+    t.string "ianseo_division"
+    t.string "ianseo_name"
     t.string "name"
     t.integer "price"
     t.integer "tournament_id", null: false

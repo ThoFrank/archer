@@ -7,6 +7,14 @@
     <b>Age end:</b> <%= @tournament_class.age_end %>
   </div>
 
+  <div>
+    <b>Ianseo name:</b> <%= @tournament_class.ianseo_name %>
+  </div>
+
+  <div>
+    <b>Ianseo division:</b> <%= @tournament_class.ianseo_division %>
+  </div>
+
   <% if @tournament_class.price %>
   <div>
     <b>Price:</b> <%= @tournament_class.price / 100 %>,<%= format("%02d", @tournament_class.price % 100) %>€
@@ -25,7 +33,7 @@
   </div>
 
   <div class="mt-6 mb-6">
-    <b>Registered participants:</b>
+    <b>Registered participants</b> (<%= @tournament_class.participants.count %>)<b>:</b>
     <ul class="list-disc list-inside">
       <% @tournament_class.participants.each do |p| %>
         <li>
