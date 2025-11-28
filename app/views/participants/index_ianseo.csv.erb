@@ -78,7 +78,13 @@
 
   # additional content outside the schema
   @participants.each do |p|
-    csv << [ "##TARGET##", p.id, "R", p.tournament_class.name, target_faces.find_index(p.target_face)]
+    csv << [
+      "##TARGET##",
+      p.id,
+      "R",
+      p.tournament_class.andand.ianseo_name || p.tournament_class.andand.name,
+      target_faces.find_index(p.target_face)
+    ]
     csv << [ "##EMAIL##", p.id, p.registration.email]
   end
 end) %>
