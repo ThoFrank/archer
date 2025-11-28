@@ -320,9 +320,6 @@ viewParticipant i participant model =
         , input [ id ("last_name_" ++ String.fromInt i), property "autocomplete" (JE.string "family-name"), name "participants[][last_name]", class last_name_class, onInput (Participant.UpdateLastName >> ParticipantMsg i), value participant.last_name ] []
         ]
     , div [ class "space-y-1" ]
-        [ input [ id ("club_" ++ String.fromInt i), type_ "hidden", autocomplete False, name "participants[][club]", value model.club ] []
-        ]
-    , div [ class "space-y-1" ]
         [ label [ for ("dob_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Date of birth:") ]
         , input
             [ type_ "date"
@@ -344,6 +341,15 @@ viewParticipant i participant model =
             []
         ]
     ]
+        ++ (if model.flags.require_club then
+                [ div [ class "space-y-1" ]
+                    [ input [ id ("club_" ++ String.fromInt i), type_ "hidden", autocomplete False, name "participants[][club]", value model.club ] []
+                    ]
+                ]
+
+            else
+                []
+           )
         ++ (if List.isEmpty model.flags.available_groups then
                 []
 
