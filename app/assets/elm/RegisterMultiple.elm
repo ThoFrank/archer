@@ -86,7 +86,8 @@ init f =
                                             |> Result.map (\d -> Dob.Valid d)
                                             |> Result.withDefault (Dob.Invalid fp.dob)
                                 in
-                                { first_name = fp.first_name
+                                { id = Just fp.id
+                                , first_name = fp.first_name
                                 , last_name = fp.last_name
                                 , club = fp.club
                                 , dob = dob
@@ -173,7 +174,8 @@ update msg mdl =
                         { model
                             | participants =
                                 model.participants
-                                    ++ [ { first_name = ""
+                                    ++ [ { id = Nothing
+                                         , first_name = ""
                                          , last_name = ""
                                          , club = model.club
                                          , dob = Dob.Invalid ""
@@ -193,7 +195,8 @@ update msg mdl =
                                 if List.isEmpty m1.participants then
                                     { m1
                                         | participants =
-                                            [ { first_name = ""
+                                            [ { id = Nothing
+                                              , first_name = ""
                                               , last_name = ""
                                               , club = model.club
                                               , dob = Dob.Invalid ""
@@ -287,6 +290,17 @@ viewParticipant i participant model =
             [ text ("#" ++ String.fromInt (i + 1)) ]
         , div [ class "flex-1" ] []
         , button [ class "flex-none text-2xl font-bold mb-4 text-gray-800", onClick (RemoveParticipant i) ] [ text "🗑️" ]
+        ]
+    , div [ class "space-y-1" ]
+        [ input
+            [ type_ "hidden"
+            , id ("id_" ++ String.fromInt i)
+            , autocomplete False
+            , name "participants[][id]"
+            , value
+                (Maybe.withDefault "" participant.id)
+            ]
+            []
         ]
     , div [ class "space-y-1" ]
         [ label [ for ("first_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Given name:") ]
@@ -542,7 +556,8 @@ type alias Flags =
     , translations : JD.Value
     , existing_archers :
         List
-            { first_name : String
+            { id : String
+            , first_name : String
             , last_name : String
             , club : String
             , email : String

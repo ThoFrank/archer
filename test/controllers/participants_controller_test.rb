@@ -50,6 +50,7 @@ class ParticipantsControllerTest < ActionDispatch::IntegrationTest
     authenticate_as(@user)
     patch tournament_registration_url(@tournament, @registration), params: {
       participants: [ {
+        id: @participant.id,
         first_name: "Foo",
         last_name: "Bar",
         club: "FooClub",

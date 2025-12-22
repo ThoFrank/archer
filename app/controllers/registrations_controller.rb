@@ -115,6 +115,7 @@ class RegistrationsController < ApplicationController
         }
       end,
       existing_archers: @registration.participants.map { |p| {
+        id: p.id.to_s,
         first_name: p.first_name,
         last_name: p.last_name,
         club: p.club || "",
@@ -137,18 +138,16 @@ class RegistrationsController < ApplicationController
     reg_params = registration_params.merge!(tournament: @tournament)
     Participant.transaction do
       begin
-        # TODO don't delete and recreate participants
-        @registration.participants.each do |p|
-          p.destroy!
-        end
         part_params.each do |p|
           puts "Part params: #{p}"
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end
-          participant = Participant.new(p)
+          participant = Participant.find(p["id"])
           participant.registration = @registration
           participant.Tournament = @tournament
+          p.filter! { |k, v| k != :id }
+          participant.update!(p)
           participant.save!
         end
       rescue => e
@@ -157,7 +156,7 @@ class RegistrationsController < ApplicationController
         return
       end
     end
-    ParticipantMailer.registration_confirmation(@registration).deliver
+    ParticipantMailer.registration_changed(@registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -189,7 +188,7 @@ class RegistrationsController < ApplicationController
     end
 
     def participants_params
-      ps = params.expect(participants: [ [ :first_name, :last_name, :club, :dob, :tournament_class, :target_face, :group ] ]).map(&:to_hash)
+      ps = params.expect(participants: [ [ :id, :first_name, :last_name, :club, :dob, :tournament_class, :target_face, :group ] ]).map(&:to_hash)
       ps.map do |p|
         p["target_face"] = TargetFace.find (p["target_face"])
         p["tournament_class"] = TournamentClass.find p["tournament_class"]
