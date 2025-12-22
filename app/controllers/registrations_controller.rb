@@ -4,7 +4,7 @@ class RegistrationsController < ApplicationController
   def new
     @participant = Participant.new
     @flags = {
-      form_action_url: tournament_participants_path(@tournament),
+      form_action_url: tournament_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.new"),
       classes: @tournament.tournament_classes.map do |cls|
@@ -27,7 +27,7 @@ class RegistrationsController < ApplicationController
     @tournament = Tournament.find(params[:tournament_id])
 
     @flags = {
-      form_action_url: tournament_multiple_create_participants_path(@tournament),
+      form_action_url: tournament_multiple_create_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.new"),
       classes: @tournament.tournament_classes.map do |cls|
@@ -39,7 +39,7 @@ class RegistrationsController < ApplicationController
           possible_target_faces: cls.target_faces
         }
       end,
-      existing_archer: nil,
+      existing_archers: [],
       require_club: @tournament.enforce_club || false,
       known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
       available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }

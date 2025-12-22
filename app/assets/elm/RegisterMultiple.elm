@@ -101,7 +101,21 @@ init f =
                 { flags = f
                 , translations = translations
                 , classes = validClasses
-                , participants = participants
+                , participants =
+                    if List.isEmpty participants then
+                        [ { id = Nothing
+                          , first_name = ""
+                          , last_name = ""
+                          , club = ""
+                          , dob = Dob.Invalid ""
+                          , selected_class = Nothing
+                          , selected_target_face = Nothing
+                          , group = Nothing
+                          }
+                        ]
+
+                    else
+                        participants
                 , email = email
                 , comment = comment
                 , club = Maybe.withDefault "" (List.head f.existing_archers |> Maybe.map (\fp -> fp.club))
