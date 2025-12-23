@@ -7,7 +7,7 @@ class RegistrationsController < ApplicationController
       form_action_url: tournament_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.new"),
-      classes: @tournament.tournament_classes.map do |cls|
+      classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
           name: cls.name,
@@ -30,7 +30,7 @@ class RegistrationsController < ApplicationController
       form_action_url: tournament_multiple_create_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.new"),
-      classes: @tournament.tournament_classes.map do |cls|
+      classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
           name: cls.name,
@@ -105,7 +105,7 @@ class RegistrationsController < ApplicationController
       form_action_url: tournament_registration_path(@tournament, @registration),
       csrf_token: form_authenticity_token,
       translations: I18n.t("participants.edit"),
-      classes: @tournament.tournament_classes.map do |cls|
+      classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
           name: cls.name,
@@ -121,8 +121,8 @@ class RegistrationsController < ApplicationController
         club: p.club || "",
         email: p.registration.email || "",
         dob: p.dob || "",
-        selected_class: p.tournament_class.andand.id.to_s || "",
-        selected_target_face: p.target_face.andand.id.to_s  || "",
+        selected_class: p.tournament_class_id.to_s || "",
+        selected_target_face: p.target_face_id.to_s  || "",
         comment: p.registration.comment.to_s,
         group_id: p.group_id || -1
       }},
