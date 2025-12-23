@@ -138,12 +138,19 @@ class RegistrationsController < ApplicationController
     reg_params = registration_params.merge!(tournament: @tournament)
     Participant.transaction do
       begin
+        delete_ids = @registration.participant_ids.without(part_params.map { |p| p["id"] }.compact)
+        delete_ids.each do |delete_me|
+          Participant.find_by(id: delete_me).andand.destroy!
+        end
+        @registration.participant_ids.filter! { |p| !delete_ids.include?(p.to_s) }
+        @registration.update!(reg_params)
+
         part_params.each do |p|
           puts "Part params: #{p}"
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end
-          participant = Participant.find(p["id"])
+          participant = Participant.exists?(p["id"]) ? Participant.find(p["id"]) : Participant.new
           participant.registration = @registration
           participant.Tournament = @tournament
           p.filter! { |k, v| k != :id }
