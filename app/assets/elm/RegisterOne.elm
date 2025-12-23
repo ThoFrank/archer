@@ -118,7 +118,8 @@ init f =
 
                 participant : Participant
                 participant =
-                    { first_name = first_name
+                    { id = Nothing
+                    , first_name = first_name
                     , last_name = last_name
                     , dob = dob
                     , selected_class = selected_class

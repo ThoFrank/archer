@@ -9,7 +9,8 @@ import TargetFace exposing (TargetFace)
 
 
 type alias Participant =
-    { first_name : String
+    { id : Maybe String
+    , first_name : String
     , last_name : String
     , club : String
     , dob : Dob

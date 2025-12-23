@@ -50,83 +50,75 @@ init f =
         decoded_translations =
             JD.decodeValue translationsDecoder f.translations
 
-        first_name =
-            Maybe.withDefault "" (Maybe.map (\a -> a.first_name) f.existing_archer)
-
-        last_name =
-            Maybe.withDefault "" (Maybe.map (\a -> a.last_name) f.existing_archer)
-
         email =
-            Maybe.withDefault "" (Maybe.map (\a -> a.email) f.existing_archer)
-
-        dob_string =
-            Maybe.withDefault "" (Maybe.map (\a -> a.dob) f.existing_archer)
-
-        dob =
-            Date.fromIsoString dob_string
-                |> Result.map (\d -> Dob.Valid d)
-                |> Result.withDefault (Dob.Invalid dob_string)
-
-        selected_class_id =
-            Maybe.map (\a -> a.selected_class) f.existing_archer
-
-        selected_target_face_id =
-            Maybe.map (\a -> a.selected_target_face) f.existing_archer
+            Maybe.withDefault "" (Maybe.map (\a -> a.email) (List.head f.existing_archers))
 
         comment =
-            Maybe.withDefault "" (Maybe.map (\a -> a.comment) f.existing_archer)
-
-        -- TODO
-        selected_group_id =
-            Nothing
+            Maybe.withDefault "" (Maybe.map (\a -> a.comment) (List.head f.existing_archers))
     in
     ( case ( decoded_translations, decoded_classed ) of
         ( Result.Ok translations, Result.Ok validClasses ) ->
             let
-                selected_class : Maybe Class
-                selected_class =
-                    Maybe.andThen
-                        (\sc ->
-                            validClasses
-                                |> filter (\{ id } -> id == sc)
-                                |> List.head
-                        )
-                        selected_class_id
-
-                selected_target_face : Maybe TargetFace
-                selected_target_face =
-                    selected_target_face_id
-                        |> Maybe.andThen
-                            (\tf ->
-                                selected_class
-                                    |> andThen
-                                        (\cls ->
-                                            cls.possible_target_faces
-                                                |> List.filter (\t -> t.id == tf)
-                                                |> List.head
-                                        )
-                            )
-
                 participants : List Participant
                 participants =
-                    [ { first_name = first_name
-                      , last_name = last_name
-                      , club = ""
-                      , dob = dob
-                      , selected_class = selected_class
-                      , selected_target_face = selected_target_face
-                      , group = selected_group_id
-                      }
-                    ]
+                    f.existing_archers
+                        |> List.map
+                            (\fp ->
+                                let
+                                    selected_class : Maybe Class
+                                    selected_class =
+                                        validClasses
+                                            |> filter (\{ id } -> id == fp.selected_class)
+                                            |> List.head
+
+                                    selected_target_face : Maybe TargetFace
+                                    selected_target_face =
+                                        selected_class
+                                            |> andThen
+                                                (\cls ->
+                                                    cls.possible_target_faces
+                                                        |> List.filter (\t -> t.id == fp.selected_target_face)
+                                                        |> List.head
+                                                )
+
+                                    dob =
+                                        Date.fromIsoString fp.dob
+                                            |> Result.map (\d -> Dob.Valid d)
+                                            |> Result.withDefault (Dob.Invalid fp.dob)
+                                in
+                                { id = Just fp.id
+                                , first_name = fp.first_name
+                                , last_name = fp.last_name
+                                , club = fp.club
+                                , dob = dob
+                                , selected_class = selected_class
+                                , selected_target_face = selected_target_face
+                                , group = fp.group_id
+                                }
+                            )
             in
             ValidatedModel
                 { flags = f
                 , translations = translations
                 , classes = validClasses
-                , participants = participants
+                , participants =
+                    if List.isEmpty participants then
+                        [ { id = Nothing
+                          , first_name = ""
+                          , last_name = ""
+                          , club = ""
+                          , dob = Dob.Invalid ""
+                          , selected_class = Nothing
+                          , selected_target_face = Nothing
+                          , group = Nothing
+                          }
+                        ]
+
+                    else
+                        participants
                 , email = email
                 , comment = comment
-                , club = ""
+                , club = Maybe.withDefault "" (List.head f.existing_archers |> Maybe.map (\fp -> fp.club))
                 }
 
         ( Result.Ok _, Result.Err e ) ->
@@ -196,7 +188,8 @@ update msg mdl =
                         { model
                             | participants =
                                 model.participants
-                                    ++ [ { first_name = ""
+                                    ++ [ { id = Nothing
+                                         , first_name = ""
                                          , last_name = ""
                                          , club = model.club
                                          , dob = Dob.Invalid ""
@@ -216,7 +209,8 @@ update msg mdl =
                                 if List.isEmpty m1.participants then
                                     { m1
                                         | participants =
-                                            [ { first_name = ""
+                                            [ { id = Nothing
+                                              , first_name = ""
                                               , last_name = ""
                                               , club = model.club
                                               , dob = Dob.Invalid ""
@@ -312,6 +306,17 @@ viewParticipant i participant model =
         , button [ class "flex-none text-2xl font-bold mb-4 text-gray-800", onClick (RemoveParticipant i) ] [ text "🗑️" ]
         ]
     , div [ class "space-y-1" ]
+        [ input
+            [ type_ "hidden"
+            , id ("id_" ++ String.fromInt i)
+            , autocomplete False
+            , name "participants[][id]"
+            , value
+                (Maybe.withDefault "" participant.id)
+            ]
+            []
+        ]
+    , div [ class "space-y-1" ]
         [ label [ for ("first_name_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Given name:") ]
         , input [ id ("first_name_" ++ String.fromInt i), property "autocomplete" (JE.string "given-name"), name "participants[][first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg i), value participant.first_name ] []
         ]
@@ -355,7 +360,7 @@ viewParticipant i participant model =
 
             else
                 [ div [ class "space-y-1" ]
-                    [ label [ for "group", class input_label_class ] [ text (t model.translations "Group:") ]
+                    [ label [ for ("group_" ++ String.fromInt i), class input_label_class ] [ text (t model.translations "Group:") ]
                     , select
                         [ onInput ((String.toInt >> Maybe.withDefault -1) >> Participant.SelectGroup >> ParticipantMsg i)
                         , value
@@ -366,7 +371,7 @@ viewParticipant i participant model =
                                 Just g ->
                                     String.fromInt g
                             )
-                        , id "group"
+                        , id ("group_" ++ String.fromInt i)
                         , name "participants[][group]"
                         , class valid_input_class
                         ]
@@ -382,7 +387,7 @@ viewParticipant i participant model =
                                         (\( j, g ) ->
                                             option
                                                 [ value (String.fromInt j)
-                                                , selected (participant.group == Just i)
+                                                , selected (participant.group == Just j)
                                                 ]
                                                 [ text g ]
                                         )
@@ -505,7 +510,7 @@ view mdl =
                 (List.concat
                     [ [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
                       ]
-                    , if model.flags.existing_archer == Nothing then
+                    , if List.isEmpty model.flags.existing_archers then
                         []
 
                       else
@@ -563,9 +568,10 @@ type alias Flags =
     , form_action_url : String
     , classes : JD.Value
     , translations : JD.Value
-    , existing_archer :
-        Maybe
-            { first_name : String
+    , existing_archers :
+        List
+            { id : String
+            , first_name : String
             , last_name : String
             , club : String
             , email : String
@@ -573,6 +579,7 @@ type alias Flags =
             , selected_class : String
             , selected_target_face : String
             , comment : String
+            , group_id : Maybe Int
             }
     , require_club : Bool
     , known_clubs : List String

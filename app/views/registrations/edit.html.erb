@@ -7,12 +7,12 @@
     <%=t(".heading", tournament: @tournament.name) %>
   </h1>
 
-  <%= elm_embed('Elm.RegisterOne', { flags: @flags }) %>
+  <%= elm_embed('Elm.RegisterMultiple', { flags: @flags }) %>
 
   <pre id="elm"></pre>
 
   <div class="inline-block ml-2">
-    <%= button_to (t ".Delete"), tournament_participant_path(@tournament, @participant), method: :delete, data: {
+    <%= button_to (t ".Delete"), tournament_registration_path(@tournament, @registration), method: :delete, data: {
           turbo_confirm: "Are you sure?"
         }, class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium" %>
   </div>
