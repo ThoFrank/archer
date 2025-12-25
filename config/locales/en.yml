@@ -65,6 +65,7 @@ en:
       Class: Class
       Target Face: Target Face
       Club: Club
+  registrations:
     new:
       heading: "Register for %{tournament}"
       "Given name:": "Given name:"

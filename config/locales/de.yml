@@ -36,6 +36,7 @@ de:
       Class: Klasse
       Target Face: Scheibe
       Club: Verein
+  registrations:
     new:
       heading: "Anmeldung für %{tournament}"
       "Given name:": "Vorname:"

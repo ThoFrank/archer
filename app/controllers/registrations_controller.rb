@@ -6,7 +6,7 @@ class RegistrationsController < ApplicationController
     @flags = {
       form_action_url: tournament_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
-      translations: I18n.t("participants.new"),
+      translations: I18n.t("registrations.new"),
       classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
@@ -29,7 +29,7 @@ class RegistrationsController < ApplicationController
     @flags = {
       form_action_url: tournament_multiple_create_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
-      translations: I18n.t("participants.new"),
+      translations: I18n.t("registrations.new"),
       classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
@@ -104,7 +104,7 @@ class RegistrationsController < ApplicationController
     @flags = {
       form_action_url: tournament_registration_path(@tournament, @registration),
       csrf_token: form_authenticity_token,
-      translations: I18n.t("participants.edit"),
+      translations: I18n.t("registrations.edit"),
       classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
         {
           id: cls.id.to_s,
