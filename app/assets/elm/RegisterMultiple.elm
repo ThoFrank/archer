@@ -5,7 +5,7 @@ import Class exposing (Class)
 import Date
 import Dob
 import Email
-import Html exposing (Html, button, datalist, div, form, h3, hr, input, label, option, select, text)
+import Html exposing (Html, button, datalist, div, form, h3, hr, input, label, option, select, text, textarea)
 import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
@@ -534,7 +534,7 @@ view mdl =
                         []
                     , [ div [ class "space-y-1" ]
                             [ label [ for "comment", class input_label_class ] [ text (t model.translations "Comment:") ]
-                            , input [ id "comment", name "registration[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
+                            , textarea [ id "comment", name "registration[comment]", class valid_input_class, onInput UpdateComment, value model.comment ] []
                             ]
                       ]
                     , List.concat (model.participants |> List.indexedMap (\i -> \p -> viewParticipant i p model))
