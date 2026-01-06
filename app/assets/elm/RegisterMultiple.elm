@@ -516,7 +516,7 @@ view mdl =
                     , if model.flags.require_club then
                         [ div [ class "space-y-1" ]
                             [ label [ for "club", class input_label_class ] [ text (t model.translations "Club:") ]
-                            , input [ id "club", name "participants[club]", class club_class, onInput UpdateClub, value model.club, list "club_suggestions" ] []
+                            , input [ id "club", name "club", class club_class, onInput UpdateClub, value model.club, list "club_suggestions" ] []
                             ]
                         , datalist [ id "club_suggestions" ]
                             (model.flags.known_clubs |> List.map (\c -> option [ value c ] []))
