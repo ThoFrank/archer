@@ -163,7 +163,7 @@ class RegistrationsController < ApplicationController
         return
       end
     end
-    ParticipantMailer.registration_changed(@registration).deliver
+    # ParticipantMailer.registration_changed(@registration).deliver
     redirect_to tournament_participants_path(@tournament)
   end
 
