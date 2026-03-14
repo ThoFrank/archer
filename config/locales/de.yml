@@ -61,6 +61,7 @@ de:
       "Comment:": "Kommentar:"
       "Group:": "Gruppe:"
       Submit: Speichern
+      "Submit without email": "Speichern ohne E-Mail Benachrichtigung"
       Delete: Löschen
   groups:
     index:

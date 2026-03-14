@@ -547,6 +547,21 @@ view mdl =
                             ]
                             []
                       ]
+                        ++ (if List.isEmpty model.flags.existing_archers then
+                                []
+
+                            else
+                                [ button
+                                    [ type_ "submit"
+                                    , name "no_mail"
+                                    , value "true"
+                                    , tabindex 0
+                                    , disabled <| not <| submittable <| model
+                                    , class "inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    ]
+                                    [ text (t model.translations "Submit without email") ]
+                                ]
+                           )
                     ]
                 )
 

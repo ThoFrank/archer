@@ -89,6 +89,7 @@ en:
       "Comment:": "Comment:"
       "Group:": "Group:"
       Submit: Submit
+      "Submit without email": "Submit without email"
   groups:
     index:
       Groups: Groups
