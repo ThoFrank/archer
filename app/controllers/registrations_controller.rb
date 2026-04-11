@@ -154,8 +154,8 @@ class RegistrationsController < ApplicationController
           participant.registration = @registration
           participant.Tournament = @tournament
           p.filter! { |k, v| k != :id }
-          participant.update!(p)
-          participant.save!
+          participant.attributes = p
+          participant.save!(validate: !authenticated?)
         end
       rescue => e
         logger.error "Could not update registration: #{e}"

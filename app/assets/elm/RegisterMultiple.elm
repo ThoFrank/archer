@@ -246,9 +246,16 @@ submittable model =
            )
 
 
-viewAvailableClasses : List Class -> Participant -> List (Html Msg)
-viewAvailableClasses classes participant =
-    available_classes classes participant
+viewAvailableClasses : ValidModel -> Participant -> List (Html Msg)
+viewAvailableClasses model participant =
+    (available_classes model.classes participant
+        ++ (if List.isEmpty model.flags.existing_archers then
+                []
+
+            else
+                model.classes |> map (\cls -> { cls | name = cls.name ++ " - unchecked" })
+           )
+    )
         |> map
             (\cls ->
                 option
@@ -411,7 +418,7 @@ viewParticipant i participant model =
                         , value "--"
                         ]
                         [ text "--" ]
-                        :: viewAvailableClasses model.classes participant
+                        :: viewAvailableClasses model participant
                     )
                 ]
            , div [ class "space-y-1" ]
