@@ -12,7 +12,9 @@ Rails.application.routes.draw do
     resources :participants
     resources :registrations
     resources :target_faces
-    resources :tournament_classes
+    resources :tournament_classes do
+      get :download, on: :collection
+    end
     resources :groups
   end
 end

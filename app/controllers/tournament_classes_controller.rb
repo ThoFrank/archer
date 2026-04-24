@@ -8,6 +8,14 @@ class TournamentClassesController < ApplicationController
     @tournament_classes = @tournament.tournament_classes
   end
 
+  # GET /tournament_classes/download
+  def download
+    send_data JSON.pretty_generate(tournament_classes_export),
+      filename: "#{@tournament.name.to_s.parameterize.presence || "tournament"}-classes.json",
+      type: "application/json",
+      disposition: "attachment"
+  end
+
   # GET /tournament_classes/1
   def show
   end
@@ -67,5 +75,18 @@ class TournamentClassesController < ApplicationController
       p["target_faces"] ||= []
       p["target_faces"] = p["target_faces"].map { |tf| @tournament.target_faces.find(tf.to_i) }
       p
+    end
+
+    def tournament_classes_export
+      @tournament.tournament_classes.includes(:target_faces).order(:id).map do |tournament_class|
+        tournament_class.as_json(
+          only: %i[ id name age_start age_end price ianseo_name ianseo_division ],
+          include: {
+            target_faces: {
+              only: %i[ id name distance size ]
+            }
+          }
+        )
+      end
     end
 end
