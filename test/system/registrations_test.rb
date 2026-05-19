@@ -63,6 +63,59 @@ class RegistrationsTest < ApplicationSystemTestCase
     assert_equal "Looking forward to it", registration.comment
   end
 
+  test "keeps entered registration data visible when duplicate participant is rejected" do
+    @tournament.update!(disallow_duplicate_participants: true)
+    participant = participants(:one)
+
+    assert_no_difference([ "Participant.count", "Registration.count" ]) do
+      visit tournament_participants_path(@tournament, locale: :en)
+      click_on "Register", match: :first
+
+      fill_in "Given name:", with: participant.first_name
+      fill_in "Last name:", with: participant.last_name
+      fill_in "Club:", with: participant.club
+      fill_in "Email address:", with: "duplicate@example.com"
+      page.execute_script(<<~JS)
+        const dob = document.getElementById("dob");
+        dob.value = "#{participant.dob}";
+        dob.dispatchEvent(new Event("input", { bubbles: true }));
+      JS
+      assert_selector "select#class option", text: participant.tournament_class.name
+      page.execute_script(<<~JS)
+        const cls = document.getElementById("class");
+        cls.value = "#{participant.tournament_class.id}";
+        cls.dispatchEvent(new Event("input", { bubbles: true }));
+        cls.dispatchEvent(new Event("change", { bubbles: true }));
+      JS
+      assert_selector "select#target_face option", text: participant.target_face.name
+      page.execute_script(<<~JS)
+        const targetFace = document.getElementById("target_face");
+        targetFace.value = "#{participant.target_face.id}";
+        targetFace.dispatchEvent(new Event("input", { bubbles: true }));
+        targetFace.dispatchEvent(new Event("change", { bubbles: true }));
+
+        const group = document.getElementById("group");
+        group.value = "#{participant.group.id}";
+        group.dispatchEvent(new Event("input", { bubbles: true }));
+        group.dispatchEvent(new Event("change", { bubbles: true }));
+      JS
+      fill_in "Comment:", with: "Please keep this"
+
+      assert_button "Submit", disabled: false
+      click_on "Submit"
+    end
+
+    assert_text "Participant is already registered for this tournament"
+    assert_field "Given name:", with: participant.first_name
+    assert_field "Last name:", with: participant.last_name
+    assert_field "Club:", with: participant.club
+    assert_field "Email address:", with: "duplicate@example.com"
+    assert_field "Comment:", with: "Please keep this"
+    assert_selector "select#class option:checked", text: participant.tournament_class.name
+    assert_selector "select#target_face option:checked", text: participant.target_face.name
+    assert_selector "select#group option:checked", text: participant.group.name
+  end
+
   test "creates a registration with multiple participants" do
     assert_difference("Participant.count", 2) do
       assert_difference("Registration.count", 1) do

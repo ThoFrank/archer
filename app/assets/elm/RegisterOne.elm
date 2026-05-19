@@ -6,7 +6,7 @@ import Date
 import Dob
 import Email
 import Html exposing (Html, datalist, div, form, input, label, option, select, text, textarea)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
+import Html.Attributes exposing (action, attribute, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
@@ -267,16 +267,16 @@ view mdl =
                         Dob.Invalid _ ->
                             invalid_input_class
             in
-            form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
+            form [ action model.flags.form_action_url, method "post", attribute "data-turbo" "false", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 (List.concat
                     [ [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
                       ]
-                    , if model.flags.existing_archer == Nothing then
-                        []
-
-                      else
+                    , if model.flags.is_edit then
                         [ input [ type_ "hidden", name "_method", value "patch", autocomplete False ] []
                         ]
+
+                      else
+                        []
                     , [ div [ class "space-y-1" ]
                             [ label [ for "first_name", class input_label_class ] [ text (t model.translations "Given name:") ]
                             , input [ id "first_name", property "autocomplete" (JE.string "given-name"), name "participant[first_name]", class first_name_class, onInput (Participant.UpdateFirstName >> ParticipantMsg), value model.participant.first_name ] []
@@ -463,4 +463,5 @@ type alias Flags =
     , require_club : Bool
     , known_clubs : List String
     , available_groups : List ( Int, String )
+    , is_edit : Bool
     }

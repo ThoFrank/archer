@@ -6,7 +6,7 @@ import Date
 import Dob
 import Email
 import Html exposing (Html, button, datalist, div, form, h3, hr, input, label, option, select, text, textarea)
-import Html.Attributes exposing (action, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
+import Html.Attributes exposing (action, attribute, autocomplete, class, disabled, for, id, list, method, name, property, selected, tabindex, type_, value)
 import Html.Events exposing (onInput)
 import I18Next exposing (t, translationsDecoder)
 import Json.Decode as JD
@@ -249,11 +249,11 @@ submittable model =
 viewAvailableClasses : ValidModel -> Participant -> List (Html Msg)
 viewAvailableClasses model participant =
     (available_classes model.classes participant
-        ++ (if List.isEmpty model.flags.existing_archers then
-                []
+        ++ (if model.flags.is_edit then
+                model.classes |> map (\cls -> { cls | name = cls.name ++ " - unchecked" })
 
             else
-                model.classes |> map (\cls -> { cls | name = cls.name ++ " - unchecked" })
+                []
            )
     )
         |> map
@@ -505,16 +505,16 @@ view mdl =
                     else
                         valid_input_class
             in
-            form [ action model.flags.form_action_url, method "post", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
+            form [ action model.flags.form_action_url, method "post", attribute "data-turbo" "false", class "space-y-4 max-w-lg mx-auto p-6 bg-white shadow rounded-lg" ]
                 (List.concat
                     [ [ input [ type_ "hidden", name "authenticity_token", value model.flags.csrf_token, autocomplete False ] []
                       ]
-                    , if List.isEmpty model.flags.existing_archers then
-                        []
-
-                      else
+                    , if model.flags.is_edit then
                         [ input [ type_ "hidden", name "_method", value "patch", autocomplete False ] []
                         ]
+
+                      else
+                        []
                     , [ div [ class "space-y-1" ]
                             [ label [ for "email", class input_label_class ] [ text (t model.translations "Email address:") ]
                             , input [ id "email", type_ "email", name "registration[email]", class email_class, onInput UpdateEmail, value model.email ] []
@@ -554,10 +554,7 @@ view mdl =
                             ]
                             []
                       ]
-                        ++ (if List.isEmpty model.flags.existing_archers then
-                                []
-
-                            else
+                        ++ (if model.flags.is_edit then
                                 [ button
                                     [ type_ "submit"
                                     , name "no_mail"
@@ -568,6 +565,9 @@ view mdl =
                                     ]
                                     [ text (t model.translations "Submit without email") ]
                                 ]
+
+                            else
+                                []
                            )
                     ]
                 )
@@ -598,4 +598,5 @@ type alias Flags =
     , require_club : Bool
     , known_clubs : List String
     , available_groups : List ( Int, String )
+    , is_edit : Bool
     }

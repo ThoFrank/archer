@@ -7,6 +7,12 @@
     <%=t(".heading", tournament: @tournament.name) %>
   </h1>
 
+  <% if @registration_error.present? %>
+    <div class="max-w-lg mx-auto mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-800">
+      <%= @registration_error %>
+    </div>
+  <% end %>
+
   <%= elm_embed('Elm.RegisterOne', { flags: @flags }) %>
 
   <pre id="elm"></pre>
