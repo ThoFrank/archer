@@ -20,6 +20,23 @@ class ParticipantValidator < ActiveModel::Validator
     unless record.registration && URI::MailTo::EMAIL_REGEXP.match?(record.registration.email)
       record.errors.add :registration
     end
+
+    if record.Tournament&.disallow_duplicate_participants?
+      duplicate = Participant
+        .where(
+          Tournament: record.Tournament,
+          first_name: record.first_name,
+          last_name: record.last_name,
+          dob: record.dob,
+          club: record.club
+        )
+        .where.not(id: record.id)
+        .exists?
+
+      if duplicate
+        record.errors.add :base, "Participant is already registered for this tournament"
+      end
+    end
   end
 end
 

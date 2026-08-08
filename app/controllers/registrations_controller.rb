@@ -3,47 +3,12 @@ class RegistrationsController < ApplicationController
   before_action :set_tournament
   def new
     @participant = Participant.new
-    @flags = {
-      form_action_url: tournament_registrations_path(@tournament),
-      csrf_token: form_authenticity_token,
-      translations: I18n.t("registrations.new"),
-      classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
-        {
-          id: cls.id.to_s,
-          name: cls.name,
-          start_dob: "#{cls.from_date}",
-          end_dob: "#{cls.to_date}",
-          possible_target_faces: cls.target_faces
-        }
-      end,
-      existing_archer: nil,
-      require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
-      available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
-    }
+    @flags = single_registration_flags
   end
 
   def multiple_new
     @tournament = Tournament.find(params[:tournament_id])
-
-    @flags = {
-      form_action_url: tournament_multiple_create_registrations_path(@tournament),
-      csrf_token: form_authenticity_token,
-      translations: I18n.t("registrations.new"),
-      classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
-        {
-          id: cls.id.to_s,
-          name: cls.name,
-          start_dob: "#{cls.from_date}",
-          end_dob: "#{cls.to_date}",
-          possible_target_faces: cls.target_faces
-        }
-      end,
-      existing_archers: [],
-      require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
-      available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
-    }
+    @flags = multiple_registration_flags
   end
 
   def create
@@ -58,45 +23,44 @@ class RegistrationsController < ApplicationController
     @participant.Tournament = @tournament
 
     @participant.transaction do
-      begin
-        registration = Registration.create(reg_params)
-        @participant.registration = registration
-        @participant.save!
-      rescue => e
-        logger.error "Could not create single registration: #{e}"
-        render :new, status: :unprocessable_content
-        return
-      end
+      registration = Registration.create!(reg_params)
+      @participant.registration = registration
+      @participant.save!
     end
 
     ParticipantMailer.registration_confirmation(@participant.registration).deliver
     redirect_to tournament_participants_path(@tournament)
+  rescue => e
+    logger.error "Could not create single registration: #{e}"
+    @registration_error = registration_error_message(e)
+    @flags = single_registration_flags(existing_archer: archer_flag(part_params, reg_params, empty_group_id: -1))
+    render :new, status: :unprocessable_content
   end
 
   def multiple_create
     part_params = participants_params
     reg_params = registration_params.merge!(tournament: @tournament)
+
     Participant.transaction do
-      begin
-        @registration = Registration.create(reg_params)
-        part_params.each do |p|
-          puts "Part params: #{p}"
-          %w[ first_name last_name club ].each do |field|
-            p[field].andand.strip!
-          end
-          participant = Participant.new(p)
-          participant.registration = @registration
-          participant.Tournament = @tournament
-          participant.save!
+      @registration = Registration.create!(reg_params)
+      part_params.each do |p|
+        %w[ first_name last_name club ].each do |field|
+          p[field].andand.strip!
         end
-      rescue => e
-        logger.error "Could not create multiple registrations: #{e}"
-        render :new, status: :unprocessable_content
-        return
+        participant = Participant.new(p)
+        participant.registration = @registration
+        participant.Tournament = @tournament
+        participant.save!
       end
     end
+
     ParticipantMailer.registration_confirmation(@registration).deliver
     redirect_to tournament_participants_path(@tournament)
+  rescue => e
+    logger.error "Could not create multiple registrations: #{e}"
+    @registration_error = registration_error_message(e)
+    @flags = multiple_registration_flags(existing_archers: part_params.map { |p| archer_flag(p, reg_params) })
+    render :multiple_new, status: :unprocessable_content
   end
 
   def edit
@@ -128,7 +92,8 @@ class RegistrationsController < ApplicationController
       }},
       require_club: @tournament.enforce_club || false,
       known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
-      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
+      available_groups: @tournament.groups.map { |g| [ g.id, g.name ] },
+      is_edit: true
     }
   end
 
@@ -146,7 +111,6 @@ class RegistrationsController < ApplicationController
         @registration.update!(reg_params)
 
         part_params.each do |p|
-          puts "Part params: #{p}"
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end
@@ -206,5 +170,65 @@ class RegistrationsController < ApplicationController
 
     def registration_params
       params.expect(registration: [ :email, :comment ]).to_hash
+    end
+
+    def single_registration_flags(existing_archer: nil)
+      registration_flags(
+        form_action_url: tournament_registrations_path(@tournament),
+        existing_archer: existing_archer
+      )
+    end
+
+    def multiple_registration_flags(existing_archers: [])
+      registration_flags(
+        form_action_url: tournament_multiple_create_registrations_path(@tournament),
+        existing_archers: existing_archers
+      )
+    end
+
+    def registration_flags(form_action_url:, **extra_flags)
+      {
+        form_action_url: form_action_url,
+        csrf_token: form_authenticity_token,
+        translations: I18n.t("registrations.new"),
+        classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
+          {
+            id: cls.id.to_s,
+            name: cls.name,
+            start_dob: "#{cls.from_date}",
+            end_dob: "#{cls.to_date}",
+            possible_target_faces: cls.target_faces
+          }
+        end,
+        require_club: @tournament.enforce_club || false,
+        known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+        available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] },
+        is_edit: false
+      }.merge(extra_flags)
+    end
+
+    def archer_flag(participant_params, registration_params, empty_group_id: nil)
+      group = participant_params["group"]
+
+      {
+        id: participant_params["id"].to_s,
+        first_name: participant_params["first_name"].to_s,
+        last_name: participant_params["last_name"].to_s,
+        club: participant_params["club"].to_s,
+        email: registration_params["email"].to_s,
+        dob: participant_params["dob"].to_s,
+        selected_class: participant_params["tournament_class"].id.to_s,
+        selected_target_face: participant_params["target_face"].id.to_s,
+        comment: registration_params["comment"].to_s,
+        group_id: group&.id || empty_group_id
+      }
+    end
+
+    def registration_error_message(error)
+      if error.respond_to?(:record) && error.record&.errors&.any?
+        error.record.errors.full_messages.to_sentence
+      else
+        error.message
+      end
     end
 end
