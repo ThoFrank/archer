@@ -7,10 +7,11 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :tournaments do
-    get "/registrations/multiple_new", to: "registrations#multiple_new", as: :multiple_new_registrations
-    post "/registrations/multiple", to: "registrations#multiple_create", as: :multiple_create_registrations
     resources :participants
-    resources :registrations
+    resources :registrations do
+      get :multiple_new, on: :collection
+      post :multiple_create, path: "multiple", on: :collection
+    end
     resources :target_faces
     resources :tournament_classes do
       get :download, on: :collection

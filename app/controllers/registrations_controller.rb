@@ -27,7 +27,7 @@ class RegistrationsController < ApplicationController
     @tournament = Tournament.find(params[:tournament_id])
 
     @flags = {
-      form_action_url: tournament_multiple_create_registrations_path(@tournament),
+      form_action_url: multiple_create_tournament_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
       translations: I18n.t("registrations.new"),
       classes: @tournament.tournament_classes.includes(:target_faces).map do |cls|
