@@ -8,9 +8,9 @@
   packages = with pkgs;[
     libyaml
     sqlite
+    inputs.nixpkgs-elm.legacyPackages.${pkgs.stdenv.hostPlatform.system}.elmPackages.elm
   ]
   ++ (with pkgs.elmPackages; [
-    elm
     elm-language-server
     elm-format
     elm-test

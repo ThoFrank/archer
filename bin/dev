@@ -13,4 +13,5 @@ export PORT="${PORT:-3000}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
-exec foreman start -f Procfile.dev "$@"
+# Use the active Ruby even if Foreman's launcher references an older Nix build.
+exec ruby -S foreman start -f Procfile.dev "$@"

@@ -67,6 +67,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-elm": {
+      "locked": {
+        "lastModified": 1752446735,
+        "narHash": "sha256-Nz2vtUEaRB/UjvPfuhHpez060P/4mvGpXW4JCDIboA4=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a421ac6595024edcfbb1ef950a3712b89161c359",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a421ac6595024edcfbb1ef950a3712b89161c359",
+        "type": "github"
+      }
+    },
     "nixpkgs-ruby": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -93,6 +109,7 @@
       "inputs": {
         "devenv": "devenv",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-elm": "nixpkgs-elm",
         "nixpkgs-ruby": "nixpkgs-ruby"
       }
     },

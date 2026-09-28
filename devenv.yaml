@@ -7,3 +7,6 @@ inputs:
     inputs:
       nixpkgs:
         follows: nixpkgs
+  # elm.json and elm-compiler require Elm 0.19.1.
+  nixpkgs-elm:
+    url: github:nixos/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359
