@@ -38,8 +38,11 @@ RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/
     --extra-conf "sandbox = false" \
     --init none \
     --no-confirm
-ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
-RUN nix profile install nixpkgs#elmPackages.elm
+ENV PATH="/opt/elm/bin:${PATH}:/nix/var/nix/profiles/default/bin"
+# Keep this revision in sync with nixpkgs-elm in devenv.yaml:
+# elm.json and elm-compiler require exactly Elm 0.19.1.
+RUN nix profile install --profile /opt/elm github:nixos/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#elmPackages.elm && \
+    test "$(elm --version)" = "0.19.1"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
