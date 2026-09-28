@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :tournaments do
-    resources :participants
+    resources :participants, only: :index
     resources :registrations do
       get :multiple_new, on: :collection
       post :multiple_create, path: "multiple", on: :collection

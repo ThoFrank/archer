@@ -18,14 +18,12 @@ class RegistrationsController < ApplicationController
       end,
       existing_archer: nil,
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      known_clubs: Participant.pluck(:club).uniq.compact,
       available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
     }
   end
 
   def multiple_new
-    @tournament = Tournament.find(params[:tournament_id])
-
     @flags = {
       form_action_url: multiple_create_tournament_registrations_path(@tournament),
       csrf_token: form_authenticity_token,
@@ -41,7 +39,7 @@ class RegistrationsController < ApplicationController
       end,
       existing_archers: [],
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      known_clubs: Participant.pluck(:club).uniq.compact,
       available_groups: @tournament.groups.filter(&:active?).map { |g| [ g.id, g.name ] }
     }
   end
@@ -80,7 +78,6 @@ class RegistrationsController < ApplicationController
       begin
         @registration = Registration.create(reg_params)
         part_params.each do |p|
-          puts "Part params: #{p}"
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end
@@ -121,13 +118,13 @@ class RegistrationsController < ApplicationController
         club: p.club || "",
         email: p.registration.email || "",
         dob: p.dob || "",
-        selected_class: p.tournament_class_id.to_s || "",
-        selected_target_face: p.target_face_id.to_s  || "",
+        selected_class: p.tournament_class_id.to_s,
+        selected_target_face: p.target_face_id.to_s,
         comment: p.registration.comment.to_s,
         group_id: p.group_id || -1
       }},
       require_club: @tournament.enforce_club || false,
-      known_clubs: Participant.all.map { |p| p.club }.uniq.compact,
+      known_clubs: Participant.pluck(:club).uniq.compact,
       available_groups: @tournament.groups.map { |g| [ g.id, g.name ] }
     }
   end
@@ -146,7 +143,6 @@ class RegistrationsController < ApplicationController
         @registration.update!(reg_params)
 
         part_params.each do |p|
-          puts "Part params: #{p}"
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end

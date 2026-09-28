@@ -16,28 +16,28 @@ class GroupsController < ApplicationController
   def create
     @group = Group.new(group_params)
     @group.tournament = @tournament
-      if @group.save
-        redirect_to tournament_groups_path, notice: "Group was successfully created."
-      else
-        render :new
-      end
+    if @group.save
+      redirect_to tournament_groups_path, notice: "Group was successfully created."
+    else
+      render :new
     end
+  end
 
-    def edit
-    end
+  def edit
+  end
 
-    def update
-      if @group.update(group_params)
-        redirect_to tournament_groups_path, notice: "Group was successfully updated."
-      else
-        render :edit
-      end
+  def update
+    if @group.update(group_params)
+      redirect_to tournament_groups_path, notice: "Group was successfully updated."
+    else
+      render :edit
     end
+  end
 
-    def destroy
-      @group.destroy
-      redirect_to tournament_groups_path, notice: "Group was successfully deleted."
-    end
+  def destroy
+    @group.destroy
+    redirect_to tournament_groups_path, notice: "Group was successfully deleted."
+  end
 
   private
     def set_group
