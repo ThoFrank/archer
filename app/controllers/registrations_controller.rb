@@ -67,7 +67,7 @@ class RegistrationsController < ApplicationController
       end
     end
 
-    ParticipantMailer.registration_confirmation(@participant.registration).deliver
+    ParticipantMailer.registration_confirmation(@participant.registration).deliver_later
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -92,7 +92,7 @@ class RegistrationsController < ApplicationController
         return
       end
     end
-    ParticipantMailer.registration_confirmation(@registration).deliver
+    ParticipantMailer.registration_confirmation(@registration).deliver_later
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -159,15 +159,20 @@ class RegistrationsController < ApplicationController
         return
       end
     end
-    ParticipantMailer.registration_changed(@registration).deliver unless params["no_mail"] == "true"
+    ParticipantMailer.registration_changed(@registration).deliver_later unless params["no_mail"] == "true"
     redirect_to tournament_participants_path(@tournament)
   end
 
   def destroy
     @registration = Registration.find(params.expect(:id))
 
-    # generate the mail before actually deleting
-    mail = ParticipantMailer.registration_cancelation(@registration)
+    # Capture the mail data before deleting records needed by the background job.
+    cancellation = {
+      email: @registration.email,
+      first_name: @registration.participants.one? ? @registration.participants.first.first_name : nil,
+      tournament_name: @registration.tournament.name,
+      tournament_date: @registration.tournament.date_start.to_date
+    }
 
     Registration.transaction do
       @registration.participants.each do |p|
@@ -176,7 +181,7 @@ class RegistrationsController < ApplicationController
       @registration.destroy!
     end
 
-    mail.deliver
+    ParticipantMailer.registration_cancelation(cancellation).deliver_later
 
     redirect_to tournament_participants_path(@tournament), status: :see_other, notice: "Registration was successfully destroyed."
   end
