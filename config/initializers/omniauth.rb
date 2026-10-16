@@ -3,6 +3,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   if ENV["ARCHER_OIDC_NAME"]
     provider :openid_connect, {
       name: ENV.fetch("ARCHER_OIDC_NAME"),
+      issuer: "https://#{ENV.fetch('ARCHER_OIDC_HOST')}",
       scope: [ :openid, :email ],
       discovery: true,
       response_type: :code,
