@@ -42,6 +42,54 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_enqueued_email_with ParticipantMailer, :registration_confirmation, args: [ registration ]
   end
 
+  test "successive single and group signups combine before their queued emails run" do
+    email = "combined@example.com"
+    post tournament_registrations_url(@tournament), params: {
+      participant: @participant_params,
+      registration: { email: email, comment: "First comment" }
+    }
+    registration = Registration.find_by!(email: email)
+
+    assert_no_difference("Registration.count") do
+      assert_difference("Participant.count", 2) do
+        assert_enqueued_email_with ParticipantMailer, :registration_changed, args: [ registration ] do
+          post multiple_create_tournament_registrations_url(@tournament), params: {
+            participants: [ @participant_params.merge(first_name: "Second"), @participant_params.merge(first_name: "Third") ],
+            registration: { email: email, comment: "Second comment" }
+          }
+        end
+      end
+    end
+    assert_redirected_to tournament_participants_url(@tournament)
+    assert_equal 3, registration.reload.participants.count
+    assert_equal "First comment\nSecond comment", registration.comment
+
+    assert_no_difference("Registration.count") do
+      assert_enqueued_email_with ParticipantMailer, :registration_changed, args: [ registration ] do
+        post tournament_registrations_url(@tournament), params: {
+          participant: @participant_params.merge(first_name: "Fourth"), registration: { email: email }
+        }
+      end
+    end
+    assert_equal 4, registration.reload.participants.count
+    assert_emails 3 do
+      perform_enqueued_jobs
+    end
+    assert_includes ActionMailer::Base.deliveries.last.body.decoded, "Fourth"
+  end
+
+  test "invalid group signup rolls back participants and registration" do
+    assert_no_difference([ "Registration.count", "Participant.count" ]) do
+      assert_no_enqueued_emails do
+        post multiple_create_tournament_registrations_url(@tournament), params: {
+          participants: [ @participant_params, @participant_params.merge(first_name: "") ],
+          registration: { email: "invalid@example.com" }
+        }
+      end
+    end
+    assert_response :unprocessable_content
+  end
+
   test "updates queue mail unless suppressed" do
     authenticate_as(users(:one))
     params = {

@@ -55,44 +55,56 @@ class RegistrationsController < ApplicationController
     @participant = Participant.new(part_params)
     @participant.Tournament = @tournament
 
-    @participant.transaction do
-      begin
-        registration = Registration.create(reg_params)
+    begin
+      registration, merged = Participant.transaction do
+        registration = Registration.create!(reg_params)
         @participant.registration = registration
         @participant.save!
-      rescue => e
-        logger.error "Could not create single registration: #{e}"
-        render :new, status: :unprocessable_content
-        return
+        combined = registration.combine_with_existing!
+        [ combined, combined != registration ]
       end
+    rescue => e
+      logger.error "Could not create single registration: #{e}"
+      render :new, status: :unprocessable_content
+      return
     end
 
-    ParticipantMailer.registration_confirmation(@participant.registration).deliver_later
+    if merged
+      ParticipantMailer.registration_changed(registration).deliver_later
+    else
+      ParticipantMailer.registration_confirmation(registration).deliver_later
+    end
     redirect_to tournament_participants_path(@tournament)
   end
 
   def multiple_create
     part_params = participants_params
     reg_params = registration_params.merge!(tournament: @tournament)
-    Participant.transaction do
-      begin
-        @registration = Registration.create(reg_params)
+    begin
+      @registration, merged = Participant.transaction do
+        registration = Registration.create!(reg_params)
         part_params.each do |p|
           %w[ first_name last_name club ].each do |field|
             p[field].andand.strip!
           end
           participant = Participant.new(p)
-          participant.registration = @registration
+          participant.registration = registration
           participant.Tournament = @tournament
           participant.save!
         end
-      rescue => e
-        logger.error "Could not create multiple registrations: #{e}"
-        render :new, status: :unprocessable_content
-        return
+        combined = registration.combine_with_existing!
+        [ combined, combined != registration ]
       end
+    rescue => e
+      logger.error "Could not create multiple registrations: #{e}"
+      render :new, status: :unprocessable_content
+      return
     end
-    ParticipantMailer.registration_confirmation(@registration).deliver_later
+    if merged
+      ParticipantMailer.registration_changed(@registration).deliver_later
+    else
+      ParticipantMailer.registration_confirmation(@registration).deliver_later
+    end
     redirect_to tournament_participants_path(@tournament)
   end
 
