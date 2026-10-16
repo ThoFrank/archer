@@ -23,6 +23,20 @@ ARCHER_OIDC_CALLBACK_URI
 ARCHER_FRAME_ANCESTORS # urls split by "," allowed as iframe hosts
 ```
 
+### Background email delivery
+
+The Docker image runs Solid Queue alongside Puma by default. Its normal startup
+runs `db:prepare`, including the queue database, before starting the web server
+and worker. Mount a persistent volume at `/rails/storage` to retain registrations
+and queued emails across container replacements. The worker uses the same SMTP
+environment variables as the web application.
+
+To run a separate worker, set `SOLID_QUEUE_IN_PUMA=false` on the web container
+and run `./bin/jobs` using the same image, configuration, and storage volume after
+preparing the databases. With SQLite, both containers must share that volume on
+the same host. Failed jobs remain in Solid Queue for inspection; transient SMTP
+errors are retried up to five attempts.
+
 ### Login with Nextcloud via oidc
 
 Assuming you have your Nextcloud instance at cloud.example.com. And your Archer instance at archer.example.com

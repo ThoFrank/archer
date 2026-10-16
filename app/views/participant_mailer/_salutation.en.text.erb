@@ -1,5 +1,6 @@
-<% if @registration.participants.length == 1 %>
-Hello <%= @registration.participants.first.first_name %>,
+<% first_name = local_assigns.fetch(:first_name) { @registration.participants.one? ? @registration.participants.first.first_name : nil } %>
+<% if first_name %>
+Hello <%= first_name %>,
 <% else %>
 Hello!
 <% end %>
