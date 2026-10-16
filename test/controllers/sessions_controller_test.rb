@@ -1,6 +1,24 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
+  test "provider failures show a recovery page without requiring authentication" do
+    assert_no_difference "Session.count" do
+      get auth_failure_url, params: { message: "Not Found", strategy: "Nextcloud" }
+    end
+
+    assert_response :unauthorized
+    assert_select "h1", "Sign-in failed"
+    assert_select "a[href=?]", new_session_path, text: "Back to sign in"
+  end
+
+  test "provider failures do not display untrusted error parameters" do
+    get auth_failure_url, params: { message: "untrusted error text", strategy: "untrusted provider" }
+
+    assert_response :unauthorized
+    assert_not_includes response.body, "untrusted error text"
+    assert_not_includes response.body, "untrusted provider"
+  end
+
   test "sign in sets a cookie that expires in seven days" do
     freeze_time do
       assert_difference "Session.count", 1 do
