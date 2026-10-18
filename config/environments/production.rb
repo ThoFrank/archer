@@ -73,7 +73,7 @@ Rails.application.configure do
     password: ENV.fetch("ARCHER_SMTP_PASSWORD") { |_| Rails.application.credentials.dig(:smtp, :password) },
     address: ENV.fetch("ARCHER_SMTP_ADDRESS", "smtp.example.com"),
     port: ENV.fetch("ARCHER_SMTP_PORT", "587").to_i,
-    authentication: :plain
+    authentication: ENV.fetch("ARCHER_SMTP_AUTHENTICATION", "plain").to_sym
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

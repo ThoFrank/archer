@@ -13,6 +13,8 @@ RAILS_MASTER_KEY # See https://github.com/ThoFrank/archer/issues/12
 ARCHER_DEFAULT_CLUB
 ARCHER_DEFAULT_MAIL_ADDRESS
 ARCHER_SMTP_ADDRESS
+ARCHER_SMTP_PORT # defaults to 587
+ARCHER_SMTP_AUTHENTICATION # defaults to plain; use login for Microsoft 365
 ARCHER_SMTP_USERNAME
 ARCHER_SMTP_PASSWORD
 ARCHER_OIDC_NAME
@@ -22,6 +24,12 @@ ARCHER_OIDC_SECRET_KEY
 ARCHER_OIDC_CALLBACK_URI
 ARCHER_FRAME_ANCESTORS # urls split by "," allowed as iframe hosts
 ```
+
+For Microsoft 365 SMTP submission, use `smtp.office365.com`, port `587`, and
+`ARCHER_SMTP_AUTHENTICATION=login`. Authenticated SMTP must be enabled for the
+mailbox, and the tenant's policies must permit password-based SMTP authentication.
+This setting selects the SMTP authentication mechanism; it does not add OAuth
+support. See [Microsoft's SMTP AUTH documentation](https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/authenticated-client-smtp-submission).
 
 ### Background email delivery
 
