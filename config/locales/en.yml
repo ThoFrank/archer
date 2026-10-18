@@ -38,6 +38,8 @@ en:
   Privacy Statement: Privacy Statement
   Imprint: Imprint
   tournaments:
+    form:
+      prevent_duplicate_registrations: Prevent duplicate registrations (same name and date of birth)
     index:
       Tournaments: Turniere
       Select a tournament: Select a tournament

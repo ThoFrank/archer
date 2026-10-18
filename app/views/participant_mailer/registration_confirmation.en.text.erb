@@ -3,7 +3,7 @@ Thanks for your registration for <%= @registration.tournament.name %> on <%= l @
 
 Your registration:
 Comment: <%= @registration.comment %>
-<% if @registration.tournament.enforce_club %>
+<% if @registration.tournament.enforce_club && @registration.participants.any? %>
 Club: <%= @registration.participants.first.club %>
 <% end %>
 
@@ -34,4 +34,5 @@ Total: <%= sum / 100 %>,<%= format("%02d", sum % 100) %>€
 <%= @registration.tournament.mail_text %>
 
 <% end %>
+<%= render "removed_participants" %>
 <%= render "greeting" %>

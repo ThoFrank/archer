@@ -54,6 +54,7 @@ class TournamentsController < ApplicationController
         :season_start_date,
         :status,
         :enforce_club,
+        :prevent_duplicate_registrations,
         :mail_text
       ])
     end

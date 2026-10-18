@@ -3,7 +3,7 @@ vielen Dank für deine Anmeldung für die Veranstaltung <%= @registration.tourna
 
 Folgende Anmeldung ist eingegangen:
 Kommentar: <%= @registration.comment %>
-<% if @registration.tournament.enforce_club %>
+<% if @registration.tournament.enforce_club && @registration.participants.any? %>
 Verein: <%= @registration.participants.first.club %>
 <% end %>
 
@@ -34,4 +34,5 @@ Summe der Startgelder: <%= sum / 100 %>,<%= format("%02d", sum % 100) %>€
 <%= @registration.tournament.mail_text %>
 
 <% end %>
+<%= render "removed_participants" %>
 <%= render "greeting" %>

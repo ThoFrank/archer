@@ -65,6 +65,11 @@
   </div>
 
   <div class="space-y-1">
+    <%= form.checkbox :prevent_duplicate_registrations %>
+    <%= form.label :prevent_duplicate_registrations, t("tournaments.form.prevent_duplicate_registrations"), class: "text-sm font-medium text-gray-700" %>
+  </div>
+
+  <div class="space-y-1">
     <%= form.label :mail_text, class: "block text-sm font-medium text-gray-700" %>
     <%= form.text_area :mail_text, class: "block w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500" %>
     <% tournament.errors.full_messages_for(:mail_text).each do |message| %>
