@@ -37,6 +37,18 @@
 
   <% if authenticated? %>
     <%= link_to (t ".Manage Groups"), tournament_groups_path(@tournament), class: "mt-2 rounded-md px-3.5 py-2.5 text-white bg-blue-600 hover:bg-blue-500 font-medium" %>
+
+    <section class="mt-8 border-t border-gray-200 pt-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2"><%= t ".Export tournament" %></h2>
+      <p class="text-gray-600 mb-4"><%= t ".Export description" %></p>
+      <%= form_with url: export_tournament_path(@tournament), method: :get, data: { turbo: false } do |form| %>
+        <div class="flex items-center gap-2 mb-4">
+          <%= form.check_box :include_participants %>
+          <%= form.label :include_participants, t(".Include participants") %>
+        </div>
+        <%= form.submit t(".Download as JSON"), class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white font-medium cursor-pointer" %>
+      <% end %>
+    </section>
   <% end %>
 
 </div>

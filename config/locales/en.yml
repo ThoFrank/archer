@@ -49,6 +49,10 @@ en:
       Go to registration: Go to registration
       Current number of participants: Current number of participants
       Manage Groups: Manage Groups
+      Export tournament: Export tournament
+      Export description: Download tournament settings, groups, target faces and classes as JSON.
+      Include participants: Include participants
+      Download as JSON: Download as JSON
   tournament_classes:
     index:
       Tournament Classes: Tournament Classes
