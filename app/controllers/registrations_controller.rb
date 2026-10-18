@@ -69,11 +69,8 @@ class RegistrationsController < ApplicationController
       return
     end
 
-    if merged
-      ParticipantMailer.registration_changed(registration).deliver_later
-    else
-      ParticipantMailer.registration_confirmation(registration).deliver_later
-    end
+    action = merged ? :registration_changed : :registration_confirmation
+    RegistrationMailJob.perform_later(registration, action)
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -100,11 +97,8 @@ class RegistrationsController < ApplicationController
       render :new, status: :unprocessable_content
       return
     end
-    if merged
-      ParticipantMailer.registration_changed(@registration).deliver_later
-    else
-      ParticipantMailer.registration_confirmation(@registration).deliver_later
-    end
+    action = merged ? :registration_changed : :registration_confirmation
+    RegistrationMailJob.perform_later(@registration, action)
     redirect_to tournament_participants_path(@tournament)
   end
 
@@ -171,7 +165,8 @@ class RegistrationsController < ApplicationController
         return
       end
     end
-    ParticipantMailer.registration_changed(@registration).deliver_later unless params["no_mail"] == "true"
+    mail_action = params["no_mail"] == "true" ? nil : :registration_changed
+    RegistrationMailJob.perform_later(@registration, mail_action)
     redirect_to tournament_participants_path(@tournament)
   end
 

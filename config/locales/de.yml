@@ -9,6 +9,8 @@ de:
   Privacy Statement: Datenschutz
   Imprint: Impressum
   tournaments:
+    form:
+      prevent_duplicate_registrations: Mehrfachanmeldungen verhindern (gleicher Name und Geburtstag)
     index:
       Tournaments: Turniere
       Select a tournament: Wähle ein Turnier

@@ -1,6 +1,7 @@
 class ParticipantMailer < ApplicationMailer
-  def registration_confirmation(registration)
+  def registration_confirmation(registration, removed_participants = [])
     @registration = registration
+    @removed_participants = removed_participants
     headers["Message-ID"] = registration_thread_id(@registration.id)
     mail(to: @registration.email, bcc: sender_address, subject: registration_subject(@registration.tournament.name))
   end
@@ -11,8 +12,9 @@ class ParticipantMailer < ApplicationMailer
     mail(to: cancellation.fetch(:email), bcc: sender_address, subject: registration_subject(cancellation.fetch(:tournament_name)))
   end
 
-  def registration_changed(registration)
+  def registration_changed(registration, removed_participants = [])
     @registration = registration
+    @removed_participants = removed_participants
     set_registration_thread_headers(@registration.id)
     mail(to: @registration.email, bcc: sender_address, subject: registration_subject(@registration.tournament.name))
   end

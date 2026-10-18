@@ -28,6 +28,37 @@ class RegistrationTest < ActiveSupport::TestCase
     assert_equal "Original comment", @existing.reload.comment
   end
 
+  test "duplicate prevention defaults to enabled" do
+    assert Tournament.new.prevent_duplicate_registrations?
+    assert tournaments(:indoor).prevent_duplicate_registrations?
+  end
+
+  test "duplicate matching requires the same tournament first name last name and birthday" do
+    [ { first_name: "Different" }, { last_name: "Different" }, { dob: Date.new(2001, 1, 1) } ].each do |attributes|
+      incoming = duplicate_registration
+      incoming.participants.first.update_columns(attributes)
+      assert_empty incoming.remove_duplicate_participants!
+      assert_equal 1, incoming.participants.count
+    end
+
+    incoming = duplicate_registration(tournament: tournaments(:vm_feld))
+    assert_empty incoming.remove_duplicate_participants!
+    assert_equal 1, incoming.participants.count
+  end
+
+  test "duplicates within one registration keep the first participant" do
+    incoming = duplicate_registration
+    first = incoming.participants.first
+    first.update_columns(first_name: "New Archer")
+    second = first.dup
+    second.save!(validate: false)
+    incoming.participants << second
+
+    assert_equal 1, incoming.remove_duplicate_participants!.size
+    assert_equal [ first.id ], incoming.reload.participant_ids
+    assert_empty incoming.remove_duplicate_participants!
+  end
+
   test "requires matching tournament email and club" do
     [ { tournament: tournaments(:vm_feld) }, { email: "other@example.com" }, { club: "Other Club" } ].each do |attributes|
       incoming = duplicate_registration(**attributes)
@@ -60,6 +91,7 @@ class RegistrationTest < ActiveSupport::TestCase
     def duplicate_registration(comment: nil, tournament: @existing.tournament, email: @existing.email, club: "FooBar")
       registration = Registration.create!(tournament: tournament, email: email, comment: comment)
       participant = participants(:one).dup
+      participant.Tournament = tournament
       participant.club = club
       participant.save!(validate: false)
       registration.participants << participant

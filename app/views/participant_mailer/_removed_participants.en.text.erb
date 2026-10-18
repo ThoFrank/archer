@@ -1,0 +1,11 @@
+<% if @removed_participants.any? %>
+The following entries were removed because a participant with the same name and date of birth is already registered for this tournament. The original entries remain registered:
+<% @removed_participants.each do |participant| %>
+- <%= participant.fetch(:first_name) %> <%= participant.fetch(:last_name) %> (<%= l participant.fetch(:dob) %>)
+<% end %>
+
+<% end %>
+<% if @registration.participants.empty? %>
+No participants remain in this registration.
+
+<% end %>
