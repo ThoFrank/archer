@@ -180,6 +180,7 @@ class RegistrationsController < ApplicationController
 
     # Capture the mail data before deleting records needed by the background job.
     cancellation = {
+      registration_id: @registration.id,
       email: @registration.email,
       first_name: @registration.participants.one? ? @registration.participants.first.first_name : nil,
       tournament_name: @registration.tournament.name,
