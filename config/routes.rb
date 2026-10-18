@@ -14,9 +14,7 @@ Rails.application.routes.draw do
       post :multiple_create, path: "multiple", on: :collection
     end
     resources :target_faces
-    resources :tournament_classes do
-      get :download, on: :collection
-    end
+    resources :tournament_classes
     resources :groups
   end
 end
