@@ -20,6 +20,10 @@ de:
       Go to registration: Zur Anmeldung
       Current number of participants: Aktuelle Anzahl der Anmeldungen
       Manage Groups: Gruppen bearbeiten
+      Export tournament: Turnier exportieren
+      Export description: Turniereinstellungen, Gruppen, Auflagen und Klassen als JSON herunterladen.
+      Include participants: Teilnehmende einschließen
+      Download as JSON: Als JSON herunterladen
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen

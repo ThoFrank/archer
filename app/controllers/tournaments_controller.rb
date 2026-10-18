@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   allow_unauthenticated_access only: %i[ index show ]
-  before_action :set_tournament, only: %i[ show edit update destroy]
+  before_action :set_tournament, only: %i[ show edit update destroy export ]
 
   def index
     @tournaments = Tournament.all
@@ -15,6 +15,14 @@ class TournamentsController < ApplicationController
   def new
     @tournament = Tournament.new
     @tournament.season_start_date = Date.new(Date.today.year)
+  end
+
+  def export
+    export = TournamentExport.new(@tournament, include_participants: ActiveModel::Type::Boolean.new.cast(params[:include_participants]))
+    send_data JSON.pretty_generate(export.as_json),
+      filename: "#{@tournament.name.to_s.parameterize.presence || "tournament"}.json",
+      type: "application/json",
+      disposition: "attachment"
   end
 
   def create

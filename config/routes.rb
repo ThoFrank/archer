@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :tournaments do
+    get :export, on: :member
     resources :participants, only: :index
     resources :registrations do
       get :multiple_new, on: :collection
