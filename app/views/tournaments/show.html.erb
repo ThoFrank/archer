@@ -1,4 +1,10 @@
 <div class="container mx-auto p-6">
+  <% if notice.present? %>
+    <p role="status" class="mb-4 text-green-700"><%= notice %></p>
+  <% end %>
+  <% if alert.present? %>
+    <p role="alert" class="mb-4 text-red-700"><%= alert %></p>
+  <% end %>
   <h1 class="text-4xl font-bold text-gray-800 mb-2">
     <%= @tournament.name %>
     <%= link_to "✏️", edit_tournament_path(@tournament) if authenticated? %>
@@ -47,6 +53,22 @@
           <%= form.label :include_participants, t(".Include participants") %>
         </div>
         <%= form.submit t(".Download as JSON"), class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white font-medium cursor-pointer" %>
+      <% end %>
+    </section>
+    <section class="mt-8 border-t border-gray-200 pt-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2"><%= t ".Import tournament" %></h2>
+      <p class="text-gray-600 mb-4"><%= t ".Import description" %></p>
+      <%= form_with url: import_tournament_path(@tournament), method: :post, multipart: true, data: { turbo: false } do |form| %>
+        <div class="mb-4">
+          <%= form.label :file, t(".JSON file"), class: "block mb-2" %>
+          <%= form.file_field :file, accept: ".json,application/json", required: true %>
+        </div>
+        <div class="mb-4">
+          <%= form.label :mode, t(".Import mode"), class: "block mb-2" %>
+          <%= form.select :mode, [[t(".Add new records"), "add_new"], [t(".Update matching records"), "overwrite"]], {}, class: "rounded-md border-gray-300" %>
+        </div>
+        <p class="text-gray-600 mb-4"><%= t ".Import modes explanation" %></p>
+        <%= form.submit t(".Import tournament"), class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white font-medium cursor-pointer" %>
       <% end %>
     </section>
   <% end %>

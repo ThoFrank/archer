@@ -95,4 +95,53 @@ class TournamentsControllerTest < ActionDispatch::IntegrationTest
       assert_equal enabled, tournament.reload.prevent_duplicate_registrations?
     end
   end
+
+  test "import section requires authentication and offers both modes in both languages" do
+    tournament = tournaments(:indoor)
+    get tournament_url(tournament)
+    assert_select "form[action=?]", import_tournament_path(tournament), count: 0
+    post import_tournament_url(tournament)
+    assert_redirected_to new_session_path
+
+    authenticate_as(users(:one))
+    [ :en, :de ].each do |locale|
+      get tournament_url(tournament, locale: locale)
+      assert_select "form[action=?][enctype=?]", import_tournament_path(tournament, locale: locale), "multipart/form-data" do
+        assert_select "input[type=file][name=file][required]"
+        assert_select "select[name=mode] option[value=add_new]"
+        assert_select "select[name=mode] option[value=overwrite]"
+      end
+      assert_no_match "Translation missing", response.body
+    end
+  end
+
+  test "organizer can upload an export and receives useful errors for invalid files" do
+    authenticate_as(users(:one))
+    tournament = tournaments(:indoor)
+    data = JSON.parse(TournamentExport.new(tournament).as_json.to_json)
+    data["tournament"]["name"] = "Imported tournament"
+    Tempfile.create([ "tournament", ".json" ]) do |file|
+      file.write(JSON.generate(data))
+      file.flush
+      upload = Rack::Test::UploadedFile.new(file.path, "application/json")
+      post import_tournament_url(tournament, locale: :en), params: { file: upload, mode: "overwrite" }
+      assert_redirected_to tournament_url(tournament, locale: :en)
+      assert_equal "Imported tournament", tournament.reload.name
+      follow_redirect!
+      assert_select "[role=status]", text: "Tournament imported successfully."
+
+      file.rewind
+      file.truncate(0)
+      file.write("invalid JSON")
+      file.flush
+      post import_tournament_url(tournament, locale: :en), params: { file: Rack::Test::UploadedFile.new(file.path, "application/json") }
+      follow_redirect!
+      assert_select "[role=alert]", text: /not valid JSON/
+    end
+
+    post import_tournament_url(tournament, locale: :en)
+    follow_redirect!
+    assert_select "[role=alert]", text: /Select a JSON file/
+    assert_equal "Imported tournament", tournament.reload.name
+  end
 end
