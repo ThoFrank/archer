@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   resources :tournaments do
     get :export, on: :member
+    post :import, on: :member
     resources :participants, only: :index
     resources :registrations do
       get :multiple_new, on: :collection

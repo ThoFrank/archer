@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   allow_unauthenticated_access only: %i[ index show ]
-  before_action :set_tournament, only: %i[ show edit update destroy export ]
+  before_action :set_tournament, only: %i[ show edit update destroy export import ]
 
   def index
     @tournaments = Tournament.all
@@ -23,6 +23,18 @@ class TournamentsController < ApplicationController
       filename: "#{@tournament.name.to_s.parameterize.presence || "tournament"}.json",
       type: "application/json",
       disposition: "attachment"
+  end
+
+  def import
+    file = params[:file]
+    raise TournamentImport::Error, t("tournaments.show.Select a JSON file") unless file.respond_to?(:read)
+
+    TournamentImport.new(@tournament, JSON.parse(file.read), mode: params[:mode] || "add_new").call
+    redirect_to @tournament, notice: t("tournaments.show.Import successful")
+  rescue JSON::ParserError
+    redirect_to @tournament, alert: t("tournaments.show.Invalid JSON file")
+  rescue TournamentImport::Error => e
+    redirect_to @tournament, alert: t("tournaments.show.Import failed", error: e.message)
   end
 
   def create

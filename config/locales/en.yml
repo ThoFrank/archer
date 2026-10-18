@@ -53,6 +53,17 @@ en:
       Export description: Download tournament settings, groups, target faces and classes as JSON.
       Include participants: Include participants
       Download as JSON: Download as JSON
+      Import tournament: Import tournament
+      Import description: Upload a tournament JSON export to import its configuration and any included participants. No registration emails are sent.
+      JSON file: JSON file
+      Import mode: Import mode
+      Add new records: Add new records only
+      Update matching records: Update matching records and add new ones
+      Import modes explanation: Adding new records keeps existing records and tournament settings. Updating also applies tournament settings and updates records with matching IDs in this tournament. Records absent from the file are kept in both modes.
+      Select a JSON file: Select a JSON file.
+      Import successful: Tournament imported successfully.
+      Invalid JSON file: The file is not valid JSON. No changes were made.
+      Import failed: "Import failed: %{error}. No changes were made."
   tournament_classes:
     index:
       Tournament Classes: Tournament Classes

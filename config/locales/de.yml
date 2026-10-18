@@ -24,6 +24,17 @@ de:
       Export description: Turniereinstellungen, Gruppen, Auflagen und Klassen als JSON herunterladen.
       Include participants: Teilnehmende einschließen
       Download as JSON: Als JSON herunterladen
+      Import tournament: Turnier importieren
+      Import description: Einen Turnierexport als JSON hochladen, um die Konfiguration und enthaltene Teilnehmende zu importieren. Es werden keine Anmelde-E-Mails versendet.
+      JSON file: JSON-Datei
+      Import mode: Importmodus
+      Add new records: Nur neue Einträge hinzufügen
+      Update matching records: Bestehende Einträge aktualisieren und neue hinzufügen
+      Import modes explanation: Beim Hinzufügen bleiben bestehende Einträge und Turniereinstellungen erhalten. Beim Aktualisieren werden auch die Turniereinstellungen übernommen und Einträge mit passenden IDs in diesem Turnier aktualisiert. Einträge, die in der Datei fehlen, bleiben in beiden Modi erhalten.
+      Select a JSON file: Bitte eine JSON-Datei auswählen.
+      Import successful: Turnier erfolgreich importiert.
+      Invalid JSON file: Die Datei enthält kein gültiges JSON. Es wurden keine Änderungen vorgenommen.
+      Import failed: "Import fehlgeschlagen: %{error}. Es wurden keine Änderungen vorgenommen."
   tournament_classes:
     index:
       Tournament Classes: Turnierklassen
