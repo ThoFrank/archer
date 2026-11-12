@@ -23,21 +23,6 @@
   languages.ruby.bundler.enable = true;
   languages.ruby.lsp.enable = true;
 
-  # Ruby 3.3.6 headers trigger a Clang warning that makes Nokogiri's -Werror
-  # checks reject the Gumbo include path on Darwin.
-  # https://github.com/sparklemotion/nokogiri/pull/3653
-  overlays = [(final: prev: lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
-    defaultGemConfig = prev.defaultGemConfig // {
-      nokogiri = attrs:
-        let original = prev.defaultGemConfig.nokogiri attrs;
-        in original // {
-          buildFlags = (original.buildFlags or []) ++ [
-            "--with-cppflags=-Wno-default-const-init-field-unsafe"
-          ];
-        };
-    };
-  })];
-
   # https://devenv.sh/processes/
   # processes.cargo-watch.exec = "cargo-watch";
 
